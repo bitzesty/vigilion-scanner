@@ -1,0 +1,26 @@
+default: &default
+  adapter: postgresql
+  encoding: utf8
+  pool: 5
+  timeout: 5000
+  username:
+  password:
+  host:
+  port:
+
+
+development: &development
+  <<: *default
+  databse: service_dev
+
+test: &test
+  <<: *default
+  databse: service_test
+
+production: &production
+  <<: *default
+  databse: service
+
+
+default_env:
+  <<: *development

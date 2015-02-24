@@ -1,7 +1,4 @@
 # Virus Scanner
-=============
-
-virus scanning app
 
 ## Installing Clam AV
 
@@ -11,3 +8,12 @@ virus scanning app
     save /usr/local/etc/clamav/freshclam.conf (comment out the example line)
 
     freshclam
+
+
+## Running
+
+    foreman start
+
+## Testing
+
+`rspec`
