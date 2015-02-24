@@ -19,9 +19,9 @@ Kartograph.default_loader = AlreadyJSON
 Kartograph.default_dumper = AlreadyJSON
 
 Dir.glob(File.join(root_path, 'app', 'models', '*.rb')).each { |file| require file }
+Dir.glob(File.join(root_path, 'app', 'jobs', '*.rb')).each { |file| require file }
 Dir.glob(File.join(root_path, 'app', 'mappers', '*.rb')).each { |file| require file }
 Dir.glob(File.join(root_path, 'app', 'api', '**', '*.rb')).each { |file| require file }
 
 
 Grape::ActiveRecord.database_file = File.join(root_path, 'config', 'database.yml')
-

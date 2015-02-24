@@ -11,6 +11,7 @@ module API
 
     post "/scan" do
       scan = ::Scan.create!(declared(params))
+      ::ScanJob.perform_async(id: scan.id)
       { id: scan.id, status: scan.status }
     end
   end

@@ -10,6 +10,8 @@ gem 'grape-activerecord'
 gem 'activerecord', require: 'active_record'
 gem 'hashie_rails'
 
+gem 'shoryuken'
+
 gem 'kartograph'
 
 gem 'guard', require: false

@@ -7,4 +7,16 @@ class Scan < ActiveRecord::Base
   enum status: %w(scanning clean infected error)
 
   validates :url, presence: true
+
+  def to_s
+    "#{status} :: #{id} :: #{url}"
+  end
+
+  def virus_check
+    # download file to tmp dir
+    # take checksums
+    # scan file with clamav
+    # parse results
+    # update status
+  end
 end

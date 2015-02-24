@@ -11,6 +11,8 @@
 
 ## Running
 
+    Load ENV variables
+
     foreman start
 
 ## Testing
