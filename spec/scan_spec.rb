@@ -5,7 +5,8 @@ describe "When requesting a file to scan" do
     post "/scan", { url: "https://s3-eu-west-1.amazonaws.com/virus-scan-test/EICAR-AV-Test" }
 
     expect_status(201)
-    expect_json(id: ::Scan.first.id, status: "scanning")
+    scan = ::Scan.first
+    expect_json(id: scan.id, status: scan.status)
   end
 
   it "should error if an invalid url is sent" do

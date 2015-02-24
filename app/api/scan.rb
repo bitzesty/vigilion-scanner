@@ -11,7 +11,7 @@ module API
 
     post "/scan" do
       scan = ::Scan.create!(declared(params))
-      { id: scan.id, status: "scanning" }
+      { id: scan.id, status: scan.status }
     end
   end
 end

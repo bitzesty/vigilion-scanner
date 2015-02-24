@@ -3,7 +3,7 @@ class AddScans < ActiveRecord::Migration
     enable_extension 'uuid-ossp' unless extension_enabled?('uuid-ossp')
     create_table :scans, id: :uuid, default: 'uuid_generate_v4()' do |t|
       t.string :url, null: false
-      t.string :status
+      t.integer :status, default: 0
       t.string :message
       t.string :md5
       t.string :sha1

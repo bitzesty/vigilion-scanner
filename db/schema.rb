@@ -18,12 +18,12 @@ ActiveRecord::Schema.define(version: 20150224030131) do
   enable_extension "uuid-ossp"
 
   create_table "scans", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
-    t.string   "url",        null: false
-    t.string   "status"
+    t.string   "url",                    null: false
+    t.integer  "status",     default: 0
     t.string   "message"
     t.string   "md5"
     t.string   "sha1"
-    t.datetime "created_at", null: false
+    t.datetime "created_at",             null: false
   end
 
 end

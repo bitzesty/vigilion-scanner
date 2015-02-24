@@ -22,4 +22,5 @@ end
 group :test do
   gem 'airborne'
   gem 'rack-test', require: 'rack/test'
+  gem 'database_cleaner'
 end
