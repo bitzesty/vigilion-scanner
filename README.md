@@ -36,7 +36,7 @@ Scan a file
 
 Check the status of a file
 
-    GET /status, {url: "URL TO SCAN"}
+    GET /status/UUID
 
 ## Nice to haves
 
