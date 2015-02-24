@@ -24,10 +24,21 @@ This application will receive post requests with a url of a file to download.
 
 This will trigger a Job that:
 
-* Downloads the file
-* Scans the file
-* Send the scan result back to the requesting web application via a webhook
-* Adds a sha1 of the file to a cache for repeat requests
+- [ ] Downloads the file into a temp location
+- [ ] Takes a md5 & sh1 checksum
+- [ ] Scans the file
+- [ ] Send the results back to the requesting web application via a webhook
+- [ ] Removes temp file
 
+Scan a file
 
     POST /scan, {url: "URL TO SCAN"}
+
+Check the status of a file
+
+    GET /status, {url: "URL TO SCAN"}
+
+## Nice to haves
+
+- [ ] If s3 url, use the md5 checksum [sometimes is the etag](http://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb) to verify file checksum
+- [ ] after downloading the file, check to see if sha1 is has already been scanned, if so return result

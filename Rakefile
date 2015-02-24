@@ -8,4 +8,3 @@ namespace :db do
     require 'config/environment'
   end
 end
-

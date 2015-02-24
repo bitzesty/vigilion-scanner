@@ -11,15 +11,15 @@ default: &default
 
 development: &development
   <<: *default
-  databse: service_dev
+  database: vs_dev
 
 test: &test
   <<: *default
-  databse: service_test
+  database: vs_test
 
 production: &production
   <<: *default
-  databse: service
+  database: vs_prod
 
 
 default_env:

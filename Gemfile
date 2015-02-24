@@ -8,6 +8,7 @@ gem 'grape'
 gem 'pg'
 gem 'grape-activerecord'
 gem 'activerecord', require: 'active_record'
+gem 'hashie_rails'
 
 gem 'kartograph'
 

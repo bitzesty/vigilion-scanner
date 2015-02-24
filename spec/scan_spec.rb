@@ -1,11 +1,14 @@
 require 'spec_helper'
 
 describe "When requesting a file to scan" do
-  it "should accept a url and return ok" do
-    post '/scan', {url: 'https://s3-eu-west-1.amazonaws.com/virus-scan-test/EICAR-AV-Test'}
-    expect_json({status: 'scanning'})
+  it "should accept a url and return 201 with status scanning" do
+    post "/scan", { url: "https://s3-eu-west-1.amazonaws.com/virus-scan-test/EICAR-AV-Test" }
+    expect_status(201)
+    expect_json(status: "scanning")
   end
 
-  it "should error if an invalid url is sent"
-  # 400 bad request
+  it "should error if an invalid url is sent" do
+    post "/scan", {file: "wtf?"}
+    expect_status(400)
+  end
 end
