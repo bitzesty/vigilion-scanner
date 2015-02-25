@@ -18,7 +18,5 @@ class ScanJob
     puts scan.to_s
 
     scan.virus_check
-    
   end
-
 end

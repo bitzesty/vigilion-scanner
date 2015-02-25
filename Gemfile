@@ -11,6 +11,7 @@ gem 'activerecord', require: 'active_record'
 gem 'hashie_rails'
 
 gem 'shoryuken'
+gem 'typhoeus'
 
 gem 'kartograph'
 

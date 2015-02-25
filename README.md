@@ -9,6 +9,9 @@
 
     freshclam
 
+    (OSX Run Clamd for faster scanning)
+    /usr/local/Cellar/clamav/0.98.6/sbin/clamd
+
 ## Running
 
     Load ENV variables
