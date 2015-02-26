@@ -46,4 +46,4 @@ Check the status of a file
 ## Nice to haves
 
 - [ ] If s3 url, use the md5 checksum [sometimes is the etag](http://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb) to verify file checksum
-- [ ] after downloading the file, check to see if sha1 is has already been scanned, if so return result
+- [ ] after downloading the file, check to see if sha1 is has already been scanned, if so return result rather than waste time scanning again (with a force option)

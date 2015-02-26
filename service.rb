@@ -2,7 +2,7 @@ module Service
   class App < Grape::API
     rescue_from ActiveRecord::RecordNotFound do |e|
       # binding.pry
-      rack_response({error: e.message}.to_json, 404)
+      rack_response({error: "These aren't the droids you're looking for..."}.to_json, 404)
     end
 
     format :json
