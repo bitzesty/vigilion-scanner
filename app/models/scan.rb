@@ -21,15 +21,12 @@ class Scan < ActiveRecord::Base
     download_file
 
     # take checksums
-    md5 = Digest::MD5.file(file_path).hexdigest
-    sha1 = Digest::SHA1.file(file_path).hexdigest
-    update_attributes(md5: md5, sha1: sha1)
+    checksums
 
     # scan file with clamav
     clamscan
-    # parse results
 
-    # update status
+    # TODO store in DB
     duration = Time.now - start_time
     puts "Duration: #{duration}"
   end
@@ -38,13 +35,26 @@ class Scan < ActiveRecord::Base
     @path ||= File.join(File.expand_path('../../..', __FILE__), 'tmp', id)
   end
 
-  def clamscan
-    command = EVN["CLAMDSCAN"].present? ? "clamdscan" : "clamscan"
+  def checksums
+    md5 = Digest::MD5.file(file_path).hexdigest
+    sha1 = Digest::SHA1.file(file_path).hexdigest
+    update(md5: md5, sha1: sha1)
+  end
 
-    Open3.popen3("foo", chdir: "/") do |i, o, e, t|
-      exit_status = t.value.success?
-      p exit_status
-      p o.read.chomp
+  def clamscan
+    command = ENV["CLAMDSCAN"].present? ? "clamdscan" : "clamscan"
+
+    Open3.popen3("#{command} #{file_path}") do |stdin, stdout, stderr, wait_thr|
+      new_status = if wait_thr.value.success?
+        :clean
+      else
+        :infected
+      end
+
+      first_line = stdout.read.split("\n")[0]
+      # Strip filepath out of message
+      new_message = first_line.gsub("#{file_path}: ", "")
+      update(status: new_status, message: new_message)
     end
   end
 
