@@ -7,7 +7,7 @@ class Scan < ActiveRecord::Base
   # clean - no viruses detected
   # infected - viruses detected
   # error - internal error (e.g. file size too large)
-  enum status: %w(scanning clean infected error)
+  enum status: %w(scanning clean infected error unknown)
 
   validates :url, presence: true
 
@@ -45,11 +45,16 @@ class Scan < ActiveRecord::Base
     command = ENV["CLAMDSCAN"].present? ? "clamdscan" : "clamscan"
 
     Open3.popen3("#{command} #{file_path}") do |stdin, stdout, stderr, wait_thr|
-      new_status = if wait_thr.value.success?
-        :clean
-      else
-        :infected
-      end
+      new_status = case wait_thr.value.exitstatus
+                   when 0
+                     :clean
+                   when 1
+                     :infected
+                   when 2
+                     :error
+                   else
+                     :unknown
+                   end
 
       first_line = stdout.read.split("\n")[0]
       # Strip filepath out of message
@@ -62,9 +67,7 @@ class Scan < ActiveRecord::Base
     downloaded_file = File.open file_path, "wb"
     request = Typhoeus::Request.new(url)
     request.on_headers do |response|
-      if response.code != 200
-        raise "Request failed"
-      end
+      raise "Request failed" if response.code != 200
     end
     request.on_body do |chunk|
       downloaded_file.write(chunk)
