@@ -29,11 +29,11 @@ This application will receive post requests with a url of a file to download.
 
 This will trigger a Job that:
 
-- [ ] Downloads the file into a temp location
-- [ ] Takes a md5 & sh1 checksum
-- [ ] Scans the file
+- [x] Downloads the file into a temp location
+- [x] Takes a md5 & sh1 checksum
+- [x] Scans the file
 - [ ] Send the results back to the requesting web application via a webhook
-- [ ] Removes temp file
+- [x] Removes temp file
 
 Scan a file
 
