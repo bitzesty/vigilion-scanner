@@ -1,5 +1,6 @@
-require 'typhoeus'
-require 'open3'
+require "typhoeus"
+require "open3"
+require "fileutils"
 
 class Scan < ActiveRecord::Base
   # STATES
@@ -26,41 +27,13 @@ class Scan < ActiveRecord::Base
     # scan file with clamav
     clamscan
 
-    # TODO store in DB
-    duration = Time.now - start_time
-    puts "Duration: #{duration}"
+    cleanup
+
+    update(duration: Time.now - start_time)
   end
 
   def file_path
-    @path ||= File.join(File.expand_path('../../..', __FILE__), 'tmp', id)
-  end
-
-  def checksums
-    md5 = Digest::MD5.file(file_path).hexdigest
-    sha1 = Digest::SHA1.file(file_path).hexdigest
-    update(md5: md5, sha1: sha1)
-  end
-
-  def clamscan
-    command = ENV["CLAMDSCAN"].present? ? "clamdscan" : "clamscan"
-
-    Open3.popen3("#{command} #{file_path}") do |stdin, stdout, stderr, wait_thr|
-      new_status = case wait_thr.value.exitstatus
-                   when 0
-                     :clean
-                   when 1
-                     :infected
-                   when 2
-                     :error
-                   else
-                     :unknown
-                   end
-
-      first_line = stdout.read.split("\n")[0]
-      # Strip filepath out of message
-      new_message = first_line.gsub("#{file_path}: ", "")
-      update(status: new_status, message: new_message)
-    end
+    @path ||= File.join(File.expand_path("../../..", __FILE__), "tmp", id)
   end
 
   def download_file
@@ -77,5 +50,38 @@ class Scan < ActiveRecord::Base
       # Note that response.body is ""
     end
     request.run
+  end
+
+  def checksums
+    md5 = Digest::MD5.file(file_path).hexdigest
+    sha1 = Digest::SHA1.file(file_path).hexdigest
+    update(md5: md5, sha1: sha1)
+  end
+
+  def clamscan
+    command = ENV["CLAMDSCAN"].present? ? "clamdscan" : "clamscan"
+    begin
+      Open3.popen3("#{command} #{file_path}") do |stdin, stdout, stderr, wait_thr|
+        new_status = case wait_thr.value.exitstatus
+                     when 0
+                       :clean
+                     when 1
+                       :infected
+                     when 2
+                       :error
+                     else
+                       :unknown
+                     end
+
+        first_line = stdout.read.split("\n")[0]
+        # Strip filepath out of message
+        new_message = first_line.gsub("#{file_path}: ", "")
+        update(status: new_status, message: new_message)
+      end
+    end
+  end
+
+  def cleanup
+    FileUtils.rm file_path, force: true
   end
 end
