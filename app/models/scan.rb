@@ -55,7 +55,8 @@ class Scan < ActiveRecord::Base
   def checksums
     md5 = Digest::MD5.file(file_path).hexdigest
     sha1 = Digest::SHA1.file(file_path).hexdigest
-    update(md5: md5, sha1: sha1)
+    sha256 = Digest::SHA256.file(file_path).hexdigest
+    update(md5: md5, sha1: sha1, sha256: sha256)
   end
 
   def clamscan

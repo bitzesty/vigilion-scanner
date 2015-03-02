@@ -8,6 +8,7 @@ class AddScans < ActiveRecord::Migration
       t.string :message
       t.string :md5
       t.string :sha1
+      t.string :sha256
       t.datetime :created_at, null: false
     end
   end
