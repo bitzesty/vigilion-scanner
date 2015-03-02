@@ -12,43 +12,27 @@ module API
     post "/scan" do
       scan = ::Scan.create!(declared(params))
       ::ScanJob.perform_async(id: scan.id)
-      { id: scan.id, status: scan.status }
+      ScanMapping.representation_for(:create, scan)
     end
 
     get "/status/:id" do
       scan = ::Scan.find(params[:id]).take!
-      { id: scan.id,
-        url: scan.url,
-        status: scan.status,
-        message: scan.message,
-        md5: scan.md5,
-        sha1: scan.sha1,
-        duration: scan.duration
-      }
+      ScanMapping.representation_for(:read, scan)
     end
 
     get "/md5/:md5" do
       scan = ::Scan.where(md5: params[:md5]).take!
-      { id: scan.id,
-        url: scan.url,
-        status: scan.status,
-        message: scan.message,
-        md5: scan.md5,
-        sha1: scan.sha1,
-        duration: scan.duration
-      }
+      ScanMapping.representation_for(:read, scan)
     end
 
     get "/sha1/:sha1" do
       scan = ::Scan.where(sha1: params[:sha1]).take!
-      { id: scan.id,
-        url: scan.url,
-        status: scan.status,
-        message: scan.message,
-        md5: scan.md5,
-        sha1: scan.sha1,
-        duration: scan.duration
-      }
+      ScanMapping.representation_for(:read, scan)
+    end
+
+    get "/sha256/:sha256" do
+      scan = ::Scan.where(sha256: params[:sha256]).take!
+      ScanMapping.representation_for(:read, scan)
     end
   end
 end

@@ -17,10 +17,7 @@ gem 'kartograph'
 
 gem 'guard', require: false
 gem 'guard-rspec', require: false
-
-group :development do
-  gem 'pry'
-end
+gem 'pry'
 
 group :test do
   gem 'airborne'

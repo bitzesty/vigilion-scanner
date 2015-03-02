@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "When requesting a file to scan" do
 
-  # TODO: Should mock out the queue 
+  # TODO: Should mock out the queue
   it "should accept a url and return 201 with status scanning" do
     sqs_queue = double 'other queue'
 
@@ -10,6 +10,7 @@ describe "When requesting a file to scan" do
 
     expect_status(201)
     scan = ::Scan.first
+  
     expect_json(id: scan.id, status: scan.status)
   end
 
