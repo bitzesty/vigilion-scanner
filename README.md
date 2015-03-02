@@ -47,3 +47,5 @@ Check the status of a file
 
 - [ ] If s3 url, use the md5 checksum [sometimes is the etag](http://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb) to verify file checksum
 - [ ] after downloading the file, check to see if sha1 is has already been scanned, if so return result rather than waste time scanning again (with a force option)
+- [ ] HA Squid proxy for clamav updates - min/max 1 auto scaling group + route 53 domain https://aws.amazon.com/articles/6884321864843201
+- [ ]
