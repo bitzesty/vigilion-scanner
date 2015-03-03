@@ -6,7 +6,6 @@ class ScanMapping
 
     scoped :read do
       property :id
-      property :url # TODO: Remove for security
       property :status
       property :message
       property :md5
