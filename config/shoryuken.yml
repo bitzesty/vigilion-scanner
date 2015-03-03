@@ -7,7 +7,7 @@ aws:
     attributes:
       - receive_count
       - sent_at
-concurrency: 1,  # The number of allocated threads to process messages. Default 25
+concurrency: 4,  # The number of allocated threads to process messages. Default 25
 delay: 5,        # The delay in seconds to pause a queue when it's empty. Default 0
 queues:
   - [<%= ENV['SQS_QUEUE'] %>, 1]

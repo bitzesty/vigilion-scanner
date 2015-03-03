@@ -28,8 +28,7 @@ class Scan < ActiveRecord::Base
     new_status, new_message = clamscan
   ensure
     cleanup
-    update(
-      url: nil,
+    update!(
       status: new_status,
       message: new_message,
       duration: (Time.now - start_time).round

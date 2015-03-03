@@ -16,7 +16,7 @@ module API
     end
 
     get "/status/:id" do
-      scan = ::Scan.find(params[:id]).take!
+      scan = ::Scan.find(params[:id])
       ScanMapping.representation_for(:read, scan)
     end
 
