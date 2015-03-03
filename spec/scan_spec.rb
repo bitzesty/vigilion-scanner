@@ -4,13 +4,11 @@ describe "When requesting a file to scan" do
 
   # TODO: Should mock out the queue
   it "should accept a url and return 201 with status scanning" do
-    sqs_queue = double 'other queue'
-
     post "/scan", { url: "https://s3-eu-west-1.amazonaws.com/virus-scan-test/EICAR-AV-Test" }
 
     expect_status(201)
     scan = ::Scan.first
-  
+
     expect_json(id: scan.id, status: scan.status)
   end
 
@@ -19,8 +17,23 @@ describe "When requesting a file to scan" do
     expect_status(400)
   end
 
-  it "should detect a virus" do
+  # http://www.eicar.org/85-0-Download.html
+  it "should detect EICAR virus" do
     scan = ::Scan.create url: "https://s3-eu-west-1.amazonaws.com/virus-scan-test/EICAR-AV-Test"
+    scan.virus_check
+    expect(scan.status).to eq("infected")
+    expect(scan.message).to eq("Eicar-Test-Signature FOUND")
+  end
+
+  it "should detect EICAR virus in a zip" do
+    scan = ::Scan.create url: "https://s3-eu-west-1.amazonaws.com/virus-scan-test/eicar_com.zip"
+    scan.virus_check
+    expect(scan.status).to eq("infected")
+    expect(scan.message).to eq("Eicar-Test-Signature FOUND")
+  end
+
+  it "should detect EICAR virus in nested zips" do
+    scan = ::Scan.create url: "https://s3-eu-west-1.amazonaws.com/virus-scan-test/eicarcom2.zip"
     scan.virus_check
     expect(scan.status).to eq("infected")
     expect(scan.message).to eq("Eicar-Test-Signature FOUND")

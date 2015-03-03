@@ -17,19 +17,23 @@ class Scan < ActiveRecord::Base
   end
 
   def virus_check
-    # download file to tmp dir
     start_time = Time.now
+    # download file to tmp dir
     download_file
 
     # take checksums
     checksums
 
     # scan file with clamav
-    clamscan
-
+    new_status, new_message = clamscan
+  ensure
     cleanup
-
-    update(duration: Time.now - start_time)
+    update(
+      url: nil,
+      status: new_status,
+      message: new_message,
+      duration: (Time.now - start_time).round
+    )
   end
 
   def file_path
@@ -77,7 +81,7 @@ class Scan < ActiveRecord::Base
         first_line = stdout.read.split("\n")[0]
         # Strip filepath out of message
         new_message = first_line.gsub("#{file_path}: ", "")
-        update(status: new_status, message: new_message)
+        return new_status, new_message
       end
     end
   end
