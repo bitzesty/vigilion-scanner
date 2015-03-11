@@ -14,7 +14,7 @@
 
 ## Running
 
-    Load ENV variables
+    Load ENV variables see .env.example
 
     foreman start
 
@@ -32,7 +32,7 @@ This will trigger a Job that:
 - [x] Downloads the file into a temp location
 - [x] Takes a md5 & sh1 checksum
 - [x] Scans the file
-- [ ] Send the results back to the requesting web application via a webhook
+- [x] Send the results back to the requesting web application via a webhook
 - [x] Removes temp file
 
 Scan a file
