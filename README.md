@@ -6,10 +6,12 @@
 
     modify /usr/local/etc/clamav/freshclam.conf.sample
     save /usr/local/etc/clamav/freshclam.conf (comment out the example line)
+    
+    modify /usr/local/etc/clamav/clamd.conf 
 
     freshclam
 
-    (OSX Run Clamd for faster scanning)
+    (OSX Run Clamd for faster scanning & MD5 caching)
     /usr/local/Cellar/clamav/0.98.6/sbin/clamd
 
 ## Running
