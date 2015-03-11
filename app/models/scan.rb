@@ -31,7 +31,7 @@ class Scan < ActiveRecord::Base
     update!(
       status: new_status,
       message: new_message,
-      duration: (Time.now - start_time).round
+      duration: (Time.now - start_time).ceil
     )
   end
 
@@ -41,7 +41,7 @@ class Scan < ActiveRecord::Base
 
   def download_file
     downloaded_file = File.open file_path, "wb"
-    request = Typhoeus::Request.new(url)
+    request = Typhoeus::Request.new(url, accept_encoding: "gzip")
     request.on_headers do |response|
       raise "Request failed" if response.code != 200
     end
