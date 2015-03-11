@@ -43,6 +43,40 @@ Check the status of a file
 
     GET /status/UUID
 
+## Architecture
+
+    ┌─────────────────┐
+    │  API Requests   │
+    └─────────────────┘  ┌──────────────────────────┐
+             │           │        Download AV       │
+             ▼           │          Updates         ▼
+    ┌──────────────────────────────────────┐ ┌──────────────────────────────────┐
+    │           ┌────────────────┐         │ │        ┌────────────────┐        │
+    │           │    AWS ELB     │         │ │        │    AWS ELB     │        │
+    │           └────────────────┘         │ │        └────────────────┘        │
+    │                                      │ │ ┌─────────────┐  ┌─────────────┐ │
+    │                                      │ │ │ Squid Proxy │  │ Squid Proxy │ │
+    │ ┌─────────┐ ┌─────────┐  ┌─────────┐ │ │ └─────────────┘  └─────────────┘ │
+    │ │         │ │         │  │         │ │ │   AWS Auto Scaling Group 1..2    │
+    │ │  Virus  │ │  Virus  │  │  Virus  │ │ └──────────────────────────────────┘
+    │ │scanning │ │scanning │  │scanning │ │
+    │ │   API   │ │   API   │  │   API   │ │
+    │ │         │ │         │  │         │ │
+    │ └─────────┘ └─────────┘  └─────────┘ │
+    │     AWS Auto Scaling Group 1..n      │
+    └──────────────────────────────────────┘
+             ▲
+     ┌───────┴─────┐
+     ▼             ▼
+    ┌─────────┐   ┌─────────┐
+    │         │   │         │
+    │         │   │         │
+    │ AWS RDS │   │ AWS SQS │
+    │         │   │         │
+    │         │   │         │
+    └─────────┘   └─────────┘
+
+
 ## Nice to haves
 
 - [ ] If s3 url, use the md5 checksum [sometimes is the etag](http://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb) to verify file checksum
