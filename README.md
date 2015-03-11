@@ -22,6 +22,8 @@
 
 `rspec`
 
+Or use postman
+
 
 ## API
 
