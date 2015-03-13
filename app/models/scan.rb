@@ -30,7 +30,7 @@ class Scan < ActiveRecord::Base
     cleanup
     update!(
       status: new_status,
-      message: new_message,
+      result: new_message,
       duration: (Time.now - start_time).ceil
     )
   end
