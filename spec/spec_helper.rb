@@ -1,5 +1,6 @@
 $: << File.expand_path(File.join(File.dirname(__FILE__), '..'))
 ENV['RACK_ENV'] = 'test'
+ENV['AVENGINE'] ||= 'clamscan'
 
 require 'config/environment'
 require 'service'
