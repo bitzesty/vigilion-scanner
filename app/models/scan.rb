@@ -25,7 +25,7 @@ class Scan < ActiveRecord::Base
     checksums
 
     # scan file with clamav
-    new_status, new_message = clamscan
+    new_status, new_message = avscan
   ensure
     cleanup
     update!(
@@ -62,26 +62,30 @@ class Scan < ActiveRecord::Base
     update(md5: md5, sha1: sha1, sha256: sha256)
   end
 
-  def clamscan
-    command = ENV["CLAMDSCAN"].present? ? "clamdscan" : "clamscan"
-    begin
-      Open3.popen3("#{command} #{file_path}") do |stdin, stdout, stderr, wait_thr|
-        new_status = case wait_thr.value.exitstatus
-                     when 0
-                       :clean
-                     when 1
-                       :infected
-                     when 2
-                       :error
-                     else
-                       :unknown
-                     end
+  def avscan
+    command = ENV["AVENGINE"]
+    if ["clamscan", "clamdscan"].include?(ENV["AVENGINE"])
+      begin
+        Open3.popen3("#{command} #{file_path}") do |stdin, stdout, stderr, wait_thr|
+          new_status = case wait_thr.value.exitstatus
+                       when 0
+                         :clean
+                       when 1
+                         :infected
+                       when 2
+                         :error
+                       else
+                         :unknown
+                       end
 
-        first_line = stdout.read.split("\n")[0]
-        # Strip filepath out of message
-        new_message = first_line.gsub("#{file_path}: ", "")
-        return new_status, new_message
+          first_line = stdout.read.split("\n")[0]
+          # Strip filepath out of message
+          new_message = first_line.gsub("#{file_path}: ", "")
+          return new_status, new_message
+        end
       end
+    else
+      raise ArgumentError, 'Invalid AVENGINE'
     end
   end
 
