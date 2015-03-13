@@ -9,7 +9,7 @@ class ScanMapping
     scoped :read do
       property :id
       property :status
-      property :message
+      property :result
       property :md5
       property :sha1
       property :sha256
