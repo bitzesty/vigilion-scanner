@@ -25,8 +25,12 @@ module Service
       end
     end
 
-    # Assumes the AVENGINE responds to --version and returns stderr if not running
-    check_avengine "#{ENV['AVENGINE']} --version"
+    if ENV['AVENGINE'] == 'clamdscan'
+      `ps aux`.include?('clamd')
+    else
+      # Assumes the AVENGINE responds to --version and returns stderr if not running
+      check_avengine "#{ENV['AVENGINE']} --version"
+    end
 
     rescue_from ActiveRecord::RecordNotFound do |e|
       rack_response({error: "These aren't the droids you're looking for..."}.to_json, 404)
