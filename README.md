@@ -6,8 +6,8 @@
 
     modify /usr/local/etc/clamav/freshclam.conf.sample
     save /usr/local/etc/clamav/freshclam.conf (comment out the example line)
-    
-    modify /usr/local/etc/clamav/clamd.conf 
+
+    modify /usr/local/etc/clamav/clamd.conf
 
     freshclam
 
@@ -79,7 +79,3 @@ Check the status of a file
           │         │   │         │
           │         │   │         │
           └─────────┘   └─────────┘
-
-## Nice to haves
-
-- [ ] If s3 url, use the md5 checksum [sometimes is the etag](http://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb) to verify file checksum
