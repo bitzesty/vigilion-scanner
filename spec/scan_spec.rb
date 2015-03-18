@@ -1,10 +1,9 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "When requesting a file to scan" do
-
   # TODO: Should mock out the queue
   it "should accept a url and return 201 with status scanning" do
-    post "/scan", { url: "https://s3-eu-west-1.amazonaws.com/virus-scan-test/EICAR-AV-Test" }
+    post "/scan", url: "https://s3-eu-west-1.amazonaws.com/virus-scan-test/EICAR-AV-Test"
 
     expect_status(201)
     scan = ::Scan.first
@@ -13,7 +12,7 @@ describe "When requesting a file to scan" do
   end
 
   it "should error if an invalid url is sent" do
-    post "/scan", {file: "wtf? this isn't the param"}
+    post "/scan", file: "wtf? this isn't the param"
     expect_status(400)
   end
 

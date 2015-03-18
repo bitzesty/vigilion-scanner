@@ -48,7 +48,7 @@ class Scan < ActiveRecord::Base
     request.on_body do |chunk|
       downloaded_file.write(chunk)
     end
-    request.on_complete do |response|
+    request.on_complete do
       downloaded_file.close
       # Note that response.body is ""
     end
@@ -66,7 +66,7 @@ class Scan < ActiveRecord::Base
     command = ENV["AVENGINE"]
     if ["clamscan", "clamdscan"].include?(ENV["AVENGINE"])
       begin
-        Open3.popen3("#{command} #{file_path}") do |stdin, stdout, stderr, wait_thr|
+        Open3.popen3("#{command} #{file_path}") do |_stdin, stdout, _stderr, wait_thr|
           new_status = case wait_thr.value.exitstatus
                        when 0
                          :clean
@@ -85,7 +85,7 @@ class Scan < ActiveRecord::Base
         end
       end
     else
-      raise ArgumentError, 'Invalid AVENGINE'
+      raise ArgumentError, "Invalid AVENGINE"
     end
   end
 
