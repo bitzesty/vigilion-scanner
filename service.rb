@@ -1,9 +1,9 @@
 require "open3"
+class NoAVEngine < StandardError; end
 
 module Service
   class App < Grape::API
 
-    class NoAVEngine < StandardError; end
 
     def self.check_avengine(*cmd)
       exit_status=nil
@@ -26,11 +26,13 @@ module Service
     end
 
     if ENV['AVENGINE'] == 'clamdscan'
-      `ps aux`.include?('clamd')
+      raise NoAVEngine, "clamd not running" unless `ps aux`.include?('clamd')
     else
       # Assumes the AVENGINE responds to --version and returns stderr if not running
       check_avengine "#{ENV['AVENGINE']} --version"
     end
+
+
 
     rescue_from ActiveRecord::RecordNotFound do |e|
       rack_response({error: "These aren't the droids you're looking for..."}.to_json, 404)
