@@ -16,7 +16,7 @@ class ScanJob
   shoryuken_options body_parser: :json
 
   def perform(_, hash)
-    scan = Scan.find(hash['id'])
+    scan = Scan.find(hash["id"])
     scan.virus_check
 
     # Notify Webhook
@@ -26,7 +26,7 @@ class ScanJob
                     headers: {
                       "Content-Type" => "application/json",
                       "User-Agent" => "VirusScanbot"
-                     }
+                    }
                     )
     end
   end
