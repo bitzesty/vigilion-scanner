@@ -11,11 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150313174042) do
+ActiveRecord::Schema.define(version: 20150320150126) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+
+  create_table "accounts", force: :cascade do |t|
+    t.string "name"
+    t.string "api_key"
+    t.string "callback_url"
+  end
+
+  add_index "accounts", ["name", "callback_url", "api_key"], name: "index_accounts_on_name_and_callback_url_and_api_key", unique: true, using: :btree
 
   create_table "scans", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
     t.string   "url",                    null: false
