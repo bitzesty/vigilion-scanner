@@ -3,6 +3,7 @@ require "securerandom"
 class Account < ActiveRecord::Base
   validates_presence_of :name, :callback_url
   before_create :set_auth_token
+  has_many :scans
 
   def login
   end
