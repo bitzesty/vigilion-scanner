@@ -14,7 +14,7 @@ module API
       end
 
       def get_authorization_token
-        request.headers.try(:fetch, "X-Auth-Token")
+        request.headers.try(:fetch, "X-Auth-Token", nil)
       end
     end
 
