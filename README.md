@@ -39,13 +39,25 @@ This will trigger a Job that:
 - [x] Send the results back to the requesting web application via a webhook
 - [x] Removes temp file
 
+To do any request below you need to pass auth token in HTTP headers
+
+    X-Auth-Token: [your_token]
+
 Scan a file
 
     POST /scan, {url: "URL TO SCAN"}
 
+  e.g.
+
+    curl -X POST -H "X-Auth-Token: your_token" -F url="URL TO SCAN" http://virus_scanner_host/scan
+
 Check the status of a file
 
     GET /status/UUID
+
+  e.g.
+
+    curl -H "X-Auth-Token: your_token" http://virus_scanner_host/status/UUID
 
 ## Architecture
 
