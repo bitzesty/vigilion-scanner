@@ -4,6 +4,24 @@ module API
 
     version "v1", using: :header, vendor: "vs"
 
+    helpers do
+      def authenticate!
+        error!("Unauthorized. Invalid token", 401) unless authenticated?
+      end
+
+      def authenticated?
+          Account.exists?(api_key: get_authorization_token)
+      end
+
+      def get_authorization_token
+        request.headers.fetch("Token")
+      end
+    end
+
+    before do
+      authenticate!
+    end
+
     params do
       requires :url, type: String
     end
