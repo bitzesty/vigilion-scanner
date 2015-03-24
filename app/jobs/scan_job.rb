@@ -20,8 +20,8 @@ class ScanJob
     scan.virus_check
 
     # Notify Webhook
-    if ENV["WEBHOOK_URL"].present?
-      Typhoeus.post(ENV["WEBHOOK_URL"],
+    if scan.account.callback_url.present?
+      Typhoeus.post(scan.account.callback_url],
                     body: ScanMapping.representation_for(:read, scan),
                     headers: {
                       "Content-Type" => "application/json",
