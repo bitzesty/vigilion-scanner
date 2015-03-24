@@ -21,7 +21,7 @@ class ScanJob
 
     # Notify Webhook
     if scan.account.callback_url.present?
-      Typhoeus.post(scan.account.callback_url],
+      Typhoeus.post(scan.account.callback_url,
                     body: ScanMapping.representation_for(:read, scan),
                     headers: {
                       "Content-Type" => "application/json",
