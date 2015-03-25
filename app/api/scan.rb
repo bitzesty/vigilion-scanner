@@ -27,7 +27,9 @@ module API
     end
 
     post "/scan" do
-      scan = ::Scan.create!(declared(params))
+      auth_token = { "account_id" => Account.where(api_key: get_authorization_token).select(:id).first }
+      params.merge!(auth_token)
+      scan = ::Scan.create!(params)
       ::ScanJob.perform_async(id: scan.id)
       ScanMapping.representation_for(:create, scan)
     end
