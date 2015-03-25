@@ -12,6 +12,8 @@ class Scan < ActiveRecord::Base
 
   validates :url, presence: true
 
+  belongs_to :account
+
   def to_s
     "#{status} :: #{id} :: #{url}"
   end
