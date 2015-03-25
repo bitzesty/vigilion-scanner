@@ -1,12 +1,9 @@
 require "securerandom"
 
 class Account < ActiveRecord::Base
-  validates_presence_of :name, :callback_url
+  validates :name, :callback_url, presence: true
   before_create :set_auth_token
   has_many :scans
-
-  def login
-  end
 
   private
 
@@ -17,6 +14,6 @@ class Account < ActiveRecord::Base
   end
 
   def generate_api_key
-    SecureRandom.uuid.gsub(/\-/, '')
+    SecureRandom.uuid.gsub(/\-/, "")
   end
 end

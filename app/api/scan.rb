@@ -10,7 +10,7 @@ module API
       end
 
       def authenticated?
-          Account.exists?(api_key: get_authorization_token)
+        Account.exists?(api_key: get_authorization_token)
       end
 
       def get_authorization_token
@@ -27,7 +27,8 @@ module API
     end
 
     post "/scan" do
-      auth_token = { "account_id" => Account.where(api_key: get_authorization_token).select(:id).first }
+      auth_token = { "account_id" => Account.where(
+        api_key: get_authorization_token).select(:id).first }
       params.merge!(auth_token)
       scan = ::Scan.create!(params)
       ::ScanJob.perform_async(id: scan.id)
