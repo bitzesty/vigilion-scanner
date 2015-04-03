@@ -18,41 +18,48 @@ module API
       end
     end
 
-    before do
-      authenticate!
+    get "/healthcheck" do
+      content_type "text/plain"
+      body "scanning: #{::Scan.scanning.count}"
     end
 
-    params do
-      requires :url, type: String
-    end
+    namespace :account do
+      before do
+        authenticate!
+      end
 
-    post "/scan" do
-      auth_token = { "account_id" => Account.where(
-        api_key: get_authorization_token).first.id }
-      params.merge!(auth_token)
-      scan = ::Scan.create!(params)
-      ::ScanJob.perform_async(id: scan.id)
-      ScanMapping.representation_for(:create, scan)
-    end
+      params do
+        requires :url, type: String
+      end
 
-    get "/status/:id" do
-      scan = ::Scan.find(params[:id])
-      ScanMapping.representation_for(:read, scan)
-    end
+      post "/scan" do
+        auth_token = { "account_id" => Account.where(
+          api_key: get_authorization_token).first.id }
+        params.merge!(auth_token)
+        scan = ::Scan.create!(params)
+        ::ScanJob.perform_async(id: scan.id)
+        ScanMapping.representation_for(:create, scan)
+      end
 
-    get "/md5/:md5" do
-      scan = ::Scan.where(md5: params[:md5]).take!
-      ScanMapping.representation_for(:read, scan)
-    end
+      get "/status/:id" do
+        scan = ::Scan.find(params[:id])
+        ScanMapping.representation_for(:read, scan)
+      end
 
-    get "/sha1/:sha1" do
-      scan = ::Scan.where(sha1: params[:sha1]).take!
-      ScanMapping.representation_for(:read, scan)
-    end
+      get "/md5/:md5" do
+        scan = ::Scan.where(md5: params[:md5]).take!
+        ScanMapping.representation_for(:read, scan)
+      end
 
-    get "/sha256/:sha256" do
-      scan = ::Scan.where(sha256: params[:sha256]).take!
-      ScanMapping.representation_for(:read, scan)
+      get "/sha1/:sha1" do
+        scan = ::Scan.where(sha1: params[:sha1]).take!
+        ScanMapping.representation_for(:read, scan)
+      end
+
+      get "/sha256/:sha256" do
+        scan = ::Scan.where(sha256: params[:sha256]).take!
+        ScanMapping.representation_for(:read, scan)
+      end
     end
   end
 end
