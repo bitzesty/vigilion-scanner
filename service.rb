@@ -40,6 +40,7 @@ module Service
       rack_response e.to_json, 400
     end
 
+    mount API::Healthcheck
     mount API::Scan
   end
 end
