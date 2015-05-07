@@ -1,2 +1,5 @@
 .env.local
 tmp/*
+.env
+.ruby-gemset
+config/database.yml
