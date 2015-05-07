@@ -10,7 +10,8 @@ class Scan < ActiveRecord::Base
   # error - internal error (e.g. file size too large)
   enum status: %w(scanning clean infected error unknown)
 
-  validates :url, presence: true
+  validates :url, :uuid, presence: true
+  validates :uuid, uniqueness: true
 
   belongs_to :account
 

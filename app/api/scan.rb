@@ -14,7 +14,7 @@ module API
       end
 
       def get_authorization_token
-        request.headers.try(:fetch, "X-Auth-Token", nil)
+        request.headers.try(:fetch, "X-Auth-Token", nil) || params["x-auth-token"]
       end
     end
 
@@ -23,20 +23,24 @@ module API
     end
 
     params do
+      requires :uuid, type: String
       requires :url, type: String
     end
 
     post "/scan" do
-      auth_token = { "account_id" => Account.where(
-        api_key: get_authorization_token).first.id }
-      params.merge!(auth_token)
-      scan = ::Scan.create!(params)
-      ::ScanJob.perform_async(id: scan.id)
+      scan_ops = {
+        account_id: Account.find_by_api_key(get_authorization_token).id,
+        uuid: params[:uuid],
+        url: params[:url]
+      }
+
+      scan = ::Scan.create!(scan_ops)
+      ::ScanJob.perform_async(id: scan.id) if ENV["RACK_ENV"] != "test"
       ScanMapping.representation_for(:create, scan)
     end
 
     get "/status/:id" do
-      scan = ::Scan.find(params[:id])
+      scan = ::Scan.find_by_uuid(params[:id])
       ScanMapping.representation_for(:read, scan)
     end
 

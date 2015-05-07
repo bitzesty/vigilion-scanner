@@ -8,6 +8,7 @@ class ScanMapping
 
     scoped :read do
       property :id
+      property :uuid
       property :status
       property :result
       property :md5
@@ -18,6 +19,7 @@ class ScanMapping
 
     scoped :create do
       property :id
+      property :uuid
       property :status
     end
   end
