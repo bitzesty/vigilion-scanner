@@ -11,7 +11,6 @@
 4) Virus Scanner handles this request right here https://github.com/bitzesty/virus-scanner/blob/master/app/api/scan.rb#L30 (edited)
 
 5) Virus Scanner app creating Scan entry and schedule Shoryuken background job
-
 Shoryuken is same Sidekiq but for AWS SQS Message Queue (https://github.com/phstc/shoryuken)
 
 6) Shoryuken job scanning uploaded file on viruses using open source antivirus clamav
