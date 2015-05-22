@@ -1,5 +1,25 @@
 # Virus Scanner
 
+## Scanning Flow
+
+1) User uploads file
+
+2) App saving it on S3 and on store_file callback we are creating Scan association for defined AR instance (ex: FormAnswerAttachment) with generated UUID and status = 'scanning'
+
+3) Once Scan association created -> we are sending uploaded file url (from S3) and generated unique UUID to virus scanner server
+
+4) Virus Scanner handles this request right here https://github.com/bitzesty/virus-scanner/blob/master/app/api/scan.rb#L30 (edited)
+
+5) Virus Scanner app creating Scan entry and schedule Shoryuken background job
+
+Shoryuken is same Sidekiq but for AWS SQS Message Queue (https://github.com/phstc/shoryuken)
+
+6) Shoryuken job scanning uploaded file on viruses using open source antivirus clamav
+
+7) Once file is scanned Virus Scanner sends callback request to QAE APP (edited) It's implemented right here https://github.com/bitzesty/virus-scanner/blob/master/app/jobs/scan_job.rb#L24
+
+8) QAE app handling it right here (using vs-rails app) https://github.com/bitzesty/vs-rails/blob/master/app/controllers/vs_rails/scans_controller.rb#L5
+
 ## Installing Clam AV
 
     brew install clamav
