@@ -22,21 +22,19 @@ module API
       authenticate!
     end
 
-    params do
-      requires :uuid, type: String
-      requires :url, type: String
-    end
-
     post "/scan" do
       scan_ops = {
         account_id: Account.find_by_api_key(get_authorization_token).id,
         uuid: params[:uuid],
         url: params[:url]
       }
-
-      scan = ::Scan.create!(scan_ops)
-      ::ScanJob.perform_async(id: scan.id) if ENV["RACK_ENV"] != "test"
-      ScanMapping.representation_for(:create, scan)
+      scan = ::Scan.new(scan_ops)
+      if scan.save
+        ::ScanJob.perform_async(id: scan.id) if ENV["RACK_ENV"] != "test"
+        ScanMapping.representation_for(:create, scan)
+      else
+        error! scan.errors, 400
+      end
     end
 
     get "/status/:id" do

@@ -12,6 +12,7 @@ class Scan < ActiveRecord::Base
 
   validates :url, :uuid, presence: true
   validates :uuid, uniqueness: true
+  validate  :absolute_url
 
   belongs_to :account
 
@@ -94,5 +95,21 @@ class Scan < ActiveRecord::Base
 
   def cleanup
     FileUtils.rm file_path, force: true
+  end
+
+private
+  def absolute_url
+    unless uri?(url)
+      errors.add(:url, "is not a valid URL")
+    end
+  end
+
+  def uri?(string)
+    uri = URI.parse(string)
+    %w( http https ).include?(uri.scheme)
+  rescue URI::BadURIError
+    false
+  rescue URI::InvalidURIError
+    false
   end
 end
