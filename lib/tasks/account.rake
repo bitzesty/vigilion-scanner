@@ -3,9 +3,10 @@ begin
     task :create do
       puts "You should provide callback url and application name via ENV variables"
       unless ENV["VIRUS_SCANNER_ACCOUNT_NAME"].nil? || ENV["VIRUS_SCANNER_CALLBACK_URL"].nil?
-        name = ENV["VIRUS_SCANNER_ACCOUNT_NAME"]
-        callback_url = ENV["VIRUS_SCANNER_CALLBACK_URL"]
-        unless name.strip!.blank? || callback_url.strip!.blank?
+        name = ENV["VIRUS_SCANNER_ACCOUNT_NAME"].dup.to_s.strip
+        callback_url = ENV["VIRUS_SCANNER_CALLBACK_URL"].dup.to_s.strip
+
+        unless name.blank? || callback_url.blank?
           if account = Account.create!(name: name, callback_url: callback_url)
             puts "Account created"
             puts "Your API key is: #{account.api_key}"
