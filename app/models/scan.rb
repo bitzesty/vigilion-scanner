@@ -11,7 +11,6 @@ class Scan < ActiveRecord::Base
   enum status: %w(scanning clean infected error unknown)
 
   validates :url, :uuid, presence: true
-  validates :uuid, uniqueness: true
   validate  :absolute_url
 
   belongs_to :account

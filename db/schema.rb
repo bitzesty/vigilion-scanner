@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150429113903) do
+ActiveRecord::Schema.define(version: 20150608185631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,7 +37,5 @@ ActiveRecord::Schema.define(version: 20150429113903) do
     t.integer  "account_id"
     t.string   "uuid",                   null: false
   end
-
-  add_index "scans", ["uuid"], name: "index_scans_on_uuid", unique: true, using: :btree
 
 end
