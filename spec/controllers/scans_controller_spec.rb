@@ -51,6 +51,10 @@ RSpec.describe ScansController, type: :controller do
 
   describe "POST #create" do
     context "with valid params" do
+      before do
+        expect(ScanWorker).to receive(:perform_async)
+      end
+
       it "creates a new Scan" do
         expect {
           post :create, {:scan => valid_attributes}

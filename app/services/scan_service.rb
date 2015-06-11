@@ -4,7 +4,7 @@ require "fileutils"
 
 class ScanService
 
-  def virus_check
+  def execute scan
     start_time = Time.now
     # download file to tmp dir
     download_file
@@ -14,6 +14,18 @@ class ScanService
 
     # scan file with clamav
     new_status, new_message = avscan
+
+
+    # Notify Webhook
+    if scan.account.callback_url.present?
+      Typhoeus.post(scan.account.callback_url,
+                    body: ScanMapping.representation_for(:read, scan),
+                    headers: {
+                      "Content-Type" => "application/json",
+                      "User-Agent" => "VirusScanbot"
+                    }
+                    )
+    end
   ensure
     cleanup
     update!(
