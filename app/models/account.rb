@@ -3,6 +3,8 @@ class Account < ActiveRecord::Base
   validates :access_key_id, uniqueness: true
   attr_encrypted :secret_access_key
 
+  has_many :scans
+
   before_create :generate_keys
 
   def generate_keys

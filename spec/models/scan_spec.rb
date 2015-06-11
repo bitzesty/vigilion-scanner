@@ -17,10 +17,12 @@ RSpec.describe Scan, type: :model do
     end
   end
 
-  describe "#key" do
-    it "must be present" do
-      expect(build(:scan, key: nil)).not_to be_valid
-    end
+  it "must have key" do
+    expect(build(:scan, key: nil)).not_to be_valid
+  end
+
+  it "must have account" do
+    expect(build(:scan, account: nil)).not_to be_valid
   end
 
   describe "status" do

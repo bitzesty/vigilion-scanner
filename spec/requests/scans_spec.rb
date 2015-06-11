@@ -1,9 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe "Scans", type: :request do
+  let(:current_account) {
+    create :account
+  }
+
   describe "GET /scans" do
-    it "works! (now write some real specs)" do
-      get scans_path
+    it "works!" do
+      get scans_path,{} , "X-Auth-Token" => current_account.access_key_id
       expect(response).to have_http_status(200)
     end
   end

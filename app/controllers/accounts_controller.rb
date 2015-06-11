@@ -1,4 +1,5 @@
 class AccountsController < ApplicationController
+  skip_before_filter :authenticate!
   before_action :set_account, only: [:show, :edit, :update, :regenerate_keys, :destroy]
 
   # GET /accounts

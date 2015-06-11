@@ -3,7 +3,7 @@ class ScansController < ApplicationController
 
   # GET /scans
   def index
-    @scans = Scan.all
+    @scans = current_account.scans
   end
 
   # GET /scans/1
@@ -12,7 +12,7 @@ class ScansController < ApplicationController
 
   # POST /scans
   def create
-    @scan = Scan.new(scan_params)
+    @scan = current_account.scans.new(scan_params)
 
     if @scan.save
       render :show, status: :created, location: @scan
@@ -24,7 +24,7 @@ class ScansController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_scan
-      @scan = Scan.find(params[:id])
+      @scan = current_account.scans.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
