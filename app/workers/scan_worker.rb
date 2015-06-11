@@ -6,6 +6,6 @@ class ScanWorker
 
   def perform(_, params)
     scan = Scan.find params["id"]
-    ScanService.new.execute scan
+    ScanService.new.perform scan
   end
 end

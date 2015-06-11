@@ -4,7 +4,10 @@ require "fileutils"
 
 class ScanService
 
-  def execute scan
+  def perform scan
+    @scan = scan
+    @account = scan.account
+
     start_time = Time.now
     # download file to tmp dir
     download_file
@@ -17,8 +20,8 @@ class ScanService
 
 
     # Notify Webhook
-    if scan.account.callback_url.present?
-      Typhoeus.post(scan.account.callback_url,
+    if @account.callback_url.present?
+      Typhoeus.post(@account.callback_url,
                     body: ScanMapping.representation_for(:read, scan),
                     headers: {
                       "Content-Type" => "application/json",
@@ -28,7 +31,7 @@ class ScanService
     end
   ensure
     cleanup
-    update!(
+    @scan.update!(
       status: new_status,
       result: new_message,
       duration: (Time.now - start_time).ceil
@@ -36,12 +39,12 @@ class ScanService
   end
 
   def file_path
-    @path ||= File.join(File.expand_path("../../..", __FILE__), "tmp", id)
+    @path ||= File.join(File.expand_path("../../..", __FILE__), "tmp", @scan.id)
   end
 
   def download_file
     downloaded_file = File.open file_path, "wb"
-    request = Typhoeus::Request.new(url, accept_encoding: "gzip")
+    request = Typhoeus::Request.new(@scan.url, accept_encoding: "gzip")
     request.on_headers do |response|
       raise "Request failed" if response.code != 200
     end
@@ -59,7 +62,7 @@ class ScanService
     md5 = Digest::MD5.file(file_path).hexdigest
     sha1 = Digest::SHA1.file(file_path).hexdigest
     sha256 = Digest::SHA256.file(file_path).hexdigest
-    update(md5: md5, sha1: sha1, sha256: sha256)
+    @scan.update!(md5: md5, sha1: sha1, sha256: sha256)
   end
 
   def avscan
