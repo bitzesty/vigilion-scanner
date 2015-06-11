@@ -1,19 +1,12 @@
-require "securerandom"
-
 class Account < ActiveRecord::Base
-  validates :name, :callback_url, presence: true
-  before_create :set_auth_token
-  has_many :scans
+  validates_presence_of :name, :callback_url
+  validates :access_key_id, uniqueness: true
+  attr_encrypted :secret_access_key
 
-  private
+  before_create :generate_keys
 
-  def set_auth_token
-    begin
-      self.api_key = generate_api_key
-    end while self.class.exists?(api_key: api_key)
-  end
-
-  def generate_api_key
-    SecureRandom.uuid.gsub(/\-/, "")
+  def generate_keys
+    self.access_key_id = SecureRandom.uuid
+    self.secret_access_key = SecureRandom.base64(36)
   end
 end
