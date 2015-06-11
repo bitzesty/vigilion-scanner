@@ -7,7 +7,7 @@ RSpec.describe ScanService do
       request.should_receive(:on_headers)
       request.should_receive(:on_body)
       request.should_receive(:on_complete)
-      request.should_receive(:run)
+      request.stub(:run)
       ENV["AVENGINE"] = "clamscan"
       Open3.should_receive(:popen3)
 

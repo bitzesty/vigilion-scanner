@@ -22,7 +22,7 @@ class ScanService
     # Notify Webhook
     if @account.callback_url.present?
       Typhoeus.post(@account.callback_url,
-                    body: ScanMapping.representation_for(:read, scan),
+                    body: scan.to_json,
                     headers: {
                       "Content-Type" => "application/json",
                       "User-Agent" => "VirusScanbot"
