@@ -35,12 +35,12 @@ class ScanService
 
     #signed_request = ApiAuth.sign!(request, @account.access_key_id, @account.secret_access_key)
     connection.post do |request|
-      request.body = @scan.to_json
+      request.body = @scan.to_json(except: :account_id)
       request.headers = {
         "Content-Type" => "application/json",
         "User-Agent" => "VirusScanbot"
       }
-      request = ApiAuth.sign!(request, @account.access_key_id, @account.secret_access_key)
+      ApiAuth.sign!(request, @account.access_key_id, @account.secret_access_key)
     end
   end
 
