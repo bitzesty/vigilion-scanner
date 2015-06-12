@@ -1,4 +1,6 @@
+require "faraday"
 require "typhoeus"
+require "typhoeus/adapters/faraday"
 require "open3"
 require "fileutils"
 
@@ -17,25 +19,29 @@ class ScanService
 
     # scan file with clamav
     new_status, new_message = avscan
-
-
-    # Notify Webhook
-    if @account.callback_url.present?
-      Typhoeus.post(@account.callback_url,
-                    body: scan.to_json,
-                    headers: {
-                      "Content-Type" => "application/json",
-                      "User-Agent" => "VirusScanbot"
-                    }
-                    )
-    end
   ensure
     cleanup
+
     @scan.update!(
       status: new_status,
       result: new_message,
       duration: (Time.now - start_time).ceil
     )
+
+    # Notify Webhook
+    connection = Faraday.new(@account.callback_url) do |faraday|
+      faraday.adapter :typhoeus
+    end
+
+    #signed_request = ApiAuth.sign!(request, @account.access_key_id, @account.secret_access_key)
+    connection.post do |request|
+      request.body = @scan.to_json
+      request.headers = {
+        "Content-Type" => "application/json",
+        "User-Agent" => "VirusScanbot"
+      }
+      request = ApiAuth.sign!(request, @account.access_key_id, @account.secret_access_key)
+    end
   end
 
   def file_path
