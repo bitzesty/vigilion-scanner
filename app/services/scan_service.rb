@@ -80,7 +80,8 @@ class ScanService
 
   def notify_client
     body = @scan.to_json(except: :account_id)
-    Typhoeus.post(@account.callback_url,
+    Typhoeus.post(
+      @account.callback_url,
       body: body,
       headers: {
         "Content-Type" => "application/json",
