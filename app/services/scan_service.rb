@@ -3,8 +3,7 @@ require "open3"
 require "fileutils"
 
 class ScanService
-
-  def perform scan
+  def perform(scan)
     @scan = scan
     @account = scan.account
 
@@ -23,8 +22,7 @@ class ScanService
     @scan.update!(
       status: new_status,
       result: new_message,
-      duration: (Time.now - start_time).ceil
-    )
+      duration: (Time.now - start_time).ceil)
 
     body = @scan.to_json(except: :account_id)
     Typhoeus.post(@account.callback_url,
@@ -33,8 +31,7 @@ class ScanService
         "Content-Type" => "application/json",
         "User-Agent" => "VirusScanbot",
         "Auth-Key" => @account.access_key_id,
-        "Auth-Hash" => Digest::MD5.hexdigest("#{body}#{@account.secret_access_key}")
-      })
+        "Auth-Hash" => Digest::MD5.hexdigest("#{body}#{@account.secret_access_key}")})
   end
 
   def file_path

@@ -23,13 +23,14 @@ class ScansController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_scan
-      @scan = current_account.scans.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def scan_params
-      params.require(:scan).permit(:url, :key)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_scan
+    @scan = current_account.scans.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def scan_params
+    params.require(:scan).permit(:url, :key)
+  end
 end
