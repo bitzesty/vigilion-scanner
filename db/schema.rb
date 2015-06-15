@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150610205726) do
+ActiveRecord::Schema.define(version: 20150615163035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,7 +30,6 @@ ActiveRecord::Schema.define(version: 20150610205726) do
     t.string   "url",                    null: false
     t.string   "key",                    null: false
     t.integer  "status",     default: 0
-    t.integer  "duration",   default: 0
     t.string   "result"
     t.string   "md5"
     t.string   "sha1"
@@ -38,6 +37,8 @@ ActiveRecord::Schema.define(version: 20150610205726) do
     t.integer  "account_id"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.datetime "started_at"
+    t.datetime "ended_at"
   end
 
 end

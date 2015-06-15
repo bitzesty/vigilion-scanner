@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe ScanService do
   describe "#perform" do
     before do
-      request = Typhoeus::Request.any_instance
-      request.should_receive(:on_headers)
-      request.should_receive(:on_body).and_yield("something")
-      request.should_receive(:on_complete)
-      request.stub(:run)
+      request = expect_any_instance_of(Typhoeus::Request)
+      request.to receive(:on_headers)
+      request.to receive(:on_body).and_yield("something")
+      request.to receive(:on_complete)
+      Typhoeus::Request.any_instance.stub(:run)
+
       ENV["AVENGINE"] = "clamscan"
       avscan_response = OpenStruct.new
       avscan_response.value = OpenStruct.new
@@ -15,7 +16,7 @@ RSpec.describe ScanService do
       stdout = OpenStruct.new
       stdout.read = "Stubbed Result"
 
-      Open3.should_receive(:popen3).and_yield(nil, stdout, nil, avscan_response)
+      expect(Open3).to receive(:popen3).and_yield(nil, stdout, nil, avscan_response)
     end
 
     it "changes scan status" do

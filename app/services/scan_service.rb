@@ -6,29 +6,14 @@ class ScanService
   def perform(scan)
     @scan = scan
     @account = scan.account
+    @scan.update_columns(started_at: Time.now, status: :scanning)
 
-    start_time = Time.now
     download_file
-    checksums
-
-    # scan file with clamav
-    new_status, new_message = avscan
+    set_checksums
+    execute_avengine
   ensure
     cleanup
-
-    @scan.update!(
-      status: new_status,
-      result: new_message,
-      duration: (Time.now - start_time).ceil)
-
-    body = @scan.to_json(except: :account_id)
-    Typhoeus.post(@account.callback_url,
-      body: body,
-      headers: {
-        "Content-Type" => "application/json",
-        "User-Agent" => "VirusScanbot",
-        "Auth-Key" => @account.access_key_id,
-        "Auth-Hash" => Digest::MD5.hexdigest("#{body}#{@account.secret_access_key}")})
+    notify_client
   end
 
   def file_path
@@ -51,14 +36,14 @@ class ScanService
     request.run
   end
 
-  def checksums
+  def set_checksums
     md5 = Digest::MD5.file(file_path).hexdigest
     sha1 = Digest::SHA1.file(file_path).hexdigest
     sha256 = Digest::SHA256.file(file_path).hexdigest
     @scan.update!(md5: md5, sha1: sha1, sha256: sha256)
   end
 
-  def avscan
+  def execute_avengine
     command = ENV["AVENGINE"]
     if ["clamscan", "clamdscan"].include?(ENV["AVENGINE"])
       begin
@@ -77,7 +62,11 @@ class ScanService
           first_line = stdout.read.split("\n")[0]
           # Strip filepath out of message
           new_message = first_line.gsub("#{file_path}: ", "")
-          return new_status, new_message
+
+          @scan.update!(
+            status: new_status,
+            result: new_message,
+            ended_at: Time.now)
         end
       end
     else
@@ -87,5 +76,16 @@ class ScanService
 
   def cleanup
     FileUtils.rm file_path, force: true
+  end
+
+  def notify_client
+    body = @scan.to_json(except: :account_id)
+    Typhoeus.post(@account.callback_url,
+      body: body,
+      headers: {
+        "Content-Type" => "application/json",
+        "User-Agent" => "VirusScanbot",
+        "Auth-Key" => @account.access_key_id,
+        "Auth-Hash" => Digest::MD5.hexdigest("#{body}#{@account.secret_access_key}")})
   end
 end
