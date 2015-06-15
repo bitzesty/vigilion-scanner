@@ -9,7 +9,6 @@ RSpec.describe ScanService do
       request.to receive(:on_complete)
       Typhoeus::Request.any_instance.stub(:run)
 
-      ENV["AVENGINE"] = "clamscan"
       avscan_response = OpenStruct.new
       avscan_response.value = OpenStruct.new
       avscan_response.value.exitstatus = 0

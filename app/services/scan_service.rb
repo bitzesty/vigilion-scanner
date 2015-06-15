@@ -44,33 +44,26 @@ class ScanService
   end
 
   def execute_avengine
-    command = ENV["AVENGINE"]
-    if ["clamscan", "clamdscan"].include?(ENV["AVENGINE"])
-      begin
-        Open3.popen3("#{command} #{file_path}") do |_, stdout, _, wait_thr|
-          new_status = case wait_thr.value.exitstatus
-                       when 0
-                         :clean
-                       when 1
-                         :infected
-                       when 2
-                         :error
-                       else
-                         :unknown
-                       end
+    Open3.popen3("#{CONFIG[:av_engine]} #{file_path}") do |_, stdout, _, wait_thr|
+      new_status = case wait_thr.value.exitstatus
+                   when 0
+                     :clean
+                   when 1
+                     :infected
+                   when 2
+                     :error
+                   else
+                     :unknown
+                   end
 
-          first_line = stdout.read.split("\n")[0]
-          # Strip filepath out of message
-          new_message = first_line.gsub("#{file_path}: ", "")
+      first_line = stdout.read.split("\n")[0]
+      # Strip filepath out of message
+      new_message = first_line.gsub("#{file_path}: ", "")
 
-          @scan.update!(
-            status: new_status,
-            result: new_message,
-            ended_at: Time.now)
-        end
-      end
-    else
-      raise ArgumentError, "Invalid AVENGINE"
+      @scan.update!(
+        status: new_status,
+        result: new_message,
+        ended_at: Time.now)
     end
   end
 
