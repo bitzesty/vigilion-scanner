@@ -8,10 +8,7 @@ class ScanService
     @account = scan.account
 
     start_time = Time.now
-    # download file to tmp dir
     download_file
-
-    # take checksums
     checksums
 
     # scan file with clamav
@@ -65,7 +62,7 @@ class ScanService
     command = ENV["AVENGINE"]
     if ["clamscan", "clamdscan"].include?(ENV["AVENGINE"])
       begin
-        Open3.popen3("#{command} #{file_path}") do |_stdin, stdout, _stderr, wait_thr|
+        Open3.popen3("#{command} #{file_path}") do |_, stdout, _, wait_thr|
           new_status = case wait_thr.value.exitstatus
                        when 0
                          :clean
