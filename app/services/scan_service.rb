@@ -1,6 +1,4 @@
-require "faraday"
 require "typhoeus"
-require "typhoeus/adapters/faraday"
 require "open3"
 require "fileutils"
 
@@ -28,20 +26,15 @@ class ScanService
       duration: (Time.now - start_time).ceil
     )
 
-    # Notify Webhook
-    connection = Faraday.new(@account.callback_url) do |faraday|
-      faraday.adapter :typhoeus
-    end
-
-    #signed_request = ApiAuth.sign!(request, @account.access_key_id, @account.secret_access_key)
-    connection.post do |request|
-      request.body = @scan.to_json(except: :account_id)
-      request.headers = {
+    body = @scan.to_json(except: :account_id)
+    Typhoeus.post(@account.callback_url,
+      body: body,
+      headers: {
         "Content-Type" => "application/json",
-        "User-Agent" => "VirusScanbot"
-      }
-      ApiAuth.sign!(request, @account.access_key_id, @account.secret_access_key)
-    end
+        "User-Agent" => "VirusScanbot",
+        "Auth-Key" => @account.access_key_id,
+        "Auth-Hash" => Digest::MD5.hexdigest("#{body}#{@account.secret_access_key}")
+      })
   end
 
   def file_path
