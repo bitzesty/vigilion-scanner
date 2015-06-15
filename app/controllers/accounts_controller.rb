@@ -1,5 +1,6 @@
 class AccountsController < ApplicationController
   skip_before_filter :authenticate!
+  before_action :check_api_key
   before_action :set_account, only: [:show, :edit, :update, :regenerate_keys, :destroy]
 
   # GET /accounts
@@ -45,13 +46,17 @@ class AccountsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_account
-      @account = Account.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_account
+    @account = Account.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def account_params
-      params.require(:account).permit(:name, :callback_url)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def account_params
+    params.require(:account).permit(:name, :callback_url)
+  end
+
+  def check_api_key
+    head :forbidden if params[:api_key] != ENV["DASHBOARD_API_KEY"]
+  end
 end

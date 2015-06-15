@@ -21,6 +21,8 @@ gem 'attr_encrypted'
 gem "shoryuken"
 gem "typhoeus"
 
+gem "dotenv-rails"
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
