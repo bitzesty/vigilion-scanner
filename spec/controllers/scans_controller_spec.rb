@@ -32,6 +32,28 @@ RSpec.describe ScansController, type: :controller do
     end
   end
 
+  describe "GET #total" do
+    it "assigns current_account scans as @scans" do
+      scan = create(:scan, created_at: 1.day.ago, account: current_account)
+      get :total
+      expect(assigns(:scans)).to include(1.day.ago.to_date => 1)
+    end
+  end
+
+  describe "GET #infected" do
+    it "assigns current_account infected scans as @scans" do
+      scan = create(:scan, account: current_account, status: "infected", created_at: 1.day.ago)
+      get :infected, {}
+      expect(assigns(:scans)).to include(1.day.ago.to_date => 1)
+    end
+
+    it "does not include current_account clean scans as @scans" do
+      scan = create :scan, account: current_account, status: "clean"
+      get :infected, {}
+      expect(assigns(:scans)).to include(1.day.ago.to_date => 0)
+    end
+  end
+
   describe "GET #show" do
     context "for current_account" do
       it "assigns the requested scan as @scan" do

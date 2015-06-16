@@ -6,6 +6,17 @@ class ScansController < ApplicationController
     @scans = current_account.scans
   end
 
+  def total
+    @scans = zeros.merge(current_account.scans.group("DATE(created_at)").order("date_created_at").where("created_at > ?", 30.days.ago).count)
+
+    render :stats
+  end
+
+  def infected
+    @scans = zeros.merge(current_account.scans.infected.group("DATE(created_at)").where("created_at > ?", 30.days.ago).order("date_created_at").count)
+    render :stats
+  end
+
   # GET /scans/1
   def show
   end
@@ -32,5 +43,11 @@ class ScansController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def scan_params
     params.require(:scan).permit(:url, :key, :file)
+  end
+
+  def zeros
+    @zeros ||= 30.downto(0)
+      .map { |n| n.days.ago.to_date }
+      .each_with_object({}) { |d, h| h[d] = 0 }
   end
 end
