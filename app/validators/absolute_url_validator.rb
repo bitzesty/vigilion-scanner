@@ -1,6 +1,6 @@
 class AbsoluteUrlValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    unless uri?(value)
+    unless value.nil? || uri?(value)
       record.errors[attribute] << "is not a valid URL"
     end
   end

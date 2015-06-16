@@ -7,7 +7,7 @@ RSpec.describe ScansController, type: :controller do
   }
 
   let(:invalid_attributes) {
-    attributes_for :scan, url: nil
+    attributes_for :scan, key: nil
   }
 
   let(:current_account) {

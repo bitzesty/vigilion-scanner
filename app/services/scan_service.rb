@@ -1,6 +1,5 @@
 require "typhoeus"
 require "open3"
-require "fileutils"
 
 class ScanService
   def perform(scan)
@@ -8,7 +7,7 @@ class ScanService
     @account = scan.account
     @scan.update_columns(started_at: Time.now, status: :scanning)
 
-    download_file
+    download_file unless @scan.file_exist?
     set_checksums
     execute_avengine
   ensure
@@ -16,12 +15,8 @@ class ScanService
     notify_client
   end
 
-  def file_path
-    @path ||= File.join(File.expand_path("../../..", __FILE__), "tmp", @scan.id)
-  end
-
   def download_file
-    downloaded_file = File.open file_path, "wb"
+    downloaded_file = File.open @scan.file_path, "wb"
     request = Typhoeus::Request.new(@scan.url, accept_encoding: "gzip")
     request.on_headers do |response|
       raise "Request failed" if response.code != 200
@@ -37,14 +32,14 @@ class ScanService
   end
 
   def set_checksums
-    md5 = Digest::MD5.file(file_path).hexdigest
-    sha1 = Digest::SHA1.file(file_path).hexdigest
-    sha256 = Digest::SHA256.file(file_path).hexdigest
+    md5 = Digest::MD5.file(@scan.file_path).hexdigest
+    sha1 = Digest::SHA1.file(@scan.file_path).hexdigest
+    sha256 = Digest::SHA256.file(@scan.file_path).hexdigest
     @scan.update!(md5: md5, sha1: sha1, sha256: sha256)
   end
 
   def execute_avengine
-    Open3.popen3("#{CONFIG[:av_engine]} #{file_path}") do |_, stdout, _, wait_thr|
+    Open3.popen3("#{CONFIG[:av_engine]} #{@scan.file_path}") do |_, stdout, _, wait_thr|
       new_status = case wait_thr.value.exitstatus
                    when 0
                      :clean
@@ -58,7 +53,7 @@ class ScanService
 
       first_line = stdout.read.split("\n")[0]
       # Strip filepath out of message
-      new_message = first_line.gsub("#{file_path}: ", "")
+      new_message = first_line.gsub("#{@scan.file_path}: ", "")
 
       @scan.update!(
         status: new_status,
@@ -68,7 +63,7 @@ class ScanService
   end
 
   def cleanup
-    FileUtils.rm file_path, force: true
+    @scan.delete_file
   end
 
   def notify_client

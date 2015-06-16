@@ -6,22 +6,41 @@ RSpec.describe ScanService do
       Typhoeus::Request.any_instance.stub(:run)
     end
 
+    context "with an existing file" do
+      before do
+        mock_avscan
+      end
+
+      let(:scan) { create :scan, file: OpenStruct.new(read: "something") }
+
+      it "works without downloading" do
+        ScanService.new.perform(scan)
+        expect(scan).to be_clean
+      end
+
+      it "deletes the file after scanning" do
+        ScanService.new.perform(scan)
+        expect(scan.file_exist?).to eq false
+      end
+    end
+
     context "with successful download" do
       before do
         mock_download_request
-        avscan_response = OpenStruct.new
-        avscan_response.value = OpenStruct.new
-        avscan_response.value.exitstatus = 0
-        stdout = OpenStruct.new
-        stdout.read = "Stubbed Result"
-        expect(Open3).to receive(:popen3).and_yield(nil, stdout, nil, avscan_response)
+        mock_avscan
       end
 
+      let(:scan){ create :scan }
+
       it "changes scan status" do
-        scan = create :scan
         ScanService.new.perform(scan)
         expect(scan).to be_clean
         expect(scan.result).to eq("Stubbed Result")
+      end
+
+      it "deletes the file after scanning" do
+        ScanService.new.perform(scan)
+        expect(scan.file_exist?).to eq false
       end
     end
 
@@ -49,5 +68,14 @@ RSpec.describe ScanService do
     request = mock_download_headers
     request.to receive(:on_body).and_yield("something")
     request.to receive(:on_complete)
+  end
+
+  def mock_avscan
+    avscan_response = OpenStruct.new
+    avscan_response.value = OpenStruct.new
+    avscan_response.value.exitstatus = 0
+    stdout = OpenStruct.new
+    stdout.read = "Stubbed Result"
+    expect(Open3).to receive(:popen3).and_yield(nil, stdout, nil, avscan_response)
   end
 end
