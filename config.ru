@@ -1,8 +1,4 @@
-$: << File.expand_path(File.dirname(__FILE__))
-require 'config/environment'
-require 'service'
+# This file is used by Rack-based servers to start the application.
 
-
-use ActiveRecord::ConnectionAdapters::ConnectionManagement
-
-run Service::App
+require ::File.expand_path('../config/environment', __FILE__)
+run Rails.application

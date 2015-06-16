@@ -1,0 +1,16 @@
+common: &common
+  adapter: postgresql
+  encoding: utf8
+
+development:
+  <<: *common
+  database: vigilion_scanner_development
+
+
+test:
+  <<: *common
+  database: vigilion_scanner_test
+
+production:
+  <<: *common
+  database: vigilion_scanner_production

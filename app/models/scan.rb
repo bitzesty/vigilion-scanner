@@ -1,114 +1,35 @@
-require "typhoeus"
-require "open3"
-require "fileutils"
-
 class Scan < ActiveRecord::Base
-  # STATES
-  # scanning - default state after we receive the file
-  # clean - no viruses detected
-  # infected - viruses detected
-  # error - internal error (e.g. file size too large)
-  enum status: %w(scanning clean infected error unknown)
+  attr_accessor :file
 
-  validates :url, :uuid, presence: true
-  validate  :absolute_url
-
+  enum status: %w(pending scanning clean infected error unknown)
   belongs_to :account
 
-  def to_s
-    "#{status} :: #{id} :: #{url}"
-  end
+  validates :url, absolute_url: true
+  validates_presence_of :key, :account
+  validates_presence_of :url, on: :create, unless: :file_to_write?
 
-  def virus_check
-    start_time = Time.now
-    # download file to tmp dir
-    download_file
-
-    # take checksums
-    checksums
-
-    # scan file with clamav
-    new_status, new_message = avscan
-  ensure
-    cleanup
-    update!(
-      status: new_status,
-      result: new_message,
-      duration: (Time.now - start_time).ceil
-    )
-  end
+  after_create :write_file
+  before_destroy :delete_file
 
   def file_path
-    @path ||= File.join(File.expand_path("../../..", __FILE__), "tmp", id)
+    File.join(File.expand_path("../../..", __FILE__), "tmp", id)
   end
 
-  def download_file
-    downloaded_file = File.open file_path, "wb"
-    request = Typhoeus::Request.new(url, accept_encoding: "gzip")
-    request.on_headers do |response|
-      raise "Request failed" if response.code != 200
-    end
-    request.on_body do |chunk|
-      downloaded_file.write(chunk)
-    end
-    request.on_complete do
-      downloaded_file.close
-      # Note that response.body is ""
-    end
-    request.run
+  def file_exist?
+    File.exist?(file_path)
   end
 
-  def checksums
-    md5 = Digest::MD5.file(file_path).hexdigest
-    sha1 = Digest::SHA1.file(file_path).hexdigest
-    sha256 = Digest::SHA256.file(file_path).hexdigest
-    update(md5: md5, sha1: sha1, sha256: sha256)
+  def delete_file
+    File.delete(file_path) if file_exist?
   end
 
-  def avscan
-    command = ENV["AVENGINE"]
-    if ["clamscan", "clamdscan"].include?(ENV["AVENGINE"])
-      begin
-        Open3.popen3("#{command} #{file_path}") do |_stdin, stdout, _stderr, wait_thr|
-          new_status = case wait_thr.value.exitstatus
-                       when 0
-                         :clean
-                       when 1
-                         :infected
-                       when 2
-                         :error
-                       else
-                         :unknown
-                       end
+  private
 
-          first_line = stdout.read.split("\n")[0]
-          # Strip filepath out of message
-          new_message = first_line.gsub("#{file_path}: ", "")
-          return new_status, new_message
-        end
-      end
-    else
-      raise ArgumentError, "Invalid AVENGINE"
-    end
+  def file_to_write?
+    @file.present?
   end
 
-  def cleanup
-    FileUtils.rm file_path, force: true
-  end
-
-private
-  def absolute_url
-    unless uri?(url)
-      errors.add(:url, "is not a valid URL")
-    end
-  end
-
-  def uri?(string)
-    uri = URI.parse(string)
-    %w( http https ).include?(uri.scheme)
-  rescue URI::BadURIError
-    false
-  rescue URI::InvalidURIError
-    false
+  def write_file
+    File.open(file_path, "wb") { |f| f.write(@file.read) } if file_to_write?
   end
 end

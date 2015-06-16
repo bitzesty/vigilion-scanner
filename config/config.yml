@@ -1,0 +1,8 @@
+development:
+  av_engine: "clamdscan"
+
+test:
+  av_engine: "clamdscan"
+
+production:
+  av_engine: <%= ENV["AVENGINE"] %>
