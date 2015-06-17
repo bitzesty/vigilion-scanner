@@ -7,14 +7,17 @@ class ScansController < ApplicationController
   end
 
   def total
-    @scans = zeros.merge(current_account.scans.group("DATE(created_at)").order("date_created_at").where("created_at > ?", 30.days.ago).count)
-
+    @scans = zeros.merge(current_account.scans.group("DATE_TRUNC('hour', created_at)").order("date_trunc_hour_created_at").where("created_at >= ?", 48.hours.ago).count)
     render :stats
   end
 
   def infected
-    @scans = zeros.merge(current_account.scans.infected.group("DATE(created_at)").where("created_at > ?", 30.days.ago).order("date_created_at").count)
+    @scans = zeros.merge(current_account.scans.infected.group("DATE_TRUNC('hour', created_at)").order("date_trunc_hour_created_at").where("created_at >= ?", 48.hours.ago).count)
     render :stats
+  end
+
+  def per_minute
+date_trunc( 'hour', ts )
   end
 
   # GET /scans/1
@@ -46,8 +49,8 @@ class ScansController < ApplicationController
   end
 
   def zeros
-    @zeros ||= 30.downto(0)
-      .map { |n| n.days.ago.to_date }
+    @zeros ||= 48.downto(0)
+      .map { |n| n.hours.ago.beginning_of_hour }
       .each_with_object({}) { |d, h| h[d] = 0 }
   end
 end
