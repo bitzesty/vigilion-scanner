@@ -7,12 +7,24 @@ class ScansController < ApplicationController
   end
 
   def total
-    @scans = zeros.merge(current_account.scans.group("DATE_TRUNC('minute', created_at)").order("date_trunc_minute_created_at").where("created_at >= ?", 24.hours.ago).count)
+    @scans = current_account.scans
+      .group("DATE_TRUNC('minute', created_at)")
+      .order("date_trunc_minute_created_at")
+      .where("created_at >= ?", 24.hours.ago)
+      .count
+
+    @scans = zeros.merge(@scans)
     render :stats
   end
 
   def infected
-    @scans = zeros.merge(current_account.scans.infected.group("DATE_TRUNC('minute', created_at)").order("date_trunc_minute_created_at").where("created_at >= ?", 24.hours.ago).count)
+    @scans = current_account.scans.infected
+      .group("DATE_TRUNC('minute', created_at)")
+      .order("date_trunc_minute_created_at")
+      .where("created_at >= ?", 24.hours.ago)
+      .count
+
+    @scans = zeros.merge(@scans)
     render :stats
   end
 
