@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     collection do
       get :total
       get :infected
+      get :response_time
     end
   end
 
