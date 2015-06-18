@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       get :total
       get :infected
       get :response_time
+      get :kilobytes_processed
     end
   end
 

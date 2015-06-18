@@ -54,6 +54,14 @@ RSpec.describe ScansController, type: :controller do
     end
   end
 
+  describe "GET #kilobytes_processed" do
+    it "assigns current_account infected scans as @scans" do
+      scan = create(:scan, account: current_account, created_at: 1.hour.ago, file_size: 1024)
+      get :kilobytes_processed, {}
+      expect(assigns(:scans).first.file_size).to eq(1)
+    end
+  end
+
   describe "GET #show" do
     context "for current_account" do
       it "assigns the requested scan as @scan" do
