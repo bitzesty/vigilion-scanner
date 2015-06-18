@@ -37,10 +37,10 @@ class ScansController < ApplicationController
 
   def kilobytes_processed
     @scans = current_account.scans
-      .select("SUM(file_size)/1024 AS file_size, DATE_TRUNC('minute', created_at) AS date_trunc_minute_created_at")
-      .group("date_trunc_minute_created_at")
+      .select("SUM(file_size)/1024 AS file_size, DATE_TRUNC('minute', created_at) AS created_at")
+      .group("created_at")
       .where("created_at >= ?", 24.hours.ago)
-      .order("date_trunc_minute_created_at")
+      .order("created_at")
   end
 
   # GET /scans/1
