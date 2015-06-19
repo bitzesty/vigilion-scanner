@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150615232207) do
+ActiveRecord::Schema.define(version: 20150618112157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,17 +28,18 @@ ActiveRecord::Schema.define(version: 20150615232207) do
 
   create_table "scans", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
     t.string   "url"
-    t.string   "key",                    null: false
-    t.integer  "status",     default: 0
+    t.string   "key",                              null: false
+    t.integer  "status",               default: 0
     t.string   "result"
     t.string   "md5"
     t.string   "sha1"
     t.string   "sha256"
     t.integer  "account_id"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.datetime "started_at"
     t.datetime "ended_at"
+    t.integer  "file_size",  limit: 8
   end
 
 end
