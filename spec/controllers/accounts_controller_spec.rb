@@ -10,11 +10,7 @@ RSpec.describe AccountsController, type: :controller do
     attributes_for :account, name: nil
   }
 
-  let(:api_key_param) { { api_key: "123" } }
-
-  before do
-    allow(ENV).to receive(:[]).with("DASHBOARD_API_KEY").and_return("123")
-  end
+  let(:api_key_param) { { api_key: "vigilion" } }
 
   describe "GET #index" do
     it "assigns all accounts as @accounts" do

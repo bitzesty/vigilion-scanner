@@ -19,7 +19,7 @@ RSpec.describe AccountsController, type: :routing do
       expect(:put => "/accounts/1").to route_to("accounts#update", :id => "1")
     end
 
-    it "routes to #create" do
+    it "routes to #regenerate_keys" do
       expect(:post => "/accounts/1/regenerate_keys").to route_to("accounts#regenerate_keys", :id => "1")
     end
 

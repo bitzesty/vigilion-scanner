@@ -58,6 +58,6 @@ class AccountsController < ApplicationController
   end
 
   def check_api_key
-    head :forbidden if params[:api_key] != ENV["DASHBOARD_API_KEY"]
+    head :forbidden if params[:api_key] != CONFIG[:dashboard_api_key]
   end
 end
