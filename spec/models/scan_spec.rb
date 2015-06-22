@@ -84,4 +84,13 @@ RSpec.describe Scan, type: :model do
       end
     end
   end
+
+  describe "#duration" do
+    let(:scan){ build(:scan, started_at: 1.hour.ago) }
+
+    it "returns the difference between started_at and ended_at" do
+      scan.ended_at = scan.started_at + 300.seconds
+      expect(scan.duration).to eq 300
+    end
+  end
 end

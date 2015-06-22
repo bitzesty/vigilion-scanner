@@ -11,6 +11,10 @@ class Scan < ActiveRecord::Base
   after_create :write_file
   before_destroy :delete_file
 
+  def duration
+    ended_at - started_at
+  end
+
   def file_path
     File.join(File.expand_path("../../..", __FILE__), "tmp", id)
   end
