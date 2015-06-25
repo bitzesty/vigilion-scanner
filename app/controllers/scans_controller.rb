@@ -1,46 +1,20 @@
 class ScansController < ApplicationController
-  before_action :set_scan, only: [:show, :edit, :update, :destroy]
+  before_action :set_scan, only: [:show]
 
   # GET /scans
   def index
-    @scans = current_account.scans
+    @scans = current_account.scans.where("created_at >= ?", 24.hours.ago).order("created_at")
   end
 
-  def total
+  def stats
     @scans = current_account.scans
       .group("DATE_TRUNC('minute', created_at)")
       .order("date_trunc_minute_created_at")
       .where("created_at >= ?", 24.hours.ago)
-      .count
-
+    @scans = @scans.where(status: Scan.statuses[params[:status]]) if params[:status]
+    @scans = @scans.count
     @scans = zeros.merge(@scans)
     render :stats
-  end
-
-  def infected
-    @scans = current_account.scans.infected
-      .group("DATE_TRUNC('minute', created_at)")
-      .order("date_trunc_minute_created_at")
-      .where("created_at >= ?", 24.hours.ago)
-      .count
-
-    @scans = zeros.merge(@scans)
-    render :stats
-  end
-
-  def response_time
-    @scans = current_account.scans
-      .select("EXTRACT(EPOCH FROM (ended_at - started_at)) * 1000 AS response_time, DATE_TRUNC('minute', created_at) as created_at")
-      .where("created_at >= ?", 24.hours.ago)
-      .order("created_at")
-  end
-
-  def kilobytes_processed
-    @scans = current_account.scans
-      .select("SUM(file_size)/1024 AS file_size, DATE_TRUNC('minute', created_at) AS created_at")
-      .group("created_at")
-      .where("created_at >= ?", 24.hours.ago)
-      .order("created_at")
   end
 
   # GET /scans/1

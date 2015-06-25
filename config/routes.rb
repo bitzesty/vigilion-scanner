@@ -1,16 +1,13 @@
 Rails.application.routes.draw do
-  resources :scans do
+  resources :scans, only: [:index, :create, :show] do
     collection do
-      get :total
-      get :infected
-      get :response_time
-      get :kilobytes_processed
+      get :stats
     end
   end
 
   resources :accounts do
     member do
-      post 'regenerate_keys'
+      post :regenerate_keys
     end
   end
 end

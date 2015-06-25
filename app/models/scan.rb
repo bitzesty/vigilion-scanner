@@ -12,7 +12,11 @@ class Scan < ActiveRecord::Base
   before_destroy :delete_file
 
   def duration
-    ended_at - started_at
+    ended_at - started_at if ended_at
+  end
+
+  def response_time
+    ended_at - created_at if ended_at
   end
 
   def file_path

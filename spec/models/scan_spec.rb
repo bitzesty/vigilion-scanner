@@ -86,11 +86,43 @@ RSpec.describe Scan, type: :model do
   end
 
   describe "#duration" do
-    let(:scan){ build(:scan, started_at: 1.hour.ago) }
+    context "when the scan was completed" do
+      it "returns the difference between started_at and ended_at" do
+        scan = build(:scan, started_at: 1.hour.ago)
+        scan.ended_at = scan.started_at + 300.seconds
+        expect(scan.duration).to eq 300
+      end
+    end
 
-    it "returns the difference between started_at and ended_at" do
-      scan.ended_at = scan.started_at + 300.seconds
-      expect(scan.duration).to eq 300
+    context "before the scanning process has started" do
+      it "returns nil" do
+        scan = build(:scan, started_at: nil, ended_at: nil)
+        expect(scan.duration).to eq nil
+      end
+    end
+
+    context "before the scanning process has ended" do
+      it "returns nil" do
+        scan = build(:scan, started_at: 1.hour.ago, ended_at: nil)
+        expect(scan.duration).to eq nil
+      end
+    end
+  end
+
+  describe "#response_time" do
+    context "when the scan was completed" do
+      it "returns the difference between created_at and ended_at" do
+        scan = build(:scan, created_at: 1.hour.ago)
+        scan.ended_at = scan.created_at + 300.seconds
+        expect(scan.response_time).to eq 300
+      end
+    end
+
+    context "before the scanning process has ended" do
+      it "returns nil" do
+        scan = build(:scan, created_at: 1.hour.ago, ended_at: nil)
+        expect(scan.response_time).to eq nil
+      end
     end
   end
 end

@@ -32,33 +32,25 @@ RSpec.describe ScansController, type: :controller do
     end
   end
 
-  describe "GET #total" do
+  describe "GET #stats" do
     it "assigns current_account scans as @scans" do
       scan = create(:scan, created_at: 1.hour.ago, account: current_account)
-      get :total
-      expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 1)
-    end
-  end
-
-  describe "GET #infected" do
-    it "assigns current_account infected scans as @scans" do
-      scan = create(:scan, account: current_account, status: "infected", created_at: 1.hour.ago)
-      get :infected, {}
+      get :stats
       expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 1)
     end
 
-    it "does not include current_account clean scans as @scans" do
-      scan = create(:scan, account: current_account, status: "clean", created_at: 1.hour.ago)
-      get :infected, {}
-      expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 0)
-    end
-  end
+    context "with infected status" do
+      it "assigns current_account infected scans as @scans" do
+        scan = create(:scan, account: current_account, status: "infected", created_at: 1.hour.ago)
+        get :stats, { status: "infected" }
+        expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 1)
+      end
 
-  describe "GET #kilobytes_processed" do
-    it "assigns current_account infected scans as @scans" do
-      create(:scan, account: current_account, created_at: 1.hour.ago, file_size: 1024)
-      get :kilobytes_processed, {}
-      expect(assigns(:scans).first.file_size).to eq(1)
+      it "does not include current_account clean scans as @scans" do
+        scan = create(:scan, account: current_account, status: "clean", created_at: 1.hour.ago)
+        get :stats, { status: "infected" }
+        expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 0)
+      end
     end
   end
 
