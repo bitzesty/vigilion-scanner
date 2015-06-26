@@ -1,26 +1,67 @@
-# Virus Scanner
+# Vigilion Scanner
+
+This app is the responsible for processing files and determine
+if they are clean or if they contain viruses.
 
 ## Scanning Flow
 
-1) User uploads file
+1) User uploads the file to the **client app**
 
-2) App saving it on S3 and on store_file callback we are creating Scan association for defined AR instance (ex: FormAnswerAttachment) with generated UUID and status = 'scanning'
+2) The **client app** saves the file on a public accessible
+storage (S3 or similar) and calls **Vigilion Scanner** with a
+URL to download the file.
 
-3) Once Scan association created -> we are sending uploaded file url (from S3) and generated unique UUID to virus scanner server
+3) Vigilion Scanner check the **client app** credentials and if
+everything is ok, it schedules the scan using **SQS Queue**.
 
-4) Virus Scanner handles this request right here https://github.com/bitzesty/virus-scanner/blob/master/app/api/scan.rb#L30 (edited)
+4) An async process downloads the file and performs the scan.
 
-5) Virus Scanner app creating Scan entry and schedule Shoryuken background job
-Shoryuken is same Sidekiq but for AWS SQS Message Queue (https://github.com/phstc/shoryuken)
+5) Once the file was scanned, **Virus Scanner** sends a
+callback request to the **client app**
 
-6) Shoryuken job scanning uploaded file on viruses using open source antivirus clamav
+6) The client checks credentials and then updates the file
+status accordingly.
 
-7) Once file is scanned Virus Scanner sends callback request to QAE APP (edited) It's implemented right here https://github.com/bitzesty/virus-scanner/blob/master/app/jobs/scan_job.rb#L24
+There is an alternative flow which instead of sending the URL,
+the client app sends the raw file.
+In this scenario, **Vigilion Scanner** stores temporarily the
+file until the async process analyzes it.
 
-8) QAE app handling it right here (using vs-rails app) https://github.com/bitzesty/vs-rails/blob/master/app/controllers/vs_rails/scans_controller.rb#L5
+## API methods
+
+### `GET    /scans/stats`
+Returns an agregation of all the scans performed.
+It could be filtered by status.
+Example: /scans/stats?status=infected
+
+### `GET    /scans`
+List all the scans performed.
+
+### `POST   /scans`
+Creates a new scan request and queues it.
+Params:
+* `scan[key]`: This is a key to map your model to ours.
+The scanner wont do anything with it but it requires to be there.
+
+* `scan[url]`: URL to download the actual file
+or alternatively
+* `scan[file]`: Instead of sending a URL it sends the actual file.
+
+### `GET    /scans/:id`
+Gets information about an specific scan request.
+The id is obtained as a response from POST /scans
 
 
-## Setup on local
+## Scan status
+
+** pending: The file was not yet scanned.
+** scanning: The scan is being scanned.
+** clean: The scan succeeded and the file is clean.
+** infected: The scan succeeded but the file was infected
+** error: The scan has not succedded.
+** unknown: Unknown error.
+
+## Application setup
 
 #### STEP 1: Setup clamav antivirus on local
 
@@ -30,10 +71,11 @@ Shoryuken is same Sidekiq but for AWS SQS Message Queue (https://github.com/phst
 
 ```
 AVENGINE=clamdscan
-AWS_REGION=eu-west-1
+AWS_REGION=<...>
 AWS_ACCESS_KEY_ID=<...>
 AWS_SECRET_ACCESS_KEY=<...>
 SQS_QUEUE=<...>
+SECRET_KEY_BASE=<...>
 ```
 
 #### STEP 3: Populate API account
@@ -94,9 +136,10 @@ gem "vs_rails", "~> 0.0.7"
 
 ## Testing
 
-`rspec`
+To run specs execute
+`bundle exec rspec`
 
-Or use postman
+You can also test the API using postman
 
 
 ## API
