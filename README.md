@@ -32,7 +32,10 @@ file until the async process analyzes it.
 ### `GET    /scans/stats`
 Returns an agregation of all the scans performed.
 It could be filtered by status.
-Example: /scans/stats?status=infected
+Example:
+```
+GET /scans/stats?status=infected
+```
 
 ### `GET    /scans`
 List all the scans performed.
@@ -44,7 +47,8 @@ Params:
 The scanner wont do anything with it but it requires to be there.
 
 * `scan[url]`: URL to download the actual file
-or alternatively
+
+Or alternatively:
 * `scan[file]`: Instead of sending a URL it sends the actual file.
 
 ### `GET    /scans/:id`
