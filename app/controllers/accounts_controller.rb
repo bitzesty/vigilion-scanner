@@ -32,13 +32,6 @@ class AccountsController < ApplicationController
     end
   end
 
-  # POST /accounts/1/regenerate_keys
-  def regenerate_keys
-    @account.generate_keys
-    @account.save!
-    render :show, status: :ok, location: @account
-  end
-
   # DELETE /accounts/1
   def destroy
     @account.destroy

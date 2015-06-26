@@ -35,8 +35,8 @@ RSpec.describe Scan, type: :model do
     expect(build(:scan, key: nil)).not_to be_valid
   end
 
-  it "must have account" do
-    expect(build(:scan, account: nil)).not_to be_valid
+  it "must have project" do
+    expect(build(:scan, project: nil)).not_to be_valid
   end
 
   describe "status" do

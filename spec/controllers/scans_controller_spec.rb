@@ -14,13 +14,17 @@ RSpec.describe ScansController, type: :controller do
     create :account
   }
 
+  let!(:current_project) {
+    create :project, account: current_account
+  }
+
   before do
-    request.headers["Auth-Key"] = current_account.access_key_id
+    request.headers["Auth-Key"] = current_project.access_key_id
   end
 
   describe "GET #index" do
-    it "assigns current_account scans as @scans" do
-      scan = create :scan, account: current_account
+    it "assigns current_project scans as @scans" do
+      scan = create :scan, project: current_project
       get :index, {}
       expect(assigns(:scans)).to eq([scan])
     end
@@ -33,21 +37,21 @@ RSpec.describe ScansController, type: :controller do
   end
 
   describe "GET #stats" do
-    it "assigns current_account scans as @scans" do
-      scan = create(:scan, created_at: 1.hour.ago, account: current_account)
+    it "assigns current_project scans as @scans" do
+      scan = create(:scan, created_at: 1.hour.ago, project: current_project)
       get :stats
       expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 1)
     end
 
     context "with infected status" do
-      it "assigns current_account infected scans as @scans" do
-        scan = create(:scan, account: current_account, status: "infected", created_at: 1.hour.ago)
+      it "assigns current_project infected scans as @scans" do
+        scan = create(:scan, project: current_project, status: "infected", created_at: 1.hour.ago)
         get :stats, { status: "infected" }
         expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 1)
       end
 
-      it "does not include current_account clean scans as @scans" do
-        scan = create(:scan, account: current_account, status: "clean", created_at: 1.hour.ago)
+      it "does not include current_project clean scans as @scans" do
+        scan = create(:scan, project: current_project, status: "clean", created_at: 1.hour.ago)
         get :stats, { status: "infected" }
         expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 0)
       end
@@ -55,9 +59,9 @@ RSpec.describe ScansController, type: :controller do
   end
 
   describe "GET #show" do
-    context "for current_account" do
+    context "for current_project" do
       it "assigns the requested scan as @scan" do
-        scan = create :scan, account: current_account
+        scan = create :scan, project: current_project
         get :show, {:id => scan.to_param}
         expect(assigns(:scan)).to eq(scan)
       end

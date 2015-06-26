@@ -23,15 +23,15 @@ class ScanService
   end
 
   def notify_client(scan)
-    account = scan.account
-    body = scan.to_json(except: :account_id)
+    project = scan.project
+    body = scan.to_json(except: :project_id)
     Typhoeus.post(
-      account.callback_url,
+      project.callback_url,
       body: body,
       headers: {
-        "Content-Type" => "application/json",
+        "Content-Type" => "project/json",
         "User-Agent" => "VirusScanbot",
-        "Auth-Key" => account.access_key_id,
-        "Auth-Hash" => Digest::MD5.hexdigest("#{body}#{account.secret_access_key}")})
+        "Auth-Key" => project.access_key_id,
+        "Auth-Hash" => Digest::MD5.hexdigest("#{body}#{project.secret_access_key}")})
   end
 end

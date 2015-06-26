@@ -99,24 +99,6 @@ RSpec.describe AccountsController, type: :controller do
     end
   end
 
-  describe "POST #regenerate_keys" do
-    it "regenerate_keys the keys of the requested account" do
-      account = create(:account)
-      old_access_key_id = account.access_key_id
-      old_secret_access_key = account.secret_access_key
-      post :regenerate_keys, {:id => account.to_param }.merge(api_key_param)
-      account.reload
-      expect(account.access_key_id).not_to eq(old_access_key_id)
-      expect(account.secret_access_key).not_to eq(old_secret_access_key)
-    end
-
-    it "assigns the requested account as @account" do
-      account = create(:account)
-      post :regenerate_keys, {:id => account.to_param }.merge(api_key_param)
-      expect(assigns(:account)).to eq(account)
-    end
-  end
-
   describe "DELETE #destroy" do
     it "destroys the requested account" do
       account = create(:account)
@@ -131,5 +113,4 @@ RSpec.describe AccountsController, type: :controller do
       expect(response.status).to eq(204)
     end
   end
-
 end

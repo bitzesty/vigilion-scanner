@@ -3,11 +3,11 @@ class ScansController < ApplicationController
 
   # GET /scans
   def index
-    @scans = current_account.scans.where("created_at >= ?", 24.hours.ago).order("created_at")
+    @scans = current_project.scans.where("created_at >= ?", 24.hours.ago).order("created_at")
   end
 
   def stats
-    @scans = current_account.scans
+    @scans = current_project.scans
       .group("DATE_TRUNC('minute', created_at)")
       .order("date_trunc_minute_created_at")
       .where("created_at >= ?", 24.hours.ago)
@@ -23,7 +23,7 @@ class ScansController < ApplicationController
 
   # POST /scans
   def create
-    @scan = current_account.scans.new(scan_params)
+    @scan = current_project.scans.new(scan_params)
 
     if @scan.save
       ScanWorker.perform_async(id: @scan.id)
@@ -37,7 +37,7 @@ class ScansController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_scan
-    @scan = current_account.scans.find(params[:id])
+    @scan = current_project.scans.find(params[:id])
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

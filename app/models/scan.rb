@@ -2,10 +2,10 @@ class Scan < ActiveRecord::Base
   attr_accessor :file
 
   enum status: %w(pending scanning clean infected error)
-  belongs_to :account
+  belongs_to :project
 
   validates :url, absolute_url: true
-  validates_presence_of :key, :account
+  validates_presence_of :key, :project
   validates_presence_of :url, on: :create, unless: :file_to_write?
 
   after_create :write_file
