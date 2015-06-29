@@ -15,7 +15,7 @@ RSpec.describe ScansController, type: :controller do
   }
 
   before do
-    request.headers["X-Auth-Token"] = current_account.access_key_id
+    request.headers["Auth-Key"] = current_account.access_key_id
   end
 
   describe "GET #index" do
@@ -109,7 +109,7 @@ RSpec.describe ScansController, type: :controller do
 
     context "without valid credentials" do
       it "returns 401 (Unauthorized)" do
-        request.headers["X-Auth-Token"] = nil
+        request.headers["Auth-Key"] = nil
         post :create, {:scan => valid_attributes}
         expect(response.status).to eq(401)
       end
