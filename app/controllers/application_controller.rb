@@ -15,14 +15,26 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticated?
-    current_account.present?
+    current_account.present? && valid_hash?
   end
 
   def current_account
-    Account.find_by_access_key_id(authorization_token)
+    @current_account ||= Account.find_by_access_key_id(authorization_token)
+  end
+
+  def valid_hash?
+    authorization_hash == digest(request.raw_post, current_account.secret_access_key)
   end
 
   def authorization_token
-    request.headers["X-Auth-Token"]
+    request.headers["Auth-Key"]
+  end
+
+  def authorization_hash
+    request.headers["Auth-Hash"]
+  end
+
+  def digest(body, secret_access_key)
+    Digest::MD5.hexdigest("#{body}#{secret_access_key}")
   end
 end
