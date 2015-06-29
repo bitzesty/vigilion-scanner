@@ -124,4 +124,14 @@ RSpec.describe Scan, type: :model do
       end
     end
   end
+
+  describe "#start!" do
+    it "sets started_at and status" do
+      Timecop.freeze Time.now
+      scan = build(:scan, started_at: nil, status: :pending)
+      scan.start!
+      expect(scan).to be_scanning
+      expect(scan.started_at).to eq Time.now
+    end
+  end
 end

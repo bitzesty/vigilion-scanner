@@ -51,7 +51,10 @@ RSpec.describe ScanService do
 
       it "raises an error" do
         scan = create :scan
-        expect{ ScanService.new.perform(scan) }.to raise_error("Request failed")
+        ScanService.new.perform(scan)
+        scan.reload
+        expect(scan).to be_error
+        expect(scan.result).to eq("Cannot download file. Status: 404")
       end
     end
   end

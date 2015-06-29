@@ -31,6 +31,12 @@ class Scan < ActiveRecord::Base
     File.delete(file_path) if file_exist?
   end
 
+  def start!
+    self.status = :scanning
+    self.started_at = Time.now
+    save!
+  end
+
   private
 
   def file_to_write?

@@ -5,11 +5,11 @@ class ScanService
   def perform(scan)
     @scan = scan
     @account = scan.account
-    @scan.update_columns(started_at: Time.now, status: :scanning)
-
-    download_file unless @scan.file_exist?
-    set_checksums_and_file_size
-    execute_avengine
+    @scan.start!
+    if @scan.file_exist? || download_file
+      set_checksums_and_file_size
+      execute_avengine
+    end
   ensure
     cleanup
     notify_client
@@ -19,7 +19,10 @@ class ScanService
     downloaded_file = File.open @scan.file_path, "wb"
     request = Typhoeus::Request.new(@scan.url, accept_encoding: "gzip")
     request.on_headers do |response|
-      raise "Request failed" if response.code != 200
+      if response.code != 200
+        @scan.result = "Cannot download file. Status: #{response.code}"
+        @scan.error!
+      end
     end
     request.on_body do |chunk|
       downloaded_file.write(chunk)
@@ -29,6 +32,7 @@ class ScanService
       # Note that response.body is ""
     end
     request.run
+    @scan.scanning?
   end
 
   def set_checksums_and_file_size
