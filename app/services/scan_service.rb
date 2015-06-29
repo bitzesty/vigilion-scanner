@@ -46,10 +46,8 @@ class ScanService
                      :clean
                    when 1
                      :infected
-                   when 2
-                     :error
                    else
-                     :unknown
+                     :error
                    end
 
       first_line = stdout.read.split("\n")[0]

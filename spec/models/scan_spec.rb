@@ -46,7 +46,6 @@ RSpec.describe Scan, type: :model do
       expect(build(:scan)).to respond_to(:clean!)
       expect(build(:scan)).to respond_to(:infected!)
       expect(build(:scan)).to respond_to(:error!)
-      expect(build(:scan)).to respond_to(:unknown!)
     end
 
     it "defaults to pending" do

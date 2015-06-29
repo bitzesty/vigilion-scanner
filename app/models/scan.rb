@@ -1,7 +1,7 @@
 class Scan < ActiveRecord::Base
   attr_accessor :file
 
-  enum status: %w(pending scanning clean infected error unknown)
+  enum status: %w(pending scanning clean infected error)
   belongs_to :account
 
   validates :url, absolute_url: true
