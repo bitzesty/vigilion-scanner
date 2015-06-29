@@ -93,6 +93,16 @@ RSpec.describe ScansController, type: :controller do
         post :create, {:scan => valid_attributes}
         expect(response).to be_created
       end
+
+      describe "view" do
+        render_views
+
+        it "includes id and status" do
+          post :create, {:scan => valid_attributes}
+          expect(response.body).to match Scan.last.id
+          expect(response.body).to match Scan.last.status
+        end
+      end
     end
 
     context "with invalid params" do

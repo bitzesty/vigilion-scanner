@@ -27,7 +27,7 @@ class ScansController < ApplicationController
 
     if @scan.save
       ScanWorker.perform_async(id: @scan.id)
-      render :show, status: :created, location: @scan
+      render :show, status: :created
     else
       render json: @scan.errors, status: :unprocessable_entity
     end
