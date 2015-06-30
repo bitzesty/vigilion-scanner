@@ -37,6 +37,13 @@ class Scan < ActiveRecord::Base
     save!
   end
 
+  def complete! status, result
+    self.status = status
+    self.result = result
+    self.ended_at = Time.now
+    save!
+  end
+
   private
 
   def file_to_write?

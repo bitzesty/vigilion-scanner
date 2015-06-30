@@ -8,7 +8,7 @@ class ScanService
     @scan.start!
     if @scan.file_exist? || download_file
       set_checksums_and_file_size
-      execute_avengine
+      AvRunner.new.perform @scan
     end
   ensure
     cleanup
@@ -20,8 +20,7 @@ class ScanService
     request = Typhoeus::Request.new(@scan.url, accept_encoding: "gzip")
     request.on_headers do |response|
       if response.code != 200
-        @scan.result = "Cannot download file. Status: #{response.code}"
-        @scan.error!
+        @scan.complete! :error, "Cannot download file. Status: #{response.code}"
       end
     end
     request.on_body do |chunk|
@@ -41,28 +40,6 @@ class ScanService
     sha256 = Digest::SHA256.file(@scan.file_path).hexdigest
     file_size = File.size(@scan.file_path)
     @scan.update!(md5: md5, sha1: sha1, sha256: sha256, file_size: file_size)
-  end
-
-  def execute_avengine
-    Open3.popen3("#{CONFIG[:av_engine]} #{@scan.file_path}") do |_, stdout, _, wait_thr|
-      new_status = case wait_thr.value.exitstatus
-                   when 0
-                     :clean
-                   when 1
-                     :infected
-                   else
-                     :error
-                   end
-
-      first_line = stdout.read.split("\n")[0]
-      # Strip filepath out of message
-      new_message = first_line.gsub("#{@scan.file_path}: ", "")
-
-      @scan.update!(
-        status: new_status,
-        result: new_message,
-        ended_at: Time.now)
-    end
   end
 
   def cleanup
