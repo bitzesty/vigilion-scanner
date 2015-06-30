@@ -134,4 +134,16 @@ RSpec.describe Scan, type: :model do
       expect(scan.started_at).to eq Time.now
     end
   end
+
+  describe "#complete!" do
+    it "sets started_at and status" do
+      Timecop.freeze Time.now
+      scan = build(:scan, ended_at: nil, status: :pending)
+      scan.complete! :clean, "good"
+
+      expect(scan).to be_clean
+      expect(scan.result).to eq "good"
+      expect(scan.ended_at).to eq Time.now
+    end
+  end
 end

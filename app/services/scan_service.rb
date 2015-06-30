@@ -20,8 +20,7 @@ class ScanService
     request = Typhoeus::Request.new(@scan.url, accept_encoding: "gzip")
     request.on_headers do |response|
       if response.code != 200
-        @scan.result = "Cannot download file. Status: #{response.code}"
-        @scan.error!
+        @scan.complete! :error, "Cannot download file. Status: #{response.code}"
       end
     end
     request.on_body do |chunk|
@@ -58,10 +57,7 @@ class ScanService
       # Strip filepath out of message
       new_message = first_line.gsub("#{@scan.file_path}: ", "")
 
-      @scan.update!(
-        status: new_status,
-        result: new_message,
-        ended_at: Time.now)
+      @scan.complete! new_status, new_message
     end
   end
 
