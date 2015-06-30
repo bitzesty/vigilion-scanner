@@ -22,6 +22,30 @@ RSpec.describe ScanService do
         ScanService.new.perform(scan)
         expect(scan.file_exist?).to eq false
       end
+
+      context "scanning the same model again" do
+        before do
+          ScanService.new.perform(scan)
+        end
+
+        it "performs the scan again" do
+          mock_avscan
+          ScanService.new.perform(scan)
+          expect(scan).to be_clean
+        end
+      end
+
+      context "performing a new scan over the same file" do
+        before do
+          ScanService.new.perform(scan)
+        end
+
+        it "avoids scanning twice" do
+          expect(Open3).not_to receive(:popen3)
+          ScanService.new.perform(create(:scan, file: scan.file))
+          expect(scan).to be_clean
+        end
+      end
     end
 
     context "with successful download" do
