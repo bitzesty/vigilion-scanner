@@ -1,9 +1,7 @@
 class Project < ActiveRecord::Base
-  belongs_to :account
-
   has_many :scans
 
-  validates :callback_url, presence: true
+  validates :callback_url, :account_id, presence: true
   validates :access_key_id, uniqueness: true
   attr_encrypted :secret_access_key
 

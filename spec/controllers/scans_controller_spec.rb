@@ -10,12 +10,8 @@ RSpec.describe ScansController, type: :controller do
     attributes_for :scan, key: nil
   }
 
-  let(:current_account) {
-    create :account
-  }
-
   let!(:current_project) {
-    create :project, account: current_account
+    create :project
   }
 
   before do

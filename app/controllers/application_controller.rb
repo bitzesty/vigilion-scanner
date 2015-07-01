@@ -37,4 +37,8 @@ class ApplicationController < ActionController::Base
   def digest(body, secret_access_key)
     Digest::MD5.hexdigest("#{body}#{secret_access_key}")
   end
+
+  def check_api_key
+    head :forbidden if params[:api_key] != CONFIG[:dashboard_api_key]
+  end
 end
