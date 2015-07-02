@@ -21,7 +21,7 @@ class ScanService
     scan.update!(md5: md5, sha1: sha1, sha256: sha256, file_size: file_size)
   end
 
-  def notify_client scan
+  def notify_client(scan)
     account = scan.account
     body = scan.to_json(except: :account_id)
     Typhoeus.post(
