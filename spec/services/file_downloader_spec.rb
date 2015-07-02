@@ -47,16 +47,31 @@ RSpec.describe FileDownloader do
         end
       end
 
+      context "with a file too big" do
+        before do
+          mock_download_headers 200, 100 * 1024 *1024
+        end
+
+        it { expect(downloader.download(scan)).to be false }
+
+        it "sets scan status to error" do
+          downloader.download(scan)
+          scan.reload
+          expect(scan).to be_error
+          expect(scan.result).to eq("Cannot download file. File too big")
+        end
+      end
+
       after do
         scan.destroy
       end
     end
 
-    def mock_download_headers(status = 200)
+    def mock_download_headers(status = 200, content_length = 1000)
       request = expect_any_instance_of(Typhoeus::Request)
       response = OpenStruct.new
       response.code = status
-      response.headers = { "Content-Length" => 1000 }
+      response.headers = { "Content-Length" => content_length }
       request.to receive(:on_headers).and_yield(response)
       request.to receive(:run)
       request
