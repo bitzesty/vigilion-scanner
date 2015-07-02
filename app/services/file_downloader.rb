@@ -1,6 +1,8 @@
 class FileDownloader
+  MB = 1024 * 1024
+
   def download(scan)
-    scan.file_exist? || download_file(scan)
+    scan.file_exists? || download_file(scan)
   end
 
 private
@@ -11,6 +13,9 @@ private
     request.on_headers do |response|
       if response.code != 200
         scan.complete! :error, "Cannot download file. Status: #{response.code}"
+      end
+      if response.headers["Content-Length"] > CONFIG[:max_file_size_mb] * MB
+        scan.complete! :error, "Cannot download file. File too big"
       end
     end
     request.on_body do |chunk|

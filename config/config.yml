@@ -1,11 +1,17 @@
+default: &default
+  max_file_size_mb: 50
+
 development:
+  <<: *default
   av_engine: "clamdscan"
   dashboard_api_key: "vigilion"
 
 test:
+  <<: *default
   av_engine: "clamdscan"
   dashboard_api_key: "vigilion"
 
 production:
+  <<: *default
   av_engine: <%= ENV["AVENGINE"] %>
   dashboard_api_key:  <%= ENV["DASHBOARD_API_KEY"] %>

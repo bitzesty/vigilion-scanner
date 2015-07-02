@@ -3,6 +3,7 @@ require "open3"
 
 class ScanService
   def perform(scan)
+    return unless scan.pending?
     scan.start!
     if FileDownloader.new.download scan
       set_checksums_and_file_size scan

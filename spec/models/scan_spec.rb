@@ -67,7 +67,7 @@ RSpec.describe Scan, type: :model do
     context "on create" do
       it "saves the file" do
         scan.save!
-        expect(scan.file_exist?).to eq true
+        expect(scan.file_exists?).to eq true
         scan.delete_file
       end
     end
@@ -79,7 +79,7 @@ RSpec.describe Scan, type: :model do
 
       it "deletes the file" do
         scan.destroy
-        expect(scan.file_exist?).to eq false
+        expect(scan.file_exists?).to eq false
       end
     end
   end

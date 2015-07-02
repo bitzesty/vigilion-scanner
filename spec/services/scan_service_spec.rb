@@ -3,58 +3,17 @@ require 'rails_helper'
 RSpec.describe ScanService do
   describe "#perform" do
     before do
-      Typhoeus::Request.any_instance.stub(:run)
-    end
-
-    context "with an existing file" do
-      before do
-        mock_avscan
-      end
-
-      let(:scan) { create :scan, file: OpenStruct.new(read: "something") }
-
-      it "works without downloading" do
-        ScanService.new.perform(scan)
-        expect(scan).to be_clean
-      end
-
-      it "deletes the file after scanning" do
-        ScanService.new.perform(scan)
-        expect(scan.file_exist?).to eq false
-      end
-
-      context "scanning the same model again" do
-        before do
-          ScanService.new.perform(scan)
-        end
-
-        it "performs the scan again" do
-          mock_avscan
-          ScanService.new.perform(scan)
-          expect(scan).to be_clean
-        end
-      end
-
-      context "performing a new scan over the same file" do
-        before do
-          ScanService.new.perform(scan)
-        end
-
-        it "avoids scanning twice" do
-          expect(Open3).not_to receive(:popen3)
-          ScanService.new.perform(create(:scan, file: scan.file))
-          expect(scan).to be_clean
-        end
-      end
+      expect_any_instance_of(Typhoeus::Request).not_to receive(:run)
+      expect(Typhoeus).to receive(:post)
     end
 
     context "with successful download" do
       before do
-        mock_download_request
+        FileDownloader.any_instance.stub(:download).and_return(true)
         mock_avscan
       end
 
-      let(:scan){ create :scan }
+      let(:scan) { create :scan, file: OpenStruct.new(read: "something") }
 
       it "changes scan status" do
         ScanService.new.perform(scan)
@@ -64,37 +23,45 @@ RSpec.describe ScanService do
 
       it "deletes the file after scanning" do
         ScanService.new.perform(scan)
-        expect(scan.file_exist?).to eq false
+        expect(scan.file_exists?).to eq false
+      end
+
+      context "performing a new scan over the same file" do
+        before do
+          ScanService.new.perform(scan)
+        end
+
+        it "avoids scanning twice" do
+          expect(Open3).not_to receive(:popen3)
+          expect(Typhoeus).to receive(:post)
+          ScanService.new.perform(create(:scan, file: scan.file))
+          expect(scan).to be_clean
+        end
       end
     end
 
     context "with failed download" do
       before do
-        mock_download_headers 404
+        FileDownloader.any_instance.stub(:download).and_return(false)
       end
 
-      it "raises an error" do
+      it "avoids scan" do
+        expect(Open3).not_to receive(:popen3)
         scan = create :scan
         ScanService.new.perform(scan)
-        scan.reload
-        expect(scan).to be_error
-        expect(scan.result).to eq("Cannot download file. Status: 404")
       end
     end
-  end
 
-  def mock_download_headers(status = 200)
-    request = expect_any_instance_of(Typhoeus::Request)
-    response = OpenStruct.new
-    response.code = status
-    request.to receive(:on_headers).and_yield(response)
-    request
-  end
+    context "scanning the same scan model again" do
+      let!(:scan) { create :scan, status: :clean }
 
-  def mock_download_request
-    request = mock_download_headers
-    request.to receive(:on_body).and_yield("something")
-    request.to receive(:on_complete)
+      it "does nothing" do
+        expect(Open3).not_to receive(:popen3)
+        expect(Typhoeus).not_to receive(:post)
+        expect(scan).not_to receive(:save!)
+        ScanService.new.perform(scan)
+      end
+    end
   end
 
   def mock_avscan

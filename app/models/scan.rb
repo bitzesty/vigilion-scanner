@@ -23,12 +23,12 @@ class Scan < ActiveRecord::Base
     File.join(File.expand_path("../../..", __FILE__), "tmp", id)
   end
 
-  def file_exist?
+  def file_exists?
     File.exist?(file_path)
   end
 
   def delete_file
-    File.delete(file_path) if file_exist?
+    File.delete(file_path) if file_exists?
   end
 
   def start!
