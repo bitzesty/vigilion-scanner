@@ -5,8 +5,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :accounts
-
   resources :projects do
     member do
       post :regenerate_keys

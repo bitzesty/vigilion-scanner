@@ -9,7 +9,7 @@ RSpec.describe ScanService do
 
     context "with successful download" do
       before do
-        FileDownloader.any_instance.stub(:download).and_return(true)
+        allow_any_instance_of(FileDownloader).to receive(:download) { true }
         mock_avscan
       end
 
@@ -42,7 +42,7 @@ RSpec.describe ScanService do
 
     context "with failed download" do
       before do
-        FileDownloader.any_instance.stub(:download).and_return(false)
+        allow_any_instance_of(FileDownloader).to receive(:download) { false }
       end
 
       it "avoids scan" do

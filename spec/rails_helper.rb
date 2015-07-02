@@ -50,7 +50,7 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   config.before(:each) do
-    ApplicationController.any_instance.stub(:valid_hash?).and_return(true)
+    allow_any_instance_of(ApplicationController).to receive(:valid_hash?).and_return(true)
   end
 
 end
