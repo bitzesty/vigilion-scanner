@@ -7,8 +7,8 @@ RSpec.describe Project, type: :model do
 
   describe "#access_key_id" do
     it "must be unique" do
-      create(:project).update_attributes(access_key_id: 'repeated')
-      second_project = build(:project, access_key_id: 'repeated')
+      create(:project).update_attributes(access_key_id: "repeated")
+      second_project = build(:project, access_key_id: "repeated")
       expect(second_project).not_to be_valid
     end
   end

@@ -1,15 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe ProjectsController, type: :controller do
-
-  let(:valid_attributes) {
-    attributes_for :project
-  }
-
-  let(:invalid_attributes) {
-    attributes_for :project, name: nil
-  }
-
+  let(:valid_attributes) { attributes_for :project }
+  let(:invalid_attributes) { attributes_for :project, name: nil }
   let(:api_key_param) { { api_key: "vigilion" } }
 
   describe "POST #regenerate_keys" do

@@ -1,18 +1,9 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe ScansController, type: :controller do
-
-  let(:valid_attributes) {
-    attributes_for :scan
-  }
-
-  let(:invalid_attributes) {
-    attributes_for :scan, key: nil
-  }
-
-  let!(:current_project) {
-    create :project
-  }
+  let(:valid_attributes) { attributes_for :scan }
+  let(:invalid_attributes) { attributes_for :scan, key: nil }
+  let!(:current_project) { create :project }
 
   before do
     request.headers["Auth-Key"] = current_project.access_key_id

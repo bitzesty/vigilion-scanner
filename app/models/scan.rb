@@ -5,8 +5,8 @@ class Scan < ActiveRecord::Base
   belongs_to :project
 
   validates :url, absolute_url: true
-  validates_presence_of :key, :project
-  validates_presence_of :url, on: :create, unless: :file_to_write?
+  validates :key, :project, presence: true
+  validates :url, presence: true, on: :create, unless: :file_to_write?
 
   after_create :write_file
   before_destroy :delete_file
