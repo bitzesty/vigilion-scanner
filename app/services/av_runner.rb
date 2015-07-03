@@ -19,6 +19,7 @@ private
   end
 
   def cache_hit(scan)
+    return false if scan.force?
     similar_scan = Scan.where(md5: scan.md5).
       where("ended_at > ?", 24.hours.ago).
       where("id != ?", scan.id).

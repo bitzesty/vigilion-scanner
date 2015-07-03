@@ -37,6 +37,13 @@ RSpec.describe ScanService do
           ScanService.new.perform(create(:scan, file: scan.file))
           expect(scan).to be_clean
         end
+
+        it "scans twice if the scan is forced" do
+          mock_avscan
+          expect(Typhoeus).to receive(:post)
+          ScanService.new.perform(create(:scan, file: scan.file, force: true))
+          expect(scan).to be_clean
+        end
       end
     end
 
