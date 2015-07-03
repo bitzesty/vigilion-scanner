@@ -3,7 +3,11 @@ ENV['RAILS_ENV'] ||= 'test'
 
 if ENV['COVERAGE']
   require 'simplecov'
-  SimpleCov.start 'rails'
+  SimpleCov.start 'rails' do
+    add_group "Workers", "/app/workers"
+    add_group "Services", "/app/services"
+    add_group "Validators", "/app/validators"
+  end
 end
 
 require 'spec_helper'
