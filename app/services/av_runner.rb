@@ -1,5 +1,6 @@
 class AvRunner
   def perform(scan)
+    set_checksums_and_file_size scan
     unless cache_hit(scan)
       Open3.popen3("#{CONFIG[:av_engine]} #{scan.file_path}") do |_, stdout, _, wait_thr|
         scan.complete! status_from_clamav(wait_thr), message_from_clamav(stdout)
@@ -8,6 +9,14 @@ class AvRunner
   end
 
 private
+
+  def set_checksums_and_file_size(scan)
+    md5 = Digest::MD5.file(scan.file_path).hexdigest
+    sha1 = Digest::SHA1.file(scan.file_path).hexdigest
+    sha256 = Digest::SHA256.file(scan.file_path).hexdigest
+    file_size = File.size(scan.file_path)
+    scan.update!(md5: md5, sha1: sha1, sha256: sha256, file_size: file_size)
+  end
 
   def cache_hit(scan)
     similar_scan = Scan.where(md5: scan.md5).
