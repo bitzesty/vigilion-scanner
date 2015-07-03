@@ -20,14 +20,8 @@ private
   end
 
   def status_from_clamav(wait_thr)
-    case wait_thr.value.exitstatus
-    when 0
-      :clean
-    when 1
-      :infected
-    else
-      :error
-    end
+    exit_status = wait_thr.value.exitstatus
+    { 0 => :clean, 1 => :infected, 2 => :error }[exit_status]
   end
 
   def message_from_clamav(stdout)

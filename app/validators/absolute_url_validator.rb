@@ -8,9 +8,7 @@ class AbsoluteUrlValidator < ActiveModel::EachValidator
   def uri?(string)
     uri = URI.parse(string)
     ["http", "https"].include?(uri.scheme)
-  rescue URI::BadURIError
-    false
-  rescue URI::InvalidURIError
+  rescue URI::Error
     false
   end
 end
