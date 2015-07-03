@@ -1,3 +1,5 @@
+require "open3"
+
 class AvRunner
   def perform(scan)
     set_checksums_and_file_size scan

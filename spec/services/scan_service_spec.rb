@@ -1,82 +1,70 @@
 require 'rails_helper'
 
 RSpec.describe ScanService do
+  subject(:scan_service){ ScanService.new }
+
   describe "#perform" do
-    before do
-      expect_any_instance_of(Typhoeus::Request).not_to receive(:run)
-      expect(Typhoeus).to receive(:post)
-    end
+    context "with pending scan" do
+      let(:scan) { create :scan, status: :pending }
 
-    context "with successful download" do
       before do
-        allow_any_instance_of(FileDownloader).to receive(:download) { true }
-        mock_avscan
+        allow_any_instance_of(FileDownloader).to receive(:download)
+        allow_any_instance_of(AvRunner).to receive(:perform)
+        allow_any_instance_of(ClientNotifier).to receive(:notify)
       end
 
-      let(:scan) { create :scan, file: OpenStruct.new(read: "something") }
-
-      it "changes scan status" do
-        ScanService.new.perform(scan)
-        expect(scan).to be_clean
-        expect(scan.result).to eq("Stubbed Result")
+      it "starts the scan" do
+        expect(scan).to receive(:start!)
+        scan_service.perform scan
       end
 
-      it "deletes the file after scanning" do
-        ScanService.new.perform(scan)
-        expect(scan.file_exists?).to eq false
+      it "downloads the file" do
+        expect_any_instance_of(FileDownloader).to receive(:download).with(instance_of(Scan))
+        scan_service.perform scan
       end
 
-      context "performing a new scan over the same file" do
+      it "deletes the file" do
+        expect(scan).to receive(:delete_file)
+        scan_service.perform scan
+      end
+
+      it "calls ClientNotifier" do
+        expect_any_instance_of(ClientNotifier).to receive(:notify).with(instance_of(Scan))
+        scan_service.perform scan
+      end
+
+      context "with successful download" do
         before do
-          ScanService.new.perform(scan)
+          allow_any_instance_of(FileDownloader).to receive(:download).and_return(true)
         end
 
-        it "avoids scanning twice" do
-          expect(Open3).not_to receive(:popen3)
-          expect(Typhoeus).to receive(:post)
-          ScanService.new.perform(create(:scan, file: scan.file))
-          expect(scan).to be_clean
+        it "calls AvRunner" do
+          expect_any_instance_of(AvRunner).to receive(:perform).with(instance_of(Scan))
+          scan_service.perform scan
+        end
+      end
+
+      context "with failed download" do
+        before do
+          allow_any_instance_of(FileDownloader).to receive(:download).and_return(false)
         end
 
-        it "scans twice if the scan is forced" do
-          mock_avscan
-          expect(Typhoeus).to receive(:post)
-          ScanService.new.perform(create(:scan, file: scan.file, force: true))
-          expect(scan).to be_clean
+        it "does not call AvRunner" do
+          expect_any_instance_of(AvRunner).not_to receive(:perform).with(instance_of(Scan))
+          scan_service.perform scan
         end
       end
     end
 
-    context "with failed download" do
-      before do
-        allow_any_instance_of(FileDownloader).to receive(:download) { false }
-      end
-
-      it "avoids scan" do
-        expect(Open3).not_to receive(:popen3)
-        scan = create :scan
-        ScanService.new.perform(scan)
-      end
-    end
-
-    context "scanning the same scan model again" do
+    context "with non pending scan" do
       let!(:scan) { create :scan, status: :clean }
 
       it "does nothing" do
-        expect(Open3).not_to receive(:popen3)
-        expect(Typhoeus).not_to receive(:post)
-        expect(scan).not_to receive(:save!)
-        ScanService.new.perform(scan)
+        expect_any_instance_of(FileDownloader).not_to receive(:download)
+        expect_any_instance_of(ClientNotifier).not_to receive(:notify)
+        expect_any_instance_of(AvRunner).not_to receive(:perform)
+        scan_service.perform(scan)
       end
     end
-  end
-
-  def mock_avscan
-    avscan_response = OpenStruct.new
-    avscan_response.value = OpenStruct.new
-    avscan_response.value.exitstatus = 0
-    stdout = OpenStruct.new
-    stdout.read = "Stubbed Result"
-    expect(Open3).to receive(:popen3).and_yield(nil, stdout, nil, avscan_response)
   end
 end
