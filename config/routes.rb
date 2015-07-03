@@ -5,9 +5,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :accounts do
+  resources :projects do
     member do
       post :regenerate_keys
+      post :update_plan
     end
   end
 end

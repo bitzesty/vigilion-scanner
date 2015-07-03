@@ -15,15 +15,15 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticated?
-    current_account.present? && valid_hash?
-  end
-
-  def current_account
-    @current_account ||= Account.find_by_access_key_id(authorization_token)
+    current_project.present? && valid_hash?
   end
 
   def valid_hash?
-    authorization_hash == digest(request.raw_post, current_account.secret_access_key)
+    authorization_hash == digest(request.raw_post, current_project.secret_access_key)
+  end
+
+  def current_project
+    @current_project ||= Project.find_by_access_key_id(authorization_token)
   end
 
   def authorization_token
@@ -36,5 +36,9 @@ class ApplicationController < ActionController::Base
 
   def digest(body, secret_access_key)
     Digest::MD5.hexdigest("#{body}#{secret_access_key}")
+  end
+
+  def check_api_key
+    head :forbidden if params[:api_key] != CONFIG[:dashboard_api_key]
   end
 end
