@@ -37,3 +37,7 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'timecop'
 end
+
+group :test do
+  gem 'simplecov', require: false
+end
