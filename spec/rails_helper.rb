@@ -3,7 +3,7 @@ ENV['RAILS_ENV'] ||= 'test'
 
 if ENV['COVERAGE']
   require 'simplecov'
-  SimpleCov.start
+  SimpleCov.start 'rails'
 end
 
 require 'spec_helper'
