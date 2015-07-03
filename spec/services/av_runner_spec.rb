@@ -7,6 +7,10 @@ RSpec.describe AvRunner do
       mock_avscan
     end
 
+    after do
+      scan.delete_file
+    end
+
     let(:scan) { create :scan, file: OpenStruct.new(read: "something") }
     let(:avscan_response) { OpenStruct.new }
 
@@ -39,6 +43,10 @@ RSpec.describe AvRunner do
     context "performing a new scan over the same file" do
       before do
         AvRunner.new.perform(scan)
+      end
+
+      after do
+        Scan.destroy_all
       end
 
       it "avoids scanning twice" do
