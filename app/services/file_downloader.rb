@@ -3,6 +3,9 @@ class FileDownloader
 
   def download(scan)
     scan.file_exists? || download_file(scan)
+  rescue DownloadError => error
+    scan.complete! :error, "Cannot download file. #{error.message}"
+    false
   end
 
 private
@@ -12,10 +15,10 @@ private
     request = Typhoeus::Request.new(scan.url, accept_encoding: "gzip")
     request.on_headers do |response|
       if response.code != 200
-        scan.complete! :error, "Cannot download file. Status: #{response.code}"
+        raise DownloadError.new "Status: #{response.code}"
       end
       if response.headers["Content-Length"] > CONFIG[:max_file_size_mb] * MB
-        scan.complete! :error, "Cannot download file. File too big"
+        raise DownloadError.new "File too big"
       end
     end
     request.on_body do |chunk|
@@ -23,9 +26,11 @@ private
     end
     request.on_complete do
       downloaded_file.close
-      # Note that response.body is ""
     end
     request.run
-    scan.scanning?
+    true
+  end
+
+  class DownloadError < StandardError
   end
 end

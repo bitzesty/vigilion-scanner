@@ -23,6 +23,15 @@ RSpec.describe FileDownloader do
     context "without an existing file" do
       let(:scan) { create :scan, status: :scanning }
 
+      after do
+        scan.destroy
+      end
+
+      it "attempt to download the file" do
+        expect_any_instance_of(Typhoeus::Request).to receive(:run)
+        downloader.download(scan)
+      end
+
       context "status OK" do
         before { mock_download_request }
 
@@ -35,7 +44,7 @@ RSpec.describe FileDownloader do
       end
 
       context "status 404" do
-        before { mock_download_headers 404 }
+        before { mock_download_request 404 }
 
         it { expect(downloader.download(scan)).to be false }
 
@@ -49,7 +58,7 @@ RSpec.describe FileDownloader do
 
       context "with a file too big" do
         before do
-          mock_download_headers 200, 100 * 1024 *1024
+          mock_download_request 200, 100 * 1024 *1024
         end
 
         it { expect(downloader.download(scan)).to be false }
@@ -61,26 +70,18 @@ RSpec.describe FileDownloader do
           expect(scan.result).to eq("Cannot download file. File too big")
         end
       end
-
-      after do
-        scan.destroy
-      end
     end
 
-    def mock_download_headers(status = 200, content_length = 1000)
-      request = expect_any_instance_of(Typhoeus::Request)
+    def mock_download_request(status = 200, content_length = 1000)
+      request = allow_any_instance_of(Typhoeus::Request)
       response = OpenStruct.new
       response.code = status
       response.headers = { "Content-Length" => content_length }
       request.to receive(:on_headers).and_yield(response)
-      request.to receive(:run)
-      request
-    end
-
-    def mock_download_request
-      request = mock_download_headers
       request.to receive(:on_body).and_yield(url_content)
       request.to receive(:on_complete).and_yield
+      request.to receive(:run)
+      request
     end
 
     def file_content(scan)
