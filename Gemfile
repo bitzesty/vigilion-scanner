@@ -1,13 +1,12 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.3'
-gem "pg"
+gem 'pg'
 gem 'jbuilder', '~> 2.0'
-gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'attr_encrypted'
-gem "shoryuken"
-gem "typhoeus"
-gem "dotenv-rails"
+gem 'shoryuken'
+gem 'typhoeus'
+gem 'dotenv-rails'
 
 group :development, :test do
   gem 'byebug'
