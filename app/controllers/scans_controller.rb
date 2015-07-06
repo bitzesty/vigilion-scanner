@@ -1,9 +1,9 @@
 class ScansController < ApplicationController
-  before_action :set_scan, only: [:show]
-
   # GET /scans
   def index
     @scans = current_project.scans.where("created_at >= ?", 24.hours.ago).order("created_at")
+    @scans = @scans.where(status: Scan.statuses[params[:status]]) if params[:status]
+    @scans = @scans.where("url ilike ?", "%#{params[:url]}%") if params[:url]
   end
 
   def stats
@@ -19,6 +19,7 @@ class ScansController < ApplicationController
 
   # GET /scans/1
   def show
+    @scan = current_project.scans.find(params[:id])
   end
 
   # POST /scans
@@ -34,11 +35,6 @@ class ScansController < ApplicationController
   end
 
   private
-
-  # Use callbacks to share common setup or constraints between actions.
-  def set_scan
-    @scan = current_project.scans.find(params[:id])
-  end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def scan_params

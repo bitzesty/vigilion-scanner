@@ -16,10 +16,32 @@ RSpec.describe ScansController, type: :controller do
       expect(assigns(:scans)).to eq([scan])
     end
 
-    it "excludes scans of another account" do
+    it "excludes scans of another project" do
       scan = create :scan
       get :index, {}
       expect(assigns(:scans)).not_to include(scan)
+    end
+
+    context "with infected status" do
+      it "excludes clean" do
+        scan = create :scan, project: current_project, status: :clean
+        get :index, { status: "infected" }
+        expect(assigns(:scans)).not_to include(scan)
+      end
+    end
+
+    context "with some url" do
+      it "includes similar url" do
+        scan = create :scan, project: current_project, url: "http://some/123"
+        get :index, { url: "some" }
+        expect(assigns(:scans)).to include(scan)
+      end
+
+      it "excludes other url" do
+        scan = create :scan, project: current_project, url: "http://other"
+        get :index, { url: "some" }
+        expect(assigns(:scans)).not_to include(scan)
+      end
     end
   end
 
