@@ -58,9 +58,4 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
-
-  config.before(:each) do
-    allow_any_instance_of(ApplicationController).to receive(:valid_hash?).and_return(true)
-  end
-
 end

@@ -1,6 +1,5 @@
 class ProjectsController < ApplicationController
-  skip_before_action :authenticate!
-  before_action :check_api_key
+  before_action :authorize_admin!
   before_action :find_project, only: [:regenerate_keys, :update, :show, :update_plan, :destroy]
 
   def index

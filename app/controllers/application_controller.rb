@@ -7,38 +7,24 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate!
-    error!("Unauthorized. Invalid token", 401) unless authenticated?
+    authorization_policy.authenticate!
   end
 
-  def error!(message, status)
-    render json: { message: message }, status: status
-  end
-
-  def authenticated?
-    current_project.present? && valid_hash?
-  end
-
-  def valid_hash?
-    authorization_hash == digest(request.raw_post, current_project.secret_access_key)
+  def authorize_admin!
+    authorization_policy.authorize_admin!
   end
 
   def current_project
-    @current_project ||= Project.find_by_access_key_id(authorization_token)
+    authorization_policy.current_project
   end
 
-  def authorization_token
-    request.headers["Auth-Key"]
-  end
+private
 
-  def authorization_hash
-    request.headers["Auth-Hash"]
-  end
-
-  def digest(body, secret_access_key)
-    Digest::MD5.hexdigest("#{body}#{secret_access_key}")
-  end
-
-  def check_api_key
-    head :forbidden if params[:api_key] != CONFIG[:dashboard_api_key]
+  def authorization_policy
+    @authorization_policy ||= if request.headers["Dashboard-Auth-Key"]
+      DashboardAuthorization.new(self)
+    else
+      ClientAuthorization.new(self)
+    end
   end
 end
