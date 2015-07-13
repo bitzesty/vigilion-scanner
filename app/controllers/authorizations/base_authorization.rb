@@ -12,4 +12,8 @@ private
   def request
     @controller.request
   end
+
+  def params
+    @controller.params
+  end
 end
