@@ -6,7 +6,7 @@ class ClientNotifier
       project.callback_url,
       body: body,
       headers: {
-        "Content-Type" => "project/json",
+        "Content-Type" => "application/json",
         "User-Agent" => "VirusScanbot",
         "Auth-Key" => project.access_key_id,
         "Auth-Hash" => Digest::MD5.hexdigest("#{body}#{project.secret_access_key}")})
