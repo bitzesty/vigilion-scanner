@@ -14,12 +14,8 @@ private
     downloaded_file = File.open scan.file_path, "wb"
     request = Typhoeus::Request.new(scan.url, accept_encoding: "gzip")
     request.on_headers do |response|
-      if response.code != 200
-        raise DownloadError.new "Status: #{response.code}"
-      end
-      if response.headers["Content-Length"] > CONFIG[:max_file_size_mb] * MB
-        raise DownloadError.new "File too big"
-      end
+      validate_status response
+      validate_length response
     end
     request.on_body do |chunk|
       downloaded_file.write(chunk)
@@ -29,6 +25,18 @@ private
     end
     request.run
     true
+  end
+
+  def validate_status(response)
+    if response.code != 200
+      raise DownloadError.new "Status: #{response.code}"
+    end
+  end
+
+  def validate_length(response)
+    if response.headers["Content-Length"].to_i > CONFIG[:max_file_size_mb] * MB
+      raise DownloadError.new "File too big"
+    end
   end
 
   class DownloadError < StandardError
