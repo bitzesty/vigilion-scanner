@@ -1,11 +1,17 @@
 require "rails_helper"
 
 RSpec.describe Project, type: :model do
-  it "must have a callback_url" do
-    expect(build(:project, callback_url: nil)).not_to be_valid
+  describe "#name" do
+    it "must be present" do
+      expect(build(:project, name: nil)).not_to be_valid
+    end
   end
 
   describe "#callback_url" do
+    it "must be present" do
+      expect(build(:project, callback_url: nil)).not_to be_valid
+    end
+
     it "must be absolute" do
       expect(build(:project, callback_url: "/some/path.zip")).not_to be_valid
     end

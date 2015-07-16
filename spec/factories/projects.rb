@@ -1,10 +1,7 @@
 FactoryGirl.define do
-  sequence :account_id do |n|
-    n
-  end
-
   factory :project do
-    account_id
+    sequence(:name) { |n| "project_#{n}" }
+    sequence(:account_id) { |n| n }
     plan "test"
     callback_url "http://secured-site.com/vigilion/callback"
   end
