@@ -5,6 +5,12 @@ RSpec.describe Project, type: :model do
     expect(build(:project, callback_url: nil)).not_to be_valid
   end
 
+  describe "#callback_url" do
+    it "must be absolute" do
+      expect(build(:project, callback_url: "/some/path.zip")).not_to be_valid
+    end
+  end
+
   describe "#access_key_id" do
     it "must be unique" do
       create(:project).update_attributes(access_key_id: "repeated")

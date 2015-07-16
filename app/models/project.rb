@@ -1,8 +1,9 @@
 class Project < ActiveRecord::Base
   has_many :scans
 
-  validates :callback_url, :account_id, presence: true
+  validates :account_id, presence: true
   validates :access_key_id, uniqueness: true
+  validates :callback_url, absolute_url: true, presence: true
   attr_encrypted :secret_access_key
 
   before_create :generate_keys
