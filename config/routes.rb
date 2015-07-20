@@ -11,4 +11,6 @@ Rails.application.routes.draw do
       post :update_plan
     end
   end
+
+  get :healthcheck, to: 'healthcheck#perform'
 end
