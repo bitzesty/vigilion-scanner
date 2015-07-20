@@ -1,5 +1,5 @@
 class HealthcheckController < ActionController::Base
   def perform
-    head :no_content
+    render plain: "OK"
   end
 end
