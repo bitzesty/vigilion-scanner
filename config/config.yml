@@ -11,6 +11,11 @@ test:
   av_engine: "clamdscan"
   dashboard_api_key: "vigilion"
 
+staging:
+  <<: *default
+  av_engine: <%= ENV["AVENGINE"] %>
+  dashboard_api_key:  <%= ENV["DASHBOARD_API_KEY"] %>
+
 production:
   <<: *default
   av_engine: <%= ENV["AVENGINE"] %>
