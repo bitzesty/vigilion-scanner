@@ -10,6 +10,9 @@ Rails.application.routes.draw do
       post :regenerate_keys
       post :update_plan
     end
+    collection do
+      get :validate
+    end
   end
 
   get :healthcheck, to: 'healthcheck#perform'

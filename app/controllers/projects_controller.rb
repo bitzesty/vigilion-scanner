@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :authorize_admin!
+  before_action :authorize_admin!, except: [:validate]
   before_action :find_project, only: [:regenerate_keys, :update, :show, :update_plan, :destroy]
 
   def index
@@ -40,6 +40,11 @@ class ProjectsController < ApplicationController
   def destroy
     @project.destroy
     head :no_content
+  end
+
+  def validate
+    @project = current_project
+    render :show, status: :ok
   end
 
   private
