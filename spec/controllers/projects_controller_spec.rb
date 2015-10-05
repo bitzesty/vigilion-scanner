@@ -33,7 +33,6 @@ RSpec.describe ProjectsController, type: :controller do
 
     before do
       request.headers["Auth-Key"] = current_project.access_key_id
-      allow_any_instance_of(ClientAuthorization).to receive(:valid_hash?).and_return(true)
     end
 
     describe "GET #validate" do

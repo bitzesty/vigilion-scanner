@@ -8,24 +8,12 @@ class ClientAuthorization < BaseAuthorization
   end
 
   def authenticated?
-    current_project.present? && valid_hash?
+    current_project.present?
   end
 
 private
 
-  def valid_hash?
-    authorization_hash == digest(request.raw_post, current_project.secret_access_key)
-  end
-
   def authorization_token
     request.headers["Auth-Key"]
-  end
-
-  def authorization_hash
-    request.headers["Auth-Hash"]
-  end
-
-  def digest(body, secret_access_key)
-    Digest::MD5.hexdigest("#{body}#{secret_access_key}")
   end
 end
