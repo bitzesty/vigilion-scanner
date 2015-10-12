@@ -22,6 +22,12 @@ RSpec.describe ScansController, type: :controller do
       expect(assigns(:scans)).not_to include(scan)
     end
 
+    it "excludes old scans" do
+      scan = create :scan, project: current_project, created_at: 1.day.ago
+      get :index, {}
+      expect(assigns(:scans)).not_to include(scan)
+    end
+
     context "with infected status" do
       it "excludes clean" do
         scan = create :scan, project: current_project, status: :clean
@@ -46,23 +52,30 @@ RSpec.describe ScansController, type: :controller do
   end
 
   describe "GET #stats" do
-    it "assigns current_project scans as @scans" do
-      scan = create(:scan, created_at: 1.hour.ago, project: current_project)
+    it "groups @scans by day and fills with zeroes" do
+      scans = create_list(:scan, 3, project: current_project)
       get :stats
-      expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 1)
+      expect(assigns(:scans)).to include(scans.first.created_at.utc.beginning_of_day => 3)
+      expect(assigns(:scans)).to include(scans.first.created_at.utc.beginning_of_day - 1.day => 0)
+    end
+
+    it "excludes scans older than 90 days" do
+      scan = create :scan, project: current_project, created_at: 90.days.ago
+      get :index, {}
+      expect(assigns(:scans)).not_to include(scan.created_at.utc.beginning_of_day => 0)
     end
 
     context "with infected status" do
       it "assigns current_project infected scans as @scans" do
         scan = create(:scan, project: current_project, status: "infected", created_at: 1.hour.ago)
         get :stats, { status: "infected" }
-        expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 1)
+        expect(assigns(:scans)).to include(scan.created_at.utc.beginning_of_day => 1)
       end
 
       it "does not include current_project clean scans as @scans" do
         scan = create(:scan, project: current_project, status: "clean", created_at: 1.hour.ago)
         get :stats, { status: "infected" }
-        expect(assigns(:scans)).to include(scan.created_at.beginning_of_minute => 0)
+        expect(assigns(:scans)).to include(scan.created_at.utc.beginning_of_day => 0)
       end
     end
   end
