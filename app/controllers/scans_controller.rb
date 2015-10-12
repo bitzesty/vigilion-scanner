@@ -1,16 +1,16 @@
 class ScansController < ApplicationController
   # GET /scans
   def index
-    @scans = current_project.scans.where("created_at >= ?", 24.hours.ago).order("created_at")
+    @scans = current_project.scans.where("created_at > ?", 24.hours.ago).order("created_at")
     @scans = @scans.where(status: Scan.statuses[params[:status]]) if params[:status]
     @scans = @scans.where("url ilike ?", "%#{params[:url]}%") if params[:url]
   end
 
   def stats
     @scans = current_project.scans
-      .group("DATE_TRUNC('minute', created_at)")
-      .order("date_trunc_minute_created_at")
-      .where("created_at >= ?", 24.hours.ago)
+      .group("DATE_TRUNC('day', created_at)")
+      .order("date_trunc_day_created_at")
+      .where("created_at >= ?", 90.days.ago)
     @scans = @scans.where(status: Scan.statuses[params[:status]]) if params[:status]
     @scans = @scans.count
     @scans = zeros.merge(@scans)
@@ -42,8 +42,6 @@ class ScansController < ApplicationController
   end
 
   def zeros
-    @zeros ||= (24 * 60).downto(0)
-      .map { |n| n.minutes.ago.beginning_of_minute }
-      .each_with_object({}) { |d, h| h[d] = 0 }
+    (0..90).each_with_object({}){ |number, hash| hash[number.days.ago.beginning_of_day] = 0 }
   end
 end
