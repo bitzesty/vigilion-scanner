@@ -11,47 +11,64 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150703154642) do
+ActiveRecord::Schema.define(version: 20151022162706) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
-  create_table "projects", force: :cascade do |t|
-    t.integer  "account_id"
-    t.string   "plan"
-    t.string   "callback_url"
-    t.string   "heroku_id"
-    t.string   "region"
-    t.text     "options"
+  create_table "accounts", force: :cascade do |t|
+    t.integer  "plan_id",                   null: false
+    t.boolean  "enabled",    default: true, null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "accounts", ["plan_id"], name: "index_accounts_on_plan_id", using: :btree
+
+  create_table "plans", force: :cascade do |t|
     t.string   "name"
+    t.decimal  "cost"
+    t.decimal  "file_size_limit"
+    t.integer  "scans_per_month"
+    t.boolean  "available_for_new_subscriptions", default: true, null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+  end
+
+  create_table "projects", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.integer  "account_id",                  null: false
+    t.string   "name"
+    t.string   "callback_url"
     t.string   "access_key_id"
     t.string   "encrypted_secret_access_key"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
-    t.string   "app"
-    t.string   "uuid"
   end
 
   add_index "projects", ["account_id"], name: "index_projects_on_account_id", using: :btree
 
   create_table "scans", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.uuid     "project_id",                           null: false
     t.string   "url"
     t.string   "key",                                  null: false
+    t.boolean  "force",                default: false
     t.integer  "status",               default: 0
     t.string   "result"
     t.string   "md5"
     t.string   "sha1"
     t.string   "sha256"
-    t.integer  "project_id"
+    t.integer  "file_size",  limit: 8
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
     t.datetime "started_at"
     t.datetime "ended_at"
-    t.integer  "file_size",  limit: 8
-    t.boolean  "force",                default: false
   end
 
   add_index "scans", ["md5"], name: "index_scans_on_md5", using: :btree
+  add_index "scans", ["project_id"], name: "index_scans_on_project_id", using: :btree
 
+  add_foreign_key "accounts", "plans"
+  add_foreign_key "projects", "accounts"
+  add_foreign_key "scans", "projects"
 end

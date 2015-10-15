@@ -25,8 +25,11 @@ class ScansController < ApplicationController
   # POST /scans
   def create
     @scan = current_project.scans.new(scan_params)
-
-    if @scan.save
+    if !current_account.allow_more_scans?
+      render json: { error: "The current account reached its monthly scan limit" }, status: 402
+    elsif @scan.file.present? && !current_account.plan.allow_file_size?(@scan.file.size)
+      render json: { error: "File too large for this plan" }, status: 402
+    elsif @scan.save
       ScanWorker.perform_async(id: @scan.id)
       render :show, status: :created
     else

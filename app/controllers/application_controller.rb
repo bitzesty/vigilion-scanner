@@ -18,6 +18,10 @@ class ApplicationController < ActionController::Base
     authorization_policy.current_project
   end
 
+  def current_account
+    current_project.account
+  end
+
 private
 
   def authorization_policy

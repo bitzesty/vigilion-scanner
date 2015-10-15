@@ -1,9 +1,6 @@
 Rails.application.routes.draw do
-  resources :scans, only: [:index, :create, :show] do
-    collection do
-      get :stats
-    end
-  end
+  resources :plans, only: :index
+  resources :accounts, only: [:show, :create, :update, :destroy]
 
   resources :projects do
     member do
@@ -12,6 +9,12 @@ Rails.application.routes.draw do
     end
     collection do
       get :validate
+    end
+  end
+
+  resources :scans, only: [:index, :create, :show] do
+    collection do
+      get :stats
     end
   end
 

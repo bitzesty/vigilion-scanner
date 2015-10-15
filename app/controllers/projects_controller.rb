@@ -54,18 +54,10 @@ class ProjectsController < ApplicationController
   end
 
   def create_project_params
-    params.require(:project).permit(:name,
-                                    :callback_url,
-                                    :account_id,
-                                    :heroku_id,
-                                    :plan,
-                                    :app,
-                                    :options,
-                                    :uuid,
-                                    :region)
+    params.require(:project).permit(:name, :callback_url, :account_id)
   end
 
   def update_project_params
-    params.require(:project).permit(:name, :callback_url, :plan)
+    params.require(:project).permit(:name, :callback_url)
   end
 end

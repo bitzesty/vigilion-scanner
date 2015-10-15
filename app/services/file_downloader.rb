@@ -15,7 +15,7 @@ private
     request = Typhoeus::Request.new(scan.url, accept_encoding: "gzip")
     request.on_headers do |response|
       validate_status response
-      validate_length response
+      validate_length response, scan.account.plan
     end
     request.on_body do |chunk|
       downloaded_file.write(chunk)
@@ -33,9 +33,13 @@ private
     end
   end
 
-  def validate_length(response)
+  def validate_length(response, plan)
+    return unless response.headers["Content-Length"].present?
     if response.headers["Content-Length"].to_i > CONFIG[:max_file_size_mb] * MB
       raise DownloadError.new "File too big"
+    end
+    unless plan.allow_file_size? response.headers["Content-Length"].to_i
+      raise DownloadError.new "File too big for this plan"
     end
   end
 

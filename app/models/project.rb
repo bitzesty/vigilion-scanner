@@ -1,5 +1,6 @@
 class Project < ActiveRecord::Base
-  has_many :scans
+  belongs_to :account
+  has_many :scans, dependent: :destroy
 
   validates :name, :account_id, presence: true
   validates :access_key_id, uniqueness: true
