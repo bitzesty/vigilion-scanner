@@ -111,7 +111,7 @@ VIRUS_SCANNER_API_KEY=<API KEY>
 foreman start
 ```
 
-Targer app in this example on 3000 port and virus scanner app on 5000
+Target app in this example on 3000 port and virus scanner app on 5000
 
 NOTE: Make sure that in target rails app's Gemfile you have:
 ```
@@ -177,36 +177,3 @@ Check the status of a file
   e.g.
 
     curl -H "X-Auth-Token: your_token" http://virus_scanner_host/status/UUID
-
-## Architecture
-
-                ┌─────────────────┐
-                │  API Requests   │
-                └─────────────────┘
-                         │
-                         ▼
-    ┌──────────────────────────────────────┐
-    │           ┌────────────────┐         │      Download AV
-    │           │    AWS ELB     │         │        Updates
-    │           └────────────────┘  ┌──────┼───────────┐
-    │                               │      │           │
-    │                               │      │           ▼
-    │ ┌─────────┐ ┌─────────┐  ┌─────────┐ │ ┌──────────────────┐
-    │ │         │ │         │  │         │ │ │                  │
-    │ │  Virus  │ │  Virus  │  │  Virus  │ │ │  ┌─────────────┐ │
-    │ │scanning │ │scanning │  │scanning │ │ │  │ Squid Proxy │ │
-    │ │   API   │ │   API   │  │   API   │ │ │  └─────────────┘ │
-    │ │         │ │         │  │         │ │ │                  │
-    │ └─────────┘ └─────────┘  └─────────┘ │ │ AWS Auto Scaling │
-    │     AWS Auto Scaling Group 1..n      │ │    Group 1..1    │
-    └──────────────────────────────────────┘ └──────────────────┘
-                       ▲
-               ┌───────┴─────┐
-               ▼             ▼
-          ┌─────────┐   ┌─────────┐
-          │         │   │         │
-          │         │   │         │
-          │ AWS RDS │   │ AWS SQS │
-          │         │   │         │
-          │         │   │         │
-          └─────────┘   └─────────┘
