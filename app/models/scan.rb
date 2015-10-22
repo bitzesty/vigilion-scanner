@@ -3,6 +3,7 @@ class Scan < ActiveRecord::Base
 
   enum status: %w(pending scanning clean infected error)
   belongs_to :project
+  has_one :account, through: :project
 
   validates :url, absolute_url: true
   validates :key, :project, presence: true

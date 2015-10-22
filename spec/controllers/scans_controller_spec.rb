@@ -99,25 +99,85 @@ RSpec.describe ScansController, type: :controller do
 
   describe "POST #create" do
     context "with valid params" do
-      before do
-        expect(ScanWorker).to receive(:perform_async)
-      end
+      context "with a scan allowed to the account" do
+        before do
+          expect(ScanWorker).to receive(:perform_async)
+        end
 
-      it "creates a new Scan" do
-        expect {
+        it "creates a new Scan" do
+          expect {
+            post :create, {:scan => valid_attributes}
+          }.to change(Scan, :count).by(1)
+        end
+
+        it "assigns a newly created scan as @scan" do
           post :create, {:scan => valid_attributes}
-        }.to change(Scan, :count).by(1)
+          expect(assigns(:scan)).to be_a(Scan)
+          expect(assigns(:scan)).to be_persisted
+        end
+
+        it "returns 201 (created)" do
+          post :create, {:scan => valid_attributes}
+          expect(response).to be_created
+        end
       end
 
-      it "assigns a newly created scan as @scan" do
-        post :create, {:scan => valid_attributes}
-        expect(assigns(:scan)).to be_a(Scan)
-        expect(assigns(:scan)).to be_persisted
+      context "with a scan not allowed to the account" do
+        before do
+          expect_any_instance_of(Account).to receive(:allow_more_scans?).and_return(false)
+        end
+
+        it "doesn't create a scan" do
+          expect { post :create, {:scan => valid_attributes}
+            }.not_to change{ Scan.count }
+        end
+
+        it "returns 402 (payment required)" do
+          post :create, {:scan => valid_attributes}
+          expect(response.status).to eq(402)
+        end
+
+        it "should return a JSON" do
+          post :create, {:scan => valid_attributes}
+          expect(JSON.parse(response.body)).to eq("error" => "The current account reached its monthly scan limit")
+        end
       end
 
-      it "returns 201 (created)" do
-        post :create, {:scan => valid_attributes}
-        expect(response).to be_created
+      context "with an attached file of 8 bytes" do
+        let(:file) { fixture_file_upload("file.txt", "text/xml") }
+        let(:attributes_with_file){ valid_attributes.merge(file: file) }
+
+        context "with a file size limit of 0MB" do
+          before do
+            current_project.account.plan.update(file_size_limit: 0)
+          end
+
+          it "doesn't create a scan" do
+            expect { post :create, {:scan => attributes_with_file}
+              }.not_to change{ Scan.count }
+          end
+
+          it "returns 402 (payment required)" do
+            post :create, {:scan => attributes_with_file}
+            expect(response.status).to eq(402)
+          end
+
+          it "should return a JSON" do
+            post :create, {:scan => attributes_with_file}
+            expect(JSON.parse(response.body)).to eq("error" => "File too large for this plan")
+          end
+        end
+
+        context "with a file size limit of 1MB" do
+          before do
+            current_project.account.plan.update(file_size_limit: 1)
+          end
+
+          it "returns 201 (created)" do
+            post :create, {:scan => attributes_with_file}
+            expect(response).to be_created
+          end
+        end
       end
 
       describe "view" do
