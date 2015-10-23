@@ -7,6 +7,7 @@ development:
   engines:
     clamav: "clamdscan"
     avg: "avgscan"
+    avg_opts: "-P -a -w -j"
     eset: "esets_scan"
 
 test:
@@ -15,6 +16,7 @@ test:
   engines:
     clamav: "clamdscan"
     avg: "avgscan"
+    avg_opts: "-P -a -w -j -i"
     eset: "esets_scan"
 
 staging:
@@ -23,6 +25,7 @@ staging:
   engines:
     clamav: "clamdscan"
     avg: "avgscan"
+    avg_opts: "-P -a -w -j"
     eset: "esets_scan"
 
 production:
@@ -31,4 +34,5 @@ production:
   engines:
     clamav: "clamdscan"
     avg: "avgscan"
+    avg_opts: "-P -a -w -j"
     eset: "esets_scan"
