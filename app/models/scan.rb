@@ -1,5 +1,5 @@
 class Scan < ActiveRecord::Base
-  AV_STATUSES = %w(pending scanning clean infected error)
+  AV_STATUSES = %w(pending scanning clean infected error password_protected)
   attr_accessor :file
 
   enum status: AV_STATUSES

@@ -9,7 +9,9 @@ class AvRunner::AvBase
     if result = cache_hit(scan)
       result
     else
-      Open3.popen3("#{CONFIG[:engines][engine]} #{scan.file_path}") do |_, stdout, _, wait_thr|
+      engine_cmd = CONFIG[:engines][engine]
+      engine_opts = CONFIG[:engines].fetch("#{engine}_opts", "")
+      Open3.popen3("#{engine_cmd} #{engine_opts} #{scan.file_path}") do |_, stdout, _, wait_thr|
         message = extract_message(stdout)
         status = extract_status(wait_thr)
         Sidekiq.logger.info "[#{engine_name}] Message: #{message}"
