@@ -186,7 +186,7 @@ RSpec.describe ScansController, type: :controller do
         it "includes id and status" do
           post :create, {:scan => valid_attributes}
           expect(response.body).to match Scan.last.id
-          expect(response.body).to match Scan.last.status
+          expect(response).to have_http_status(:created)
         end
       end
     end
