@@ -1,3 +1,4 @@
 dependencies:
    pre:
-    - sudo apt-get update; sudo apt-get install clamav
+    - sudo apt-get update; sudo apt-get install clamav clamav-daemon -y
+    - sudo /etc/init.d/clamav-daemon start
