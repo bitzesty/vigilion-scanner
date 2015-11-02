@@ -14,7 +14,10 @@
 # Ignore all logfiles and tempfiles.
 /log/*
 !/log/.keep
-/tmp
+!/tmp/.keep
+!/tmp/pids/.keep
+/tmp/*
+
 /config/database.yml
 
 /coverage

@@ -7,8 +7,8 @@ class ScanService
         AvRunner.new.perform scan
       end
     rescue => ex
-      Shoryuken.logger.error ex
-      Shoryuken.logger.error ex.backtrace.join("\n")
+      Sidekiq.logger.error ex
+      Sidekiq.logger.error ex.backtrace.join("\n")
     ensure
       scan.delete_file
       ClientNotifier.new.notify scan

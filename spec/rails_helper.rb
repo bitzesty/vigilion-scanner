@@ -10,6 +10,9 @@ if ENV['COVERAGE']
   end
 end
 
+require 'sidekiq/testing'
+Sidekiq::Testing.inline!
+
 require 'spec_helper'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'

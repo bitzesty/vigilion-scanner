@@ -4,7 +4,7 @@ gem 'rails', '4.2.3'
 gem 'pg'
 gem 'jbuilder', '~> 2.0'
 gem 'attr_encrypted'
-gem 'shoryuken'
+gem 'sidekiq'
 gem 'typhoeus'
 gem 'dotenv-rails'
 

@@ -80,13 +80,14 @@ AWS_ACCESS_KEY_ID=<...>
 AWS_SECRET_ACCESS_KEY=<...>
 SQS_QUEUE=<...>
 SECRET_KEY_BASE=<...>
+REDIS_URL=
 ```
 
 #### STEP 3: Populate API account
 
 Here is the rake script https://github.com/bitzesty/virus-scanner/blob/master/lib/tasks/account.rake
 
-Basicly you need to run:
+Run:
 ```
 account = Account.create!(name: 'test_api_account', callback_url: "http://localhost:3000/vs_rails/scans/callback")
 
@@ -132,6 +133,10 @@ gem "vs_rails", "~> 0.0.7"
     (OSX Run Clamd for faster scanning & MD5 caching)
     /usr/local/Cellar/clamav/0.98.6/sbin/clamd
 
+## Redis
+
+  REDIS needs to be installed and running, can set REDIS_URL
+
 ## Running
 
     Load ENV variables see .env.example
@@ -144,36 +149,3 @@ To run specs execute
 `bundle exec rspec`
 
 You can also test the API using postman
-
-
-## API
-
-This application will receive post requests with a url of a file to download.
-
-This will trigger a Job that:
-
-- [x] Downloads the file into a temp location
-- [x] Takes a md5 & sh1 checksum
-- [x] Scans the file
-- [x] Send the results back to the requesting web application via a webhook
-- [x] Removes temp file
-
-To do any request below you need to pass auth token in HTTP headers
-
-    X-Auth-Token: [your_token]
-
-Scan a file
-
-    POST /scan, {url: "URL TO SCAN"}
-
-  e.g.
-
-    curl -X POST -H "X-Auth-Token: your_token" -F url="URL TO SCAN" http://virus_scanner_host/scan
-
-Check the status of a file
-
-    GET /status/UUID
-
-  e.g.
-
-    curl -H "X-Auth-Token: your_token" http://virus_scanner_host/status/UUID
