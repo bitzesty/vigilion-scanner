@@ -23,14 +23,6 @@ RSpec.describe Project, type: :model do
     end
   end
 
-  describe "#access_key_id" do
-    it "must be unique" do
-      create(:project).update_attributes(access_key_id: "repeated")
-      second_project = build(:project, access_key_id: "repeated")
-      expect(second_project).not_to be_valid
-    end
-  end
-
   context "after created" do
     it "has access_keys" do
       project = build(:project, access_key_id: nil, secret_access_key: nil)

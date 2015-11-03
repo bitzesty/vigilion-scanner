@@ -7,6 +7,9 @@ gem 'attr_encrypted'
 gem 'sidekiq'
 gem 'typhoeus'
 gem 'dotenv-rails'
+gem 'puma'
+gem 'rails_12factor'
+gem 'lograge'
 
 group :development, :test do
   gem 'byebug'

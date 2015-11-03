@@ -3,6 +3,14 @@
 This app is the responsible for processing files and determine
 if they are clean or if they contain viruses.
 
+## Deployment
+
+TODO auto deploy from circle ci
+
+Provision redis & db and then set env variables
+
+convox deploy --app vigilion-scanner-staging
+
 ## Scanning Flow
 
 1) User uploads the file to the **client app**

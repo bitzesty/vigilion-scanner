@@ -5,6 +5,8 @@ class ClientNotifier
     Typhoeus.post(
       project.callback_url,
       body: body,
+      ssl_verifypeer: false,
+      ssl_verifyhost: 0, # host checking disabled
       headers: {
         "Content-Type" => "application/json",
         "User-Agent" => "VirusScanbot",
