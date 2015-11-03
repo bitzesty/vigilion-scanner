@@ -19,4 +19,7 @@ Rails.application.routes.draw do
   end
 
   get :healthcheck, to: 'healthcheck#perform'
+
+  # Redirect the root api request back to vigilion
+  root to: redirect('https://www.vigilion.com/')
 end
