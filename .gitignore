@@ -18,6 +18,4 @@
 !/tmp/pids/.keep
 /tmp/*
 
-/config/database.yml
-
 /coverage

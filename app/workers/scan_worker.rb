@@ -1,7 +1,7 @@
 class ScanWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :scan, retry: 2
+  sidekiq_options retry: 2
 
   def perform(params)
     scan = Scan.find params["id"]
