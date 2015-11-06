@@ -26,7 +26,9 @@ RUN gem install -N nokogiri -- --use-system-libraries && \
 
 EXPOSE 3000
 
+# ClamAV
 ADD config/freshclam.conf /etc/clamav/freshclam.conf
+ADD config/clamd.conf /etc/clamav/clamd.conf
 RUN freshclam
 
 WORKDIR /app
