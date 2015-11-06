@@ -3,4 +3,3 @@
 :pidfile: tmp/pids/sidekiq.pid
 :queues:
   - default
-  - [scan, 2]
