@@ -25,7 +25,7 @@ private
     similar_scan = Scan.where(md5: scan.md5).
       where("ended_at > ?", 30.days.ago).
       where("id != ?", scan.id).
-      where("status != 2").
+      where("status != 4").
       last
     if similar_scan
       scan.complete! similar_scan.status, "CACHE HIT: Similar scan performed"
