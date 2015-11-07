@@ -9,4 +9,4 @@ web: &web
 worker:
   <<: *web
   ports: []
-  command: bundle exec sidekiq -C ./config/sidekiq.yml
+  command: bash -c "clamd && bundle exec sidekiq -C ./config/sidekiq.yml"
