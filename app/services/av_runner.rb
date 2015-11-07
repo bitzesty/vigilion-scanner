@@ -23,8 +23,9 @@ private
   def cache_hit(scan)
     return false if scan.force?
     similar_scan = Scan.where(md5: scan.md5).
-      where("ended_at > ?", 24.hours.ago).
+      where("ended_at > ?", 30.days.ago).
       where("id != ?", scan.id).
+      where("status != 2").
       last
     if similar_scan
       scan.complete! similar_scan.status, "CACHE HIT: Similar scan performed"
@@ -37,8 +38,8 @@ private
   end
 
   def message_from_clamav(stdout)
-      first_line = stdout.read.split("\n")[0]
-      # Strip filepath out of message
-      first_line.gsub(/.*: /im, "")
+    first_line = stdout.read.split("\n")[0]
+    # Strip filepath out of message
+    first_line.gsub(/.*: /im, '')
   end
 end
