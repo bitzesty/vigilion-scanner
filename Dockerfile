@@ -29,7 +29,9 @@ EXPOSE 3000
 # ClamAV
 ADD config/freshclam.conf /etc/clamav/freshclam.conf
 ADD config/clamd.conf /etc/clamav/clamd.conf
+
 RUN freshclam
+RUN clamd
 
 WORKDIR /app
 
