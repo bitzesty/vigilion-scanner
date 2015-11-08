@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :plans, only: :index
+  resources :plans, only: [:index, :show]
   resources :accounts, only: [:show, :create, :update, :destroy]
 
   resources :projects do
