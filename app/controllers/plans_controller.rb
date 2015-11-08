@@ -5,7 +5,7 @@ class PlansController < ApplicationController
     @plans = Plan.available_for_new_subscriptions
   end
 
-  def plan
+  def show
     @plan = Plan.find(params[:id])
   end
 end
