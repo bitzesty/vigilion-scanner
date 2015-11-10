@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :scans, only: [:index, :create, :show] do
     collection do
       get :stats
+      get :admin_stats
     end
   end
 

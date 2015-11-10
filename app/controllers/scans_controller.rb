@@ -1,9 +1,22 @@
 class ScansController < ApplicationController
+  before_action :authorize_admin!, only: [:admin_stats]
+  
   # GET /scans
   def index
     @scans = current_project.scans.where("created_at > ?", 24.hours.ago).order("created_at")
     @scans = @scans.where(status: Scan.statuses[params[:status]]) if params[:status]
     @scans = @scans.where("url ilike ?", "%#{params[:url]}%") if params[:url]
+  end
+
+  def admin_stats
+    @scans = Scan
+      .group("DATE_TRUNC('day', created_at)")
+      .order("date_trunc_day_created_at")
+      .where("created_at >= ?", 90.days.ago)
+    @scans = @scans.where(status: Scan.statuses[params[:status]]) if params[:status]
+    @scans = @scans.count
+    @scans = zeros.merge(@scans)
+    render :stats
   end
 
   def stats
