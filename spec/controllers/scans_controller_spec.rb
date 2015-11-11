@@ -6,7 +6,7 @@ RSpec.describe ScansController, type: :controller do
   let!(:current_project) { create :project }
 
   before do
-    request.headers["Auth-Key"] = current_project.access_key_id
+    request.headers["X-Api-Key"] = current_project.access_key_id
   end
 
   describe "GET #index" do
@@ -205,7 +205,7 @@ RSpec.describe ScansController, type: :controller do
 
     context "without valid credentials" do
       it "returns 401 (Unauthorized)" do
-        request.headers["Auth-Key"] = nil
+        request.headers["X-Api-Key"] = nil
         post :create, {:scan => valid_attributes}
         expect(response.status).to eq(401)
       end

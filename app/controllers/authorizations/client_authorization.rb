@@ -14,6 +14,6 @@ class ClientAuthorization < BaseAuthorization
 private
 
   def authorization_token
-    request.headers["Auth-Key"]
+    request.headers["X-Api-Key"]
   end
 end
