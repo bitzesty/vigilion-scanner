@@ -58,7 +58,7 @@ RSpec.describe ProjectsController, type: :controller do
     let!(:current_project) { create :project }
 
     before do
-      request.headers["Auth-Key"] = current_project.access_key_id
+      request.headers["X-Api-Key"] = current_project.access_key_id
     end
 
     describe "GET #validate" do
