@@ -11,6 +11,7 @@ gem 'dotenv-rails'
 gem 'puma'
 gem 'rails_12factor'
 gem 'lograge'
+gem 'sentry-raven'
 
 group :development, :test do
   gem 'byebug'

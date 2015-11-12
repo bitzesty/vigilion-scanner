@@ -25,6 +25,7 @@ class ApplicationController < ActionController::Base
 private
 
   def authorization_policy
+    logger.info request.env
     @authorization_policy ||= if request.headers["Dashboard-Auth-Key"]
       DashboardAuthorization.new(self)
     else
