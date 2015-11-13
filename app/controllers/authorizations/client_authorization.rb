@@ -14,6 +14,7 @@ class ClientAuthorization < BaseAuthorization
 private
 
   def authorization_token
+    Rails.logger.info("request.headers[X-Api-Key]: #{request.headers['X-Api-Key']}")
     request.headers["X-Api-Key"]
   end
 end
