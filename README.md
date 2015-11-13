@@ -20,6 +20,14 @@ convox run web rake db:migrate --app vigilion-scanner-staging
 
 convox deploy --app vigilion-scanner-production
 
+
+Logging:
+
+Production logs are streamed to papertrail (credentials are in lastpass)
+
+`matt+staging@vigilion.com`
+
+
 ## Scanning Flow
 
 1) User uploads the file to the **client app**
