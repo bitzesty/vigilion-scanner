@@ -11,7 +11,7 @@ class ClientAuthorization < BaseAuthorization
     current_project.present?
   end
 
-private
+  private
 
   def authorization_token
     request.headers['X-Api-Key']
