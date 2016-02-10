@@ -22,60 +22,64 @@ convox start builds and runs the processes declared in your application manifest
 A `CTRL+C` on the convox start process stops everything and exits.
 
 ## Deployment
-
 This app can be deployed to Convox via the `convox deploy` CLI command.
 
-Use your Grid API key to log into Grid via the CLI, using your Grid API key as the password.
+You need to be added to convox grid (ask Matt) to deploy manually.
 
-`convox login grid.convox.com --password <Grid API key>`
 
-##### Create the app
+##### Switch to the `vigilion` Rack
+
+    convox update (alway make sure your CLI is up to date)
+    convox switch vigilion
+
+##### Create the app (if necessary)
 
 To create an app named `vigilion-scanner-staging` you will have to use this command:
 
 `convox apps create vigilion-scanner-staging`
 
-##### Create the backing services
+##### Create the backing services (if necessary)
 
-Provision redis & db
+Provision redis & postgresql
 
 ```
-convox services create postgres --name pg1
-convox services create redis --name rd1
+convox services create postgres --name pg-staging
+convox services create redis --name redis-staging
 ```
 
 And then set env variables:
 
 ```
-$ convox services info pg1
-Name    pg1
+$ convox services info pg-staging
+Name    pg-staging
 Status  running
-URL     postgres://postgres:KEDS6tKPZb1iffVB8IXi@pg1.cbm068zjzjcr.us-east-1.rds.amazonaws.com:5432/app
+URL     postgres://postgres:KEDS6tKPZb1iffVB8IXi@pg-staging.cbm068zjzjcr.us-east-1.rds.amazonaws.com:5432/app
 
-$ convox env set POSTGRES_URL=postgres://postgres:KEDS6tKPZb1iffVB8IXi@pg1.cbm068zjzjcr.us-east-1.rds.amazonaws.com:5432/app
+$ convox env set POSTGRES_URL=postgres://postgres:KEDS6tKPZb1iffVB8IXi@pg-staging.cbm068zjzjcr.us-east-1.rds.amazonaws.com:5432/app
 
-$ convox services info rd1
-Name    rd1
+$ convox services info redis-staging
+Name    redis-staging
 Status  running
-URL     redis://u:Rn2uRT7g7NJ8iXNAtnSj@rd1-Balancer-124JJ4R695MAR-153811640.us-east-1.elb.amazonaws.com:6379/0
+URL     redis://u:Rn2uRT7g7NJ8iXNAtnSj@redis-staging-Balancer-124JJ4R695MAR-153811640.us-east-1.elb.amazonaws.com:6379/0
 
-$ convox env set REDIS_URL=redis://u:Rn2uRT7g7NJ8iXNAtnSj@rd1-Balancer-124JJ4R695MAR-153811640.us-east-1.elb.amazonaws.com:6379/0
+$ convox env set REDIS_URL=redis://u:Rn2uRT7g7NJ8iXNAtnSj@redis-staging-Balancer-124JJ4R695MAR-153811640.us-east-1.elb.amazonaws.com:6379/0
 ```
 
 
 ##### Deploy the app
 
+To deploy to production make sure you are on the production branch
 
 ```
 convox deploy --app vigilion-scanner-staging
 ```
 
-To run commands in the staging app:
+To run one off or rake tasks (specify the app with the --app flag)
 
-```
-convox run web bash --app vigilion-scanner-staging
-convox run web rake db:migrate --app vigilion-scanner-staging
-```
+
+    convox run web rake some:long_task --detach
+    convox run web bash --app vigilion-scanner-staging
+    convox run web rake db:migrate --app vigilion-scanner-staging
 
 ##### Logging:
 
