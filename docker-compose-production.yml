@@ -1,0 +1,8 @@
+web:
+  build: .
+  command: bundle exec puma -C config/puma.rb
+  ports:
+    - "443:3000"
+worker:
+  build: .
+  command: bash -c "clamd && bundle exec sidekiq -C ./config/sidekiq.yml"
