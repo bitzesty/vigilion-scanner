@@ -15,7 +15,7 @@ Convox uses these files to build and run your development environment:
 
 Once you have installed `Docker` and `Convox` please run this command:
 
-`convox start`
+`convox start --file docker-compose-development.yml`
 
 convox start builds and runs the processes declared in your application manifest.
 
@@ -65,10 +65,9 @@ $ convox env set REDIS_URL=redis://u:Rn2uRT7g7NJ8iXNAtnSj@rd1-Balancer-124JJ4R69
 
 ##### Deploy the app
 
-local dev, move the docker_compose.yml.local to the main one and move the prod one out of the way (no way to spcify a file path atm). Then run convox start
 
 ```
-convox deploy -f docker-compose-production.yml --app vigilion-scanner-staging
+convox deploy --app vigilion-scanner-staging
 ```
 
 To run commands in the staging app:

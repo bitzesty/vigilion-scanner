@@ -1,28 +1,8 @@
 web:
   build: .
   command: bundle exec puma -C config/puma.rb
-  links: &app_links
-    - database
-    - redis
   ports:
-    - "3000:3000"
-  volumes:
-    - .:/app
+    - "443:3000"
 worker:
   build: .
-  command: bundle exec sidekiq -C ./config/sidekiq.yml
-  links: *app_links
-  volumes:
-    - .:/app
-database:
-  image: postgres:9.4
-  environment:
-    - LINK_SCHEME=postgres
-    - LINK_PASSWORD=password
-    - LINK_USERNAME=postgres
-  ports:
-    - 5432
-redis:
-  image: convox/redis
-  ports:
-    - 6379
+  command: bash -c "clamd && bundle exec sidekiq -C ./config/sidekiq.yml"
