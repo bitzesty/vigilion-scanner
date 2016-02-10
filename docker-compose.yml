@@ -1,12 +1,8 @@
-web: &web
+web:
   build: .
   command: bundle exec puma -C config/puma.rb
-  environment:
   ports:
     - "443:3000"
-  volumes:
-    - .:/app
 worker:
-  <<: *web
-  ports: []
+  build: .
   command: bash -c "clamd && bundle exec sidekiq -C ./config/sidekiq.yml"

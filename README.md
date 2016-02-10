@@ -3,25 +3,85 @@
 This app is the responsible for processing files and determine
 if they are clean or if they contain viruses.
 
+## Development
+
+This application use [convox](https://convox.com/docs/) as the workflow for development and deployment. Please follow this [instructions](http://convox.github.io/docs/getting-started/) if you don't have installed the CLI. To use `convox` you will need have installed [Docker](https://www.docker.com/).
+
+
+Convox uses these files to build and run your development environment:
+
+- A docker-compose.yml
+- A Dockerfile to document your build
+
+Once you have installed `Docker` and `Convox` please run this command:
+
+`convox start --file docker-compose-development.yml`
+
+convox start builds and runs the processes declared in your application manifest.
+
+A `CTRL+C` on the convox start process stops everything and exits.
+
 ## Deployment
+This app can be deployed to Convox via the `convox deploy` CLI command.
 
-TODO auto deploy from circle ci/convox grid?
+You need to be added to convox grid (ask Matt) to deploy manually.
 
-Provision redis & db and then set env variables
 
-local dev, move the docker_compose.yml.local to the main one and move the prod one out of the way (no way to spcify a file path atm). Then run convox start
+##### Switch to the `vigilion` Rack
 
-deploying:
+    convox update (alway make sure your CLI is up to date)
+    convox switch vigilion
 
+##### Create the app (if necessary)
+
+To create an app named `vigilion-scanner-staging` you will have to use this command:
+
+`convox apps create vigilion-scanner-staging`
+
+##### Create the backing services (if necessary)
+
+Provision redis & postgresql
+
+```
+convox services create postgres --name pg-staging
+convox services create redis --name redis-staging
+```
+
+And then set env variables:
+
+```
+$ convox services info pg-staging
+Name    pg-staging
+Status  running
+URL     postgres://postgres:KEDS6tKPZb1iffVB8IXi@pg-staging.cbm068zjzjcr.us-east-1.rds.amazonaws.com:5432/app
+
+$ convox env set POSTGRES_URL=postgres://postgres:KEDS6tKPZb1iffVB8IXi@pg-staging.cbm068zjzjcr.us-east-1.rds.amazonaws.com:5432/app
+
+$ convox services info redis-staging
+Name    redis-staging
+Status  running
+URL     redis://u:Rn2uRT7g7NJ8iXNAtnSj@redis-staging-Balancer-124JJ4R695MAR-153811640.us-east-1.elb.amazonaws.com:6379/0
+
+$ convox env set REDIS_URL=redis://u:Rn2uRT7g7NJ8iXNAtnSj@redis-staging-Balancer-124JJ4R695MAR-153811640.us-east-1.elb.amazonaws.com:6379/0
+```
+
+
+##### Deploy the app
+
+To deploy to production make sure you are on the production branch
+
+```
 convox deploy --app vigilion-scanner-staging
+```
 
-convox run web bash --app vigilion-scanner-staging
-convox run web rake db:migrate --app vigilion-scanner-staging
-
-convox deploy --app vigilion-scanner-production
+To run one off or rake tasks (specify the app with the --app flag)
 
 
-Logging:
+    convox run web rake some:long_task --detach
+    convox run web bash --app vigilion-scanner-staging
+    convox run web rake db:migrate --app vigilion-scanner-staging
+
+##### Logging:
 
 Production logs are streamed to papertrail (credentials are in lastpass)
 
@@ -143,30 +203,6 @@ NOTE: Make sure that in target rails app's Gemfile you have:
 ```
 gem "vs_rails", "~> 0.0.7"
 ```
-
-## Installing Clam AV
-
-    brew install clamav
-
-    modify /usr/local/etc/clamav/freshclam.conf.sample
-    save /usr/local/etc/clamav/freshclam.conf (comment out the example line)
-
-    modify /usr/local/etc/clamav/clamd.conf
-
-    freshclam
-
-    (OSX Run Clamd for faster scanning & MD5 caching)
-    /usr/local/Cellar/clamav/0.98.6/sbin/clamd
-
-## Redis
-
-  REDIS needs to be installed and running, can set REDIS_URL
-
-## Running
-
-    Load ENV variables see .env.example
-
-    foreman start
 
 ## Testing
 
