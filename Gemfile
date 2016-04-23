@@ -13,7 +13,9 @@ gem 'sentry-raven'
 
 group :development, :test do
   gem 'byebug'
-  gem 'rspec-rails'
+  %w[rails core expectations mocks support].each do |name|
+    gem "rspec-#{name}", github: "rspec/rspec-#{name}", branch: 'master'
+  end
   gem 'factory_girl_rails'
   gem 'timecop'
   gem 'simplecov', require: false
