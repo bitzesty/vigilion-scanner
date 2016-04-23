@@ -9,7 +9,6 @@ gem 'sidekiq-unique-jobs'
 gem 'typhoeus'
 gem 'dotenv-rails'
 gem 'puma'
-gem 'rails_12factor'
 gem 'lograge'
 gem 'sentry-raven'
 
