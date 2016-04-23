@@ -26,4 +26,5 @@ end
 
 group :test do
   gem 'simplecov', require: false
+  gem 'rails-controller-testing'
 end
