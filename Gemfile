@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.5.1'
+gem 'rails', '5.0.0.beta3'
 gem 'pg'
 gem 'jbuilder', '~> 2.0'
 gem 'attr_encrypted'
