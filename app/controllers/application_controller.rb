@@ -1,3 +1,6 @@
+require 'client_authorization'
+require 'dashboard_authorization'
+
 class ApplicationController < ActionController::API
   before_action :change_default_response
   before_action :authenticate!
