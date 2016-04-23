@@ -26,9 +26,9 @@ private
 
   def authorization_policy
     @authorization_policy ||= if request.headers["Dashboard-Auth-Key"]
-      DashboardAuthorization.new(self)
+      ::DashboardAuthorization.new(self)
     else
-      ClientAuthorization.new(self)
+      ::ClientAuthorization.new(self)
     end
   end
 end
