@@ -13,7 +13,7 @@ gem 'sentry-raven'
 
 group :development, :test do
   gem 'byebug'
-  gem 'rspec-rails', '~> 3.0'
+  gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'timecop'
   gem 'simplecov', require: false

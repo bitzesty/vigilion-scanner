@@ -185,7 +185,7 @@ DEPENDENCIES
   puma
   rails (= 5.0.0.beta3)
   rails-controller-testing
-  rspec-rails (~> 3.0)
+  rspec-rails
   sentry-raven
   sidekiq
   sidekiq-unique-jobs
