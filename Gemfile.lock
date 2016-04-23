@@ -179,7 +179,7 @@ DEPENDENCIES
   byebug
   dotenv-rails
   factory_girl_rails
-  jbuilder (~> 2.0)
+  jbuilder
   lograge
   pg
   puma
