@@ -3,22 +3,20 @@
 This app is the responsible for processing files and determine
 if they are clean or if they contain viruses.
 
-## Deployment
+## Local Convox
 
-TODO auto deploy from circle ci/convox grid?
+    convox start -f docker-compose.yml.local
 
-Provision redis & db and then set env variables
+## Deploying Convox
 
-local dev, move the docker_compose.yml.local to the main one and move the prod one out of the way (no way to spcify a file path atm). Then run convox start
+    convox switch bitzesty/vigilion
 
-deploying:
+    convox deploy --app vigilion-scanner-staging
 
-convox deploy --app vigilion-scanner-staging
+    convox run web bash --app vigilion-scanner-staging
+    convox run web rake db:migrate --app vigilion-scanner-staging
 
-convox run web bash --app vigilion-scanner-staging
-convox run web rake db:migrate --app vigilion-scanner-staging
-
-convox deploy --app vigilion-scanner-production
+    convox deploy --app vigilion-scanner-production
 
 
 Logging:
