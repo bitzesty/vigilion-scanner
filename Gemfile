@@ -13,17 +13,12 @@ gem 'sentry-raven'
 
 group :development, :test do
   gem 'byebug'
-  gem 'spring'
-  gem 'rspec-rails', '~> 3.0'
-  gem 'factory_girl_rails'
-  gem 'timecop'
-end
-
-group :development do
-  gem 'web-console', '~> 2.0'
 end
 
 group :test do
+  gem 'rspec-rails', '~> 3.0'
+  gem 'factory_girl_rails'
+  gem 'timecop'
   gem 'simplecov', require: false
   gem 'rails-controller-testing'
 end
