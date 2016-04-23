@@ -1,3 +1,4 @@
+require_relative 'authorizations/base_authorization'
 require_relative 'authorizations/client_authorization'
 require_relative 'authorizations/dashboard_authorization'
 
