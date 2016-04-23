@@ -5,7 +5,6 @@ class Project < ActiveRecord::Base
   validates :name, :account_id, presence: true
 
   validates :callback_url, absolute_url: true, presence: true
-  attr_encrypted :secret_access_key
 
   before_create :generate_keys
 
