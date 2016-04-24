@@ -3,9 +3,6 @@ require_relative 'authorizations/client_authorization'
 require_relative 'authorizations/dashboard_authorization'
 
 class ApplicationController < ActionController::API
-  include ActionController::Rendering
-  include ActionView::Layouts
-
   before_action :change_default_response
   before_action :authenticate!
 

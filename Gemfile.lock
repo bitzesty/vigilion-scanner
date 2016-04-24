@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/rails/jbuilder.git
+  revision: 64c510ec69d9e63b73ffd5942e802d21a7d14701
+  specs:
+    jbuilder (2.4.1)
+      activesupport (>= 3.0.0, < 5.1)
+      multi_json (~> 1.2)
+
+GIT
   remote: git://github.com/rspec/rspec-core.git
   revision: cf8dfdc76586a9bb09da0bd03f0da3f2cf8fc580
   branch: master
@@ -110,9 +118,6 @@ GEM
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     i18n (0.7.0)
-    jbuilder (2.4.1)
-      activesupport (>= 3.0.0, < 5.1)
-      multi_json (~> 1.2)
     json (1.8.3)
     lograge (0.3.6)
       actionpack (>= 3)
@@ -210,7 +215,7 @@ DEPENDENCIES
   byebug
   dotenv-rails
   factory_girl_rails
-  jbuilder
+  jbuilder!
   lograge
   pg
   puma
