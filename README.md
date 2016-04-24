@@ -98,11 +98,6 @@ The id is obtained as a response from POST /scans
 
 ```
 AVENGINE=clamdscan
-AWS_REGION=<...>
-AWS_ACCESS_KEY_ID=<...>
-AWS_SECRET_ACCESS_KEY=<...>
-SQS_QUEUE=<...>
-SECRET_KEY_BASE=<...>
 REDIS_URL=
 ```
 
