@@ -7,7 +7,7 @@ class ApplicationController < ActionController::API
   before_action :authenticate!
 
   def change_default_response
-    request.format = "json"
+    request.format = 'json'
   end
 
   def authenticate!
@@ -26,13 +26,13 @@ class ApplicationController < ActionController::API
     current_project.account
   end
 
-private
+  private
 
   def authorization_policy
-    @authorization_policy ||= if request.headers["Dashboard-Auth-Key"]
-      ::DashboardAuthorization.new(self)
-    else
-      ::ClientAuthorization.new(self)
-    end
+    @authorization_policy ||= if request.headers['Dashboard-Auth-Key']
+                                DashboardAuthorization.new(self)
+                              else
+                                ClientAuthorization.new(self)
+                              end
   end
 end
