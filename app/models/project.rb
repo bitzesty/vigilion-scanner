@@ -9,7 +9,8 @@ class Project < ActiveRecord::Base
   before_create :generate_keys
 
   def generate_keys
-    self.access_key_id = "V161L-" + SecureRandom.urlsafe_base64(20)
-    self.secret_access_key = "L10N-" + SecureRandom.urlsafe_base64(36)
+    self.access_key_id = 'VIGIL' + SecureRandom.urlsafe_base64(20)
+    self.secret_access_key = SecureRandom.urlsafe_base64(40)
+    true
   end
 end
