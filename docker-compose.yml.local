@@ -1,6 +1,6 @@
 web: &web
   build: .
-  command: [bundle, exec, puma, -C, config/puma.rb]
+  command: bundle exec puma -C config/puma.rb
   environment:
     - RACK_ENV=development
   ports:
@@ -13,7 +13,7 @@ web: &web
 worker:
   <<: *web
   ports: []
-  command: [bundle, exec, sidekiq -C, ./config/sidekiq.yml]
+  command: bash -c "clamd && bundle exec sidekiq -C ./config/sidekiq.yml"
 redis:
   image: convox/redis
 database:

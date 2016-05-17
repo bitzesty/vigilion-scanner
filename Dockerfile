@@ -1,6 +1,7 @@
-FROM ruby:2.3.0-alpine
+FROM ruby:2.3-alpine
 
 RUN apk add --update --no-cache \
+    bash \
     build-base \
     nodejs \
     tzdata \
