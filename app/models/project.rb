@@ -13,4 +13,11 @@ class Project < ActiveRecord::Base
     self.secret_access_key = SecureRandom.urlsafe_base64(40)
     true
   end
+
+  def self.regenerate_keys
+    all.map do |project|
+      project.generate_keys
+      project.save
+    end
+  end
 end
