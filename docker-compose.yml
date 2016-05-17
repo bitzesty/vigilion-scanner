@@ -1,6 +1,6 @@
 web:
   build: .
-  command: bundle exec puma -C config/puma.rb
+  command: bash -c "bundle exec puma -C config/puma.rb"
   ports:
     - "443:3000"
 worker:
