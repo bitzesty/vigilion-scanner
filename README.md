@@ -15,6 +15,7 @@ if they are clean or if they contain viruses.
 
     convox run web bash --app vigilion-scanner-staging
     convox run web rake db:migrate --app vigilion-scanner-staging
+    convox run web rake some:long_task --detach
 
     convox deploy --app vigilion-scanner-production
 
