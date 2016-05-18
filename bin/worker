@@ -1,7 +1,5 @@
 #!/bin/sh
 
-freshclam &&
-
 # Startup clamd in background
 clamd &
 
