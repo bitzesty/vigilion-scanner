@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', github: 'rails/rails' 
+gem 'rails', github: 'rails/rails'
 gem 'pg'
 gem 'jbuilder', github: 'rails/jbuilder'
 gem 'sidekiq'
@@ -8,7 +8,6 @@ gem 'sidekiq-unique-jobs'
 gem 'typhoeus'
 gem 'dotenv-rails'
 gem 'puma'
-gem 'lograge'
 gem 'sentry-raven'
 
 group :development, :test do
