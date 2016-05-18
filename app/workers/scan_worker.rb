@@ -5,7 +5,7 @@ class ScanWorker
 
   def perform(id)
     scan = Scan.find id
-    logger.info "Scanning #{id}"
+    Sidekiq.logger.info "Scanning #{id}"
     ScanService.new.perform scan
   end
 end

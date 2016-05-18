@@ -6,6 +6,7 @@ class AvRunner
     unless cache_hit(scan)
       Open3.popen3("#{CONFIG[:av_engine]} #{scan.file_path}") do |_, stdout, _, wait_thr|
         scan.complete! status_from_clamav(wait_thr), message_from_clamav(stdout)
+        Sidekiq.logger.info stdout.read.split("\n")
       end
     end
   end

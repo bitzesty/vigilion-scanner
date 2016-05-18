@@ -34,7 +34,7 @@ RUN bundle install --without development test --jobs 4
 COPY . /app
 
 # ClamAV
-ADD config/freshclam.conf /etc/clamav/freshclam.conf
+COPY config/freshclam.conf /etc/clamav/freshclam.conf
 ADD config/clamd.conf /etc/clamav/clamd.conf
 
 RUN freshclam
