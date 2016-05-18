@@ -1,6 +1,6 @@
 class ScansController < ApplicationController
   before_action :authorize_admin!, only: [:admin_stats]
-  
+
   # GET /scans
   def index
     @scans = current_project.scans.where("created_at > ?", 24.hours.ago).order("created_at")
@@ -43,7 +43,7 @@ class ScansController < ApplicationController
     elsif @scan.file.present? && !current_account.plan.allow_file_size?(@scan.file.size)
       render json: { error: "File too large for this plan" }, status: 402
     elsif @scan.save
-      ScanWorker.perform_async(id: @scan.id)
+      ScanWorker.perform_async(@scan.id)
       render :show, status: :created
     else
       render json: @scan.errors, status: :unprocessable_entity
