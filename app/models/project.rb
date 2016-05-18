@@ -10,7 +10,7 @@ class Project < ActiveRecord::Base
 
   def generate_keys
     self.access_key_id = 'VIGIL' + SecureRandom.urlsafe_base64(20)
-    self.secret_access_key = SecureRandom.urlsafe_base64(40)
+    self.secret_access_key = 'LION' + SecureRandom.urlsafe_base64(36)
     true
   end
 
