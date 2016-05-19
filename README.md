@@ -36,7 +36,7 @@ storage (S3 or similar) and calls **Vigilion Scanner** with a
 URL to download the file.
 
 3) Vigilion Scanner check the **client app** credentials and if
-everything is ok, it schedules the scan using **SQS Queue**.
+everything is ok, it schedules the scan using **Sidekiq**.
 
 4) An async process downloads the file and performs the scan.
 
@@ -88,6 +88,19 @@ The id is obtained as a response from POST /scans
 ** infected: The scan succeeded but the file was infected
 ** error: The scan has not succedded.
 ** unknown: Unknown error.
+
+## HTTP Statuses
+
+|Code |	Title |	Description |
+|---------------------------|
+|200|	OK |	The request was successful. |
+|201|	Created |	The resource was successfully created. |
+|400|	Bad request |	Bad request |
+|422|	Validation error |	A validation error occurred. |
+|401|	Unauthorized |	Your API key is invalid. |
+|404|	Not found |	The resource does not exist. |
+|50X|	Internal Server Error |	An error occurred with our API. |
+
 
 ## Application setup
 
