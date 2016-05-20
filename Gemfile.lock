@@ -121,6 +121,7 @@ GEM
     byebug (8.2.4)
     concurrent-ruby (1.0.1)
     connection_pool (2.2.0)
+    database_cleaner (1.5.1)
     diff-lcs (1.2.5)
     docile (1.1.5)
     dotenv (2.1.1)
@@ -214,6 +215,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  database_cleaner
   dotenv-rails
   factory_girl_rails
   jbuilder!

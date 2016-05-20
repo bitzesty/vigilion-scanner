@@ -19,4 +19,5 @@ group :development, :test do
   gem 'timecop'
   gem 'simplecov', require: false
   gem 'rails-controller-testing'
+  gem 'database_cleaner'
 end
