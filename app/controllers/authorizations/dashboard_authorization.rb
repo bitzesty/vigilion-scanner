@@ -14,6 +14,6 @@ class DashboardAuthorization < BaseAuthorization
 private
 
   def authorization_token
-    request.headers["Dashboard-Auth-Key"]
+    request.headers['Dashboard-Auth-Key']
   end
 end

@@ -5,7 +5,11 @@ class AvRunner
     set_checksums_and_file_size scan
     unless cache_hit(scan)
       Open3.popen3("#{CONFIG[:av_engine]} #{scan.file_path}") do |_, stdout, _, wait_thr|
-        scan.complete! status_from_clamav(wait_thr), message_from_clamav(stdout)
+        message = message_from_clamav(stdout)
+        status = status_from_clamav(wait_thr)
+        Sidekiq.logger.info "Message: #{message}"
+        Sidekiq.logger.info "Status #{status}"
+        scan.complete! status, message
       end
     end
   end

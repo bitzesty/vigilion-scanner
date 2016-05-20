@@ -17,5 +17,5 @@ Plan.create! name: "alpha-testers", cost: 0, available_for_new_subscriptions: fa
 # special plan for dashboard demo
 Plan.create! name: "dashboard-demo", cost: 0, available_for_new_subscriptions: false, file_size_limit: 0.2
 
-# account = Account.create(plan_id:  9)
-# account.projects.create!(name: 'demo', callback_url: "https://www.vigilion.com/vigilion/callback")
+account = Account.create(plan_id:  9)
+account.projects.create!(name: 'demo', callback_url: "https://www.vigilion.com/vigilion/callback")

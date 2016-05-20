@@ -1,22 +1,28 @@
-web: &web
+web:
   build: .
   command: bundle exec puma -C config/puma.rb
-  environment:
-    - RACK_ENV=development
+  links: &app_links
+    - database
+    - redis
   ports:
-    - 3000:3000
+    - "3000:3000"
   volumes:
     - .:/app
-  links:
-    - postgres
-    - redis
 worker:
-  <<: *web
-  ports: []
+  build: .
   command: bundle exec sidekiq -C ./config/sidekiq.yml
+  links: *app_links
+  volumes:
+    - .:/app
+database:
+  image: postgres:9.4
+  environment:
+    - LINK_SCHEME=postgres
+    - LINK_PASSWORD=password
+    - LINK_USERNAME=postgres
+  ports:
+    - 5432
 redis:
   image: convox/redis
-postgres:
-  image: convox/postgres
-  environment:
-    - POSTGRES_DATABASE=vigilion_scanner_development
+  ports:
+    - 6379

@@ -1,5 +1,5 @@
 class HealthcheckController < ActionController::Base
   def perform
-    render plain: "OK"
+    render plain: 'OK'
   end
 end

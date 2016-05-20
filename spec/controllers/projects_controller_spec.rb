@@ -15,7 +15,7 @@ RSpec.describe ProjectsController, type: :controller do
         account_project = create :project, account: account
         another_project = create :project
 
-        get :index, { account_id: account.id }
+        get :index, params: { account_id: account.id }
         expect(assigns(:projects)).to eq([account_project])
       end
 
@@ -24,7 +24,7 @@ RSpec.describe ProjectsController, type: :controller do
 
         it "includes an array with projects" do
           project = create :project
-          get :index, { account_id: project.account_id }
+          get :index, params: { account_id: project.account_id }
           json = JSON.parse(response.body)
           expect(json.count).to eq 1
           expect(json.first["id"]).to eq project.id
@@ -40,7 +40,7 @@ RSpec.describe ProjectsController, type: :controller do
         project = create(:project)
         old_access_key_id = project.access_key_id
         old_secret_access_key = project.secret_access_key
-        post :regenerate_keys, { id: project.to_param }
+        post :regenerate_keys, params: { id: project.to_param }
         project.reload
         expect(project.access_key_id).not_to eq(old_access_key_id)
         expect(project.secret_access_key).not_to eq(old_secret_access_key)
@@ -48,7 +48,7 @@ RSpec.describe ProjectsController, type: :controller do
 
       it "assigns the requested project as @project" do
         project = create(:project)
-        post :regenerate_keys, { id: project.to_param }
+        post :regenerate_keys, params: { id: project.to_param }
         expect(assigns(:project)).to eq(project)
       end
     end

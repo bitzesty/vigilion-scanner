@@ -5,7 +5,7 @@ common: &common
 development:
   <<: *common
   database: vigilion_scanner_development
-  url: <%= ENV['DATABASE_URL'] || "postgresql://#{ENV['POSTGRES_ENV_POSTGRES_USERNAME']}:#{ENV['POSTGRES_ENV_POSTGRES_PASSWORD']}@#{ENV['POSTGRES_PORT_5432_TCP_ADDR']}:#{ENV['POSTGRES_PORT_5432_TCP_PORT']}" %>
+  url: <%= ENV['DATABASE_URL'] %>
 
 test:
   <<: *common
