@@ -3,22 +3,21 @@
 This app is the responsible for processing files and determine
 if they are clean or if they contain viruses.
 
-## Deployment
+## Local Convox
 
-TODO auto deploy from circle ci/convox grid?
+    convox start -f docker-compose.yml.local
 
-Provision redis & db and then set env variables
+## Deploying Convox
 
-local dev, move the docker_compose.yml.local to the main one and move the prod one out of the way (no way to spcify a file path atm). Then run convox start
+    convox switch bitzesty/vigilion
 
-deploying:
+    convox deploy --app vigilion-scanner-staging
 
-convox deploy --app vigilion-scanner-staging
+    convox run web bash --app vigilion-scanner-staging
+    convox run web rake db:migrate --app vigilion-scanner-staging
+    convox run web rake some:long_task --detach
 
-convox run web bash --app vigilion-scanner-staging
-convox run web rake db:migrate --app vigilion-scanner-staging
-
-convox deploy --app vigilion-scanner-production
+    convox deploy --app vigilion-scanner-production
 
 
 Logging:
@@ -37,7 +36,7 @@ storage (S3 or similar) and calls **Vigilion Scanner** with a
 URL to download the file.
 
 3) Vigilion Scanner check the **client app** credentials and if
-everything is ok, it schedules the scan using **SQS Queue**.
+everything is ok, it schedules the scan using **Sidekiq**.
 
 4) An async process downloads the file and performs the scan.
 
@@ -81,14 +80,26 @@ Gets information about an specific scan request.
 The id is obtained as a response from POST /scans
 
 
-## Scan status
+## Scan statuses
 
-** pending: The file was not yet scanned.
-** scanning: The scan is being scanned.
-** clean: The scan succeeded and the file is clean.
-** infected: The scan succeeded but the file was infected
-** error: The scan has not succedded.
-** unknown: Unknown error.
+* pending: The file is queued for scanning.
+* scanning: The scan is being scanned.
+* clean: The scan succeeded and the file is clean.
+* infected: The scan succeeded and the file was infected.
+* error: Unable to scan the file.
+
+## HTTP Statuses
+
+|Code |	Title |	Description |
+|---------------------------|
+|200|	OK |	The request was successful. |
+|201|	Created |	The resource was successfully created. |
+|400|	Bad request |	Bad request |
+|422|	Validation error |	A validation error occurred. |
+|401|	Unauthorized |	Your API key is invalid. |
+|404|	Not found |	The resource does not exist. |
+|50X|	Internal Server Error |	An error occurred with our API. |
+
 
 ## Application setup
 
@@ -100,11 +111,6 @@ The id is obtained as a response from POST /scans
 
 ```
 AVENGINE=clamdscan
-AWS_REGION=<...>
-AWS_ACCESS_KEY_ID=<...>
-AWS_SECRET_ACCESS_KEY=<...>
-SQS_QUEUE=<...>
-SECRET_KEY_BASE=<...>
 REDIS_URL=
 ```
 

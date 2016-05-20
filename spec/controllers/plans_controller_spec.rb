@@ -1,28 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe PlansController, type: :controller do
+
+  let!(:plan) { create :plan }
+  let!(:plan2) { create :plan, available_for_new_subscriptions: false }
+
   before do
     request.headers["Dashboard-Auth-Key"] = CONFIG["dashboard_api_key"]
   end
 
   describe "GET #index" do
-    it "assigns all plans as @plans" do
-      plan = create :plan
+    it "assigns all plans as @plans and hides plans not available for new subscriptions" do
       get :index
       expect(assigns(:plans)).to eq([plan])
-    end
-
-    it "hides plans not available for new subscriptions" do
-      plan = create :plan, available_for_new_subscriptions: false
-      get :index
-      expect(assigns(:plans)).to eq([])
     end
 
     describe "view" do
       render_views
 
       it "includes an array with plans" do
-        plan = create :plan
         get :index
         json = JSON.parse(response.body)
         expect(json.count).to eq 1

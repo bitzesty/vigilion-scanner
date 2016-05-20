@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :scan do
-    url "http://secured-site.com/file.zip"
+    url "https://s3.amazonaws.com/vigilion-load-test/eicar.com"
     key "file"
     project
   end

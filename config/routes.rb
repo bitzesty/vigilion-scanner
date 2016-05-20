@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   resources :plans, only: [:index, :show]
   resources :accounts, only: [:show, :create, :update, :destroy]
 
-  resources :projects do
+  resources :projects, only: [:index, :show, :create, :update, :destroy] do
     member do
       post :regenerate_keys
       post :update_plan

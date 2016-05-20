@@ -5,7 +5,7 @@ RSpec.describe "Accounts", type: :request do
 
   describe "GET /accounts/ID" do
     it "works!" do
-      get account_path(account), {}, "Dashboard-Auth-Key" => CONFIG["dashboard_api_key"]
+      get account_path(account), headers: { "Dashboard-Auth-Key" => CONFIG["dashboard_api_key"] }
       expect(response).to have_http_status(200)
     end
   end

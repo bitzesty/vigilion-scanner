@@ -1,27 +1,23 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.5.1'
+gem 'rails', github: 'rails/rails'
 gem 'pg'
-gem 'jbuilder', '~> 2.0'
-gem 'attr_encrypted'
+gem 'jbuilder', github: 'rails/jbuilder'
 gem 'sidekiq'
 gem 'sidekiq-unique-jobs'
 gem 'typhoeus'
 gem 'dotenv-rails'
 gem 'puma'
-gem 'rails_12factor'
-gem 'lograge'
 gem 'sentry-raven'
 
 group :development, :test do
   gem 'byebug'
-  gem 'web-console', '~> 2.0'
-  gem 'spring'
-  gem 'rspec-rails', '~> 3.0'
+  %w[rails core expectations mocks support].each do |name|
+    gem "rspec-#{name}", github: "rspec/rspec-#{name}", branch: 'master'
+  end
   gem 'factory_girl_rails'
   gem 'timecop'
-end
-
-group :test do
   gem 'simplecov', require: false
+  gem 'rails-controller-testing'
+  gem 'database_cleaner'
 end

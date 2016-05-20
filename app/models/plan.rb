@@ -1,6 +1,8 @@
 class Plan < ActiveRecord::Base
   MEGA_BYTE = 1024 * 1024
 
+  has_many :accounts
+
   scope :available_for_new_subscriptions, -> { where(available_for_new_subscriptions: true) }
 
   def allow_more_scans?(scan_amount_this_month)

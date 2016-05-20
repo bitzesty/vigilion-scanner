@@ -1,12 +1,10 @@
-web: &web
+web:
   build: .
-  command: bundle exec puma -C config/puma.rb
-  environment:
+  labels:
+    - convox.port.443.protocol=https
+  command: bash -c "bundle exec puma -C config/puma.rb"
   ports:
     - "443:3000"
-  volumes:
-    - .:/app
 worker:
-  <<: *web
-  ports: []
-  command: bash -c "clamd && bundle exec sidekiq -C ./config/sidekiq.yml"
+  build: .
+  command: ["bin/worker"]

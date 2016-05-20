@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151022162706) do
+ActiveRecord::Schema.define(version: 20160423220851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,19 +36,19 @@ ActiveRecord::Schema.define(version: 20151022162706) do
     t.datetime "updated_at",                                     null: false
   end
 
-  create_table "projects", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
-    t.integer  "account_id",                  null: false
+  create_table "projects", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
+    t.integer  "account_id",        null: false
     t.string   "name"
     t.string   "callback_url"
     t.string   "access_key_id"
-    t.string   "encrypted_secret_access_key"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.string   "secret_access_key"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
   add_index "projects", ["account_id"], name: "index_projects_on_account_id", using: :btree
 
-  create_table "scans", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "scans", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid     "project_id",                           null: false
     t.string   "url"
     t.string   "key",                                  null: false
