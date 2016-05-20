@@ -185,7 +185,7 @@ RSpec.describe ScansController, type: :controller do
 
         it "includes id and status" do
           post :create, params: { scan: valid_attributes }
-          ScanWorker.new.perform(Scan.last.id)
+          json = JSON.parse(response.body)
           expect(json["id"]).to eq Scan.last.id
           expect(json["status"]).to eq "pending"
           expect(response).to have_http_status(:created)
