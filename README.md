@@ -80,14 +80,13 @@ Gets information about an specific scan request.
 The id is obtained as a response from POST /scans
 
 
-## Scan status
+## Scan statuses
 
-** pending: The file was not yet scanned.
-** scanning: The scan is being scanned.
-** clean: The scan succeeded and the file is clean.
-** infected: The scan succeeded but the file was infected
-** error: The scan has not succedded.
-** unknown: Unknown error.
+* pending: The file is queued for scanning.
+* scanning: The scan is being scanned.
+* clean: The scan succeeded and the file is clean.
+* infected: The scan succeeded and the file was infected.
+* error: Unable to scan the file.
 
 ## HTTP Statuses
 
