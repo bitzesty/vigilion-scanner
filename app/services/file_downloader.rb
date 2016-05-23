@@ -12,7 +12,7 @@ private
 
   def download_file(scan)
     downloaded_file = File.open scan.file_path, "wb"
-    request = Typhoeus::Request.new(scan.url, accept_encoding: "gzip", ssl_verifypeer: false, ssl_verifyhost: 0)
+    request = Typhoeus::Request.new(scan.url, accept_encoding: "gzip", ssl_verifypeer: false, ssl_verifyhost: 0, followlocation: true)
     request.on_headers do |response|
       validate_status response
       validate_length response, scan.account.plan
