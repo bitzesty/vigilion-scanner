@@ -4,9 +4,6 @@ dependencies:
   post:
     - curl -Ls https://install.convox.com/linux.zip > convox.zip
     - sudo unzip convox.zip -d /usr/local/bin
-test:
-  post:
-    - bundle exec bin/circle
 deployment:
   staging:
     branch: master
