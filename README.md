@@ -9,6 +9,8 @@ if they are clean or if they contain viruses.
 
 ## Deploying Convox
 
+    AUTO DEPLOYMENT is done via CircleCI, and a heroku daily scheduler.
+
     convox switch bitzesty/vigilion
 
     convox deploy --app vigilion-scanner-staging

@@ -1,3 +1,24 @@
 dependencies:
    pre:
     - sudo apt-get install clamav clamav-daemon -y
+  post:
+    - curl -Ls https://install.convox.com/linux.zip > convox.zip
+    - sudo unzip convox.zip -d /usr/local/bin
+test:
+  post:
+    - bundle exec bin/circle
+deployment:
+  staging:
+    branch: master
+    commands:
+      - convox login console.convox.com
+      - convox switch bitzesty/vigilion
+      - convox deploy --app vigilion-scanner-staging
+      - convox run web rake db:migrate --app vigilion-scanner-staging
+  production:
+    branch: production
+    commands:
+      - convox login console.convox.com
+      - convox switch bitzesty/vigilion
+      - convox deploy --app vigilion-scanner-production
+      - convox run web rake db:migrate --app vigilion-scanner-production
