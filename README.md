@@ -24,9 +24,7 @@ if they are clean or if they contain viruses.
 
 Logging:
 
-Production logs are streamed to papertrail (credentials are in lastpass)
-
-`matt+staging@vigilion.com`
+Staging & Production logs are streamed to papertrail (credentials are in lastpass user`matt+prod@vigilion.com`)
 
 
 ## Scanning Flow
