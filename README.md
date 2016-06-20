@@ -1,7 +1,6 @@
 # Vigilion Scanner [![Circle CI](https://circleci.com/gh/bitzesty/vigilion-scanner.svg?style=svg&circle-token=fdeeca1d75da76a7ed912436b764c9f6497cf4fc)](https://circleci.com/gh/bitzesty/vigilion-scanner)
 
-This app is the responsible for processing files and determine
-if they are clean or if they contain viruses.
+This app is the responsible for processing files and scanning them to see if they are clean or if they contain viruses.
 
 ## Local Convox
 
@@ -25,7 +24,6 @@ if they are clean or if they contain viruses.
 Logging:
 
 Staging & Production logs are streamed to papertrail (credentials are in lastpass user`matt+prod@vigilion.com`)
-
 
 ## Scanning Flow
 
