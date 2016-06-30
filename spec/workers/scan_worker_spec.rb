@@ -12,7 +12,7 @@ RSpec.describe ScanWorker do
   describe "integration" do
     context "scan eicar file" do
       it "set scan as infected" do
-        scan = create(:scan, file: OpenStruct.new(read: "X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"))
+        scan = create(:scan, file: OpenStruct.new(read: "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"))
         puts scan.id
         ScanWorker.new.perform(scan.id)
         expect(scan.reload).to be_infected
