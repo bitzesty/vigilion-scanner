@@ -52,7 +52,7 @@ class ScansController < ApplicationController
 
   private
   def scan_params
-    params.fetch(:blog, {}).permit(:url, :key, :file, :force)
+    params.fetch(:scan, {}).permit(:url, :key, :file, :force)
     params.permit(:url, :key, :file, :force)
   end
 
