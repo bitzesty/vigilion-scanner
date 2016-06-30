@@ -52,8 +52,11 @@ class ScansController < ApplicationController
 
   private
   def scan_params
-    params.fetch(:scan, {}).permit(:url, :key, :file, :force)
-    params.permit(:url, :key, :file, :force)
+    if params[:scan].present?
+      params.require(:scan).permit(:url, :key, :file, :force)
+    else
+      params.permit(:url, :key, :file, :force)
+    end
   end
 
   def zeros
