@@ -38,7 +38,6 @@ class ScansController < ApplicationController
   # POST /scans
   def create
     @scan = current_project.scans.new(scan_params)
-    byebug
     if !current_account.allow_more_scans?
       render json: { error: "The current account reached its monthly scan limit" }, status: 402
     elsif @scan.file.present? && !current_account.plan.allow_file_size?(@scan.file.size)

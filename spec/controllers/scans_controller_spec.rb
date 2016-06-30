@@ -109,7 +109,7 @@ RSpec.describe ScansController, type: :controller do
             post :create, params: valid_attributes
           }.to change(Scan, :count).by(1)
         end
-        
+
         it "creates a new Scan" do
           expect {
             post :create, params: { scan: valid_attributes }
