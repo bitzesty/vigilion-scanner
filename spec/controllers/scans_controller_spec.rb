@@ -104,6 +104,12 @@ RSpec.describe ScansController, type: :controller do
           expect(ScanWorker).to receive(:perform_async)
         end
 
+        it "creates a new Scan without nested scan params" do
+          expect {
+            post :create, params: valid_attributes
+          }.to change(Scan, :count).by(1)
+        end
+        
         it "creates a new Scan" do
           expect {
             post :create, params: { scan: valid_attributes }
