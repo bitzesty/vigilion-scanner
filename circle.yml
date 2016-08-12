@@ -9,15 +9,15 @@ deployment:
     branch: master
     commands:
       - convox login console.convox.com
-      - convox switch bitzesty/vigilion
-      - convox deploy --app vigilion-scanner-staging:
+      - convox switch bitzesty/vigilion-eu
+      - convox deploy --app scanner-staging:
           timeout: 1200
-      - convox run web rake db:migrate --app vigilion-scanner-staging
+      - convox run web rake db:migrate --app scanner-staging
   production:
     branch: production
     commands:
       - convox login console.convox.com
-      - convox switch bitzesty/vigilion
-      - convox deploy --app vigilion-scanner-production:
+      - convox switch bitzesty/vigilion-eu
+      - convox deploy --app scanner-production:
           timeout: 1200
-      - convox run web rake db:migrate --app vigilion-scanner-production
+      - convox run web rake db:migrate --app scanner-production
