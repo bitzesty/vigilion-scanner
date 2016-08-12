@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', github: 'rails/rails'
+gem 'rails', github: 'rails/rails', branch: '5-0-stable'
 gem 'pg'
 gem 'jbuilder', github: 'rails/jbuilder'
 gem 'sidekiq'
