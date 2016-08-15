@@ -36,9 +36,6 @@ RUN gem install bundler && gem update --system
 
 EXPOSE 3000
 
-# so that we can clone rails from github
-RUN git config --global http.postBuffer 1048576000
-
 WORKDIR /app
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
