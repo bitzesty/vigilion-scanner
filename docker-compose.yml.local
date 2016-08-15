@@ -6,16 +6,12 @@ web:
     - redis
   ports:
     - "3000:3000"
-  volumes:
-    - /var/lib/clamav
 worker:
   build: .
   command: ["bin/worker"]
   links:
     - database
     - redis
-  volumes:
-    - /var/lib/clamav
 database:
   image: postgres:9.4
   environment:
