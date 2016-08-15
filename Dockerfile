@@ -55,5 +55,5 @@ COPY . /app
 # ClamAV
 COPY config/freshclam.conf /etc/clamav/freshclam.conf
 COPY config/clamd.conf /etc/clamav/clamd.conf
-RUN freshclam --show-progress 
+RUN freshclam -v 
 RUN clamscan --version > CLAM_VERSION
