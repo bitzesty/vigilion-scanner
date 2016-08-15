@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '~> 5.0.0.1'
 gem 'pg'
-gem 'jbuilder', github: 'rails/jbuilder'
+gem 'jbuilder', '~> 2.6.0'
 gem 'sidekiq'
 gem 'sidekiq-unique-jobs'
 gem 'typhoeus'
