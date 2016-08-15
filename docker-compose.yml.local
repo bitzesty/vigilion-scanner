@@ -8,7 +8,7 @@ web:
     - "3000:3000"
 worker:
   build: .
-  command: bundle exec sidekiq -C .app/config/sidekiq.yml
+  command: bundle exec sidekiq -C ./app/config/sidekiq.yml
   links:
     - database
     - redis
