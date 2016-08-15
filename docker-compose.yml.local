@@ -1,6 +1,6 @@
 web:
   build: .
-  command: bash -c "bundle exec puma -C config/puma.rb"
+  command: bash -c "bundle exec rails s"
   links:
     - database
     - redis
