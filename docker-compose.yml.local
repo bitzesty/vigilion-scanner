@@ -1,17 +1,21 @@
 web:
   build: .
-  command: bundle exec puma -C app/config/puma.rb
+  command: bash -c "bundle exec puma -C config/puma.rb"
   links:
     - database
     - redis
   ports:
     - "3000:3000"
+  volumes:
+    - /var/lib/clamav
 worker:
   build: .
-  command: bundle exec sidekiq -C ./app/config/sidekiq.yml
+  command: ["bin/worker"]
   links:
     - database
     - redis
+  volumes:
+    - /var/lib/clamav
 database:
   image: postgres:9.4
   environment:
