@@ -33,9 +33,10 @@ RUN apt-get -qq update && \
         libzip-dev
 
 # config clamav user
-RUN adduser clamav && \
-    mkdir /var/lib/clamav && \
-    chown clamav:clamav -R /var/lib/clamav
+
+RUN useradd -ms /bin/bash clamav
+RUN mkdir /var/lib/clamav
+RUN chown clamav:clamav -R /var/lib/clamav
 
 # build clamav
 RUN cd /usr/src && \
@@ -61,5 +62,5 @@ COPY . /app
 # ClamAV
 COPY config/freshclam.conf /usr/local/etc/freshclam.conf
 COPY config/clamd.conf /usr/local/etc/clamd.conf
-RUN freshclam -v
+RUN freshclam --with-progress
 RUN clamscan --version > CLAM_VERSION
