@@ -59,10 +59,11 @@ WORKDIR /app
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 RUN bundle install --without development test --jobs 4
+
 COPY . /app
 
 # ClamAV
 COPY config/freshclam.conf /usr/local/etc/freshclam.conf
 COPY config/clamd.conf /usr/local/etc/clamd.conf
-RUN freshclam --with-progress
+RUN freshclam --show-progress
 RUN clamscan --version > CLAM_VERSION
