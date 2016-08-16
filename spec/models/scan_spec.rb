@@ -139,11 +139,89 @@ RSpec.describe Scan, type: :model do
     it "sets started_at and status" do
       Timecop.freeze Time.now
       scan = build(:scan, ended_at: nil, status: :pending)
-      scan.complete! :clean, "good"
+      scan.complete!(:clean, "good")
 
       expect(scan).to be_clean
       expect(scan.result).to eq "good"
       expect(scan.ended_at).to eq Time.now
+    end
+  end
+
+  describe "#av_checked!" do
+    it "sets av status and main status to success" do
+      Timecop.freeze Time.now
+      scan = build(:scan, ended_at: nil, status: :pending)
+      scan.av_checked!(
+        clamav: {
+          status: :clean,
+          message: "good"
+        }
+      )
+
+      expect(scan).to be_clean
+      expect(scan.result).to eq "good"
+      expect(scan).to be_clamav_clean
+      expect(scan.clamav_result).to eq "good"
+      expect(scan.ended_at).to eq Time.now
+    end
+
+    it "sets av status and main status to failure" do
+      Timecop.freeze Time.now
+      scan = build(:scan, ended_at: nil, status: :pending)
+      scan.av_checked!(
+        clamav: {
+          status: :clean,
+          message: "good"
+        },
+        avg: {
+          status: :infected,
+          message: "wrong"
+        }
+      )
+
+      expect(scan).to be_infected
+      expect(scan.result).to eq "wrong"
+      expect(scan).to be_avg_infected
+      expect(scan.avg_result).to eq "wrong"
+    end
+  end
+
+  describe "#engines" do
+    it "set's engines accordint to plan" do
+      scan = create(:scan)
+      expect(scan.reload.engines).to eq([:clamav])
+    end
+
+    it "set's engines accordint to plan" do
+      plan = create(:plan, clamav: false, eset: true, avg: true)
+      account = create(:account, plan: plan)
+      scan = create(:scan, account: account)
+
+      expect(scan.reload.engines).to eq([:eset, :avg])
+    end
+  end
+
+  describe "#relevant_result" do
+    it "returns clean if others errored" do
+      scan = build(:scan)
+      scan_results = {
+        clamav: { status: :clean },
+        avg: { status: :error }
+      }
+      expect(
+        scan.send(:relevant_result, scan_results)
+      ).to eq(scan_results[:clamav])
+    end
+
+    it "returns infection if any is infected" do
+      scan = build(:scan)
+      scan_results = {
+        clamav: { status: :clean },
+        avg: { status: :infected }
+      }
+      expect(
+        scan.send(:relevant_result, scan_results)
+      ).to eq(scan_results[:avg])
     end
   end
 end

@@ -196,6 +196,12 @@ RSpec.describe ScansController, type: :controller do
           expect(json["status"]).to eq "pending"
           expect(response).to have_http_status(:created)
         end
+
+        it "includes list of AV engines" do
+          post :create, params: { scan: valid_attributes }
+          json = JSON.parse(response.body)
+          expect(json["engines"]).to include("clamav")
+        end
       end
     end
 
