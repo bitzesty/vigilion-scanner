@@ -4,7 +4,7 @@ class FileDownloader
   def download(scan)
     scan.file_exists? || download_file(scan)
   rescue DownloadError => error
-    scan.complete! :error, "Cannot download file. #{error.message}"
+    scan.complete!(:error, "Cannot download file. #{error.message}")
     false
   end
 
