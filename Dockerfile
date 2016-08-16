@@ -30,7 +30,9 @@ RUN apt-get -qq update && \
         libcurl3 \
         curl \
         unrar-free \
-        libzip-dev
+        libzip-dev \
+        bzip2 \
+        libbz2-dev
 
 # config clamav user
 
