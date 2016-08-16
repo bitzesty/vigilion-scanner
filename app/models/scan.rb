@@ -1,7 +1,13 @@
 class Scan < ActiveRecord::Base
+  ENGINES = [:clamav, :eset, :avg]
+  AV_STATUSES = %w(pending scanning clean infected error)
   attr_accessor :file
 
-  enum status: %w(pending scanning clean infected error)
+  enum status: AV_STATUSES
+  enum clamav_status: AV_STATUSES, _prefix: :clamav
+  enum avg_status: AV_STATUSES, _prefix: :avg
+  enum eset_status: AV_STATUSES, _prefix: :eset
+
   belongs_to :project
   has_one :account, through: :project
 
@@ -9,6 +15,7 @@ class Scan < ActiveRecord::Base
   validates :key, :project, presence: true
   validates :url, presence: true, on: :create, unless: :file_to_write?
 
+  before_create :assign_engines
   after_create :write_file
   before_destroy :delete_file
 
@@ -38,11 +45,18 @@ class Scan < ActiveRecord::Base
     save!
   end
 
-  def complete! status, result
-    self.status = status
-    self.result = result
+  def complete! statuses, results
+    statuses.each do |engine, status|
+      self.public_send("#{engine}_status=", status)
+    end
+    # results?
+    # self.result = result
     self.ended_at = Time.now
     save!
+  end
+
+  def engines
+    ENGINES.select { |e| public_send(e) }
   end
 
   private
@@ -53,5 +67,11 @@ class Scan < ActiveRecord::Base
 
   def write_file
     File.open(file_path, "wb") { |f| f.write(@file.read) } if file_to_write?
+  end
+
+  def assign_engines
+    ENGINES.each do |engine|
+      self.public_send("#{engine}=", account.plan.public_send(engine))
+    end
   end
 end

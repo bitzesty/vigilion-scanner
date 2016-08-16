@@ -39,7 +39,8 @@ RUN apt-get -qq update && \
         unrar-free \
         libzip-dev \
         bzip2 \
-        libbz2-dev
+        libbz2-dev \
+        wget
 
 # config clamav user
 RUN useradd -ms /bin/bash clamav
@@ -52,6 +53,12 @@ RUN cd /usr/src && \
     tar xzvf clamav-0.99.2.tar.gz && \
     cd clamav-0.99.2 && \
     ./configure --enable-bzip2 --with-system-llvm --disable-llvm -q && make CFLAGS="-Wall -g -O2 -Wno-unused-variable -Wno-unused-value" -s && make install -s
+
+# install avg
+
+# RUN wget http://download.avgfree.com/filedir/inst/avg2013flx-r3118-a6926.i386.deb && \
+#    dpkg -i avg2013flx-r3118-a6926.i386.deb && \
+#    avgupdate
 
 # link shared libraries
 RUN ldconfig

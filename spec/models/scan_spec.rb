@@ -139,11 +139,26 @@ RSpec.describe Scan, type: :model do
     it "sets started_at and status" do
       Timecop.freeze Time.now
       scan = build(:scan, ended_at: nil, status: :pending)
-      scan.complete! :clean, "good"
+      scan.complete!({ clamav: :clean }, "good")
 
-      expect(scan).to be_clean
-      expect(scan.result).to eq "good"
+      expect(scan).to be_clamav_clean
+      expect(scan.result).to eq "good" # fixme
       expect(scan.ended_at).to eq Time.now
+    end
+  end
+
+  describe "#engines" do
+    it "set's engines accordint to plan" do
+      scan = create(:scan)
+      expect(scan.reload.engines).to eq([:clamav])
+    end
+
+    it "set's engines accordint to plan" do
+      plan = create(:plan, clamav: false, eset: true, avg: true)
+      account = create(:account, plan: plan)
+      scan = create(:scan, account: account)
+
+      expect(scan.reload.engines).to eq([:eset, :avg])
     end
   end
 end
