@@ -3,9 +3,12 @@ FROM ubuntu:16.04
 # https://www.brightbox.com/docs/ruby/ubuntu/
 ENV RUBY_VERSION 2.3
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C3173AA6 && \
-    echo deb http://ppa.launchpad.net/brightbox/ruby-ng/ubuntu trusty main > /etc/apt/sources.list.d/brightbox-ruby-ng-trusty.list && \
-    apt-get -qq update && apt-get -qqy install --no-install-recommends \
+RUN apt-get update && \
+    apt-get -qqy install software-properties-common && \
+    apt-add-repository ppa:brightbox/ruby-ng
+
+RUN apt-get -qq update && \
+    apt-get -qqy install --no-install-recommends \
         ca-certificates \
         openssl \
         libssl-dev \
@@ -27,9 +30,22 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C3173AA6 &
         libcurl3 \
         curl \
         unrar-free \
-        libzip-dev \
-        clamav \
-        clamav-daemon
+        libzip-dev
+
+# config clamav user
+RUN adduser clamav && \
+    mkdir /var/lib/clamav && \
+    chown clamav:clamav -R /var/lib/clamav
+
+# build clamav
+RUN cd /usr/src && \
+    curl -LO https://www.clamav.net/downloads/production/clamav-0.99.2.tar.gz && \
+    tar xzvf clamav-0.99.2.tar.gz && \
+    cd clamav-0.99.2 && \
+    ./configure -q && make -s && make install -s
+
+# link shared libraries
+RUN ldconfig
 
 RUN echo 'gem: --no-rdoc --no-ri' >> ~/.gemrc
 RUN gem install bundler && gem update --system
@@ -40,11 +56,10 @@ WORKDIR /app
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 RUN bundle install --without development test --jobs 4
-
 COPY . /app
 
 # ClamAV
-COPY config/freshclam.conf /etc/clamav/freshclam.conf
-COPY config/clamd.conf /etc/clamav/clamd.conf
+COPY config/freshclam.conf /usr/local/etc/freshclam.conf
+COPY config/clamd.conf /usr/local/etc/clamd.conf
 RUN freshclam -v
 RUN clamscan --version > CLAM_VERSION
