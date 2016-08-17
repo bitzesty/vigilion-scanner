@@ -8,4 +8,6 @@ web:
     - "443:3000"
 worker:
   build: .
+  labels:
+    - convox.deployment.minimum=0
   command: ["bin/worker"]
