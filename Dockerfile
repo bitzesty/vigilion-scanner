@@ -51,7 +51,7 @@ RUN cd /usr/src && \
     curl -LO https://www.clamav.net/downloads/production/clamav-0.99.2.tar.gz && \
     tar xzvf clamav-0.99.2.tar.gz && \
     cd clamav-0.99.2 && \
-    ./configure --enable-bzip2 --with-system-llvm --disable-llvm -q && make CFLAGS="-Wall -g -O2" -s && make install -s
+    ./configure --enable-bzip2 --with-system-llvm --disable-llvm -q && make CFLAGS="-Wall -g -O2 -Wno-unused-variable -Wno-unused-value" -s && make install -s
 
 # link shared libraries
 RUN ldconfig
