@@ -26,6 +26,7 @@ RUN apt-get -qq update && \
         patch \
         ruby$RUBY_VERSION \
         ruby$RUBY_VERSION-dev \
+        ruby-switch \
         nodejs \
         build-essential \
         tzdata \
@@ -40,6 +41,8 @@ RUN apt-get -qq update && \
         libzip-dev \
         bzip2 \
         libbz2-dev
+
+RUN ruby-switch --set ruby$RUBY_VERSION
 
 # config clamav user
 RUN useradd -ms /bin/bash clamav
@@ -57,7 +60,7 @@ RUN cd /usr/src && \
 RUN ldconfig
 
 RUN echo 'gem: --no-rdoc --no-ri' >> ~/.gemrc
-RUN gem update --system && gem install bundler rake
+RUN gem update --system && gem install bundler
 
 EXPOSE 3000
 
