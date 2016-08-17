@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 5.0.0.1'
+gem 'rake'
 gem 'pg'
 gem 'jbuilder', '~> 2.6.0'
 gem 'sidekiq'
