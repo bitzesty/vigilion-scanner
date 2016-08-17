@@ -16,6 +16,13 @@ RUN apt-get -qq update && \
         gcc \
         libc6-dev \
         make \
+        pkg-config \
+        llvm-3.6 \
+        llvm-3.6-dev \
+        llvm-3.6-tools \
+        clang \
+        libpcre3 \
+        libpcre3-dev \
         patch \
         ruby$RUBY_VERSION \
         ruby$RUBY_VERSION-dev \
@@ -35,7 +42,6 @@ RUN apt-get -qq update && \
         libbz2-dev
 
 # config clamav user
-
 RUN useradd -ms /bin/bash clamav
 RUN mkdir /var/lib/clamav
 RUN chown clamav:clamav -R /var/lib/clamav
@@ -45,7 +51,7 @@ RUN cd /usr/src && \
     curl -LO https://www.clamav.net/downloads/production/clamav-0.99.2.tar.gz && \
     tar xzvf clamav-0.99.2.tar.gz && \
     cd clamav-0.99.2 && \
-    ./configure -q && make -s && make install -s
+    ./configure --enable-bzip2 --with-system-llvm --disable-llvm -q && make CFLAGS="-Wall -g -O2" -s && make install -s
 
 # link shared libraries
 RUN ldconfig
