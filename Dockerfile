@@ -64,7 +64,8 @@ EXPOSE 3000
 WORKDIR /app
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
-RUN bundle install --without development test --jobs 4
+RUN bundle install --without development test --jobs 4 --deployment
+
 
 COPY . /app
 
