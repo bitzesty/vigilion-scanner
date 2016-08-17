@@ -33,7 +33,6 @@ RUN apt-get -qq update && \
         libxslt-dev \
         git \
         postgresql-client \
-        postgresql-dev \
         libpq-dev \
         libcurl3 \
         curl \
