@@ -1,6 +1,6 @@
 web:
   build: .
-  command: ["/bin/bash", bundle, exec, puma, -C, config/puma.rb]
+  command: [bundle, exec, puma, -C, config/puma.rb]
   links:
     - database
     - redis
@@ -8,7 +8,7 @@ web:
     - "3000:3000"
 worker:
   build: .
-  command: ["/bin/bash", "bin/worker"]
+  command: ["bin/worker"]
   links:
     - database
     - redis
