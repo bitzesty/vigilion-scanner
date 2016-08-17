@@ -3,9 +3,9 @@ web:
   labels:
     - convox.port.443.protocol=https
     - convox.deployment.minimum=50
-  command: ["bin/bash", bundle, exec, puma, -C, config/puma.rb]
+  command: ["/bin/bash", bundle, exec, puma, -C, config/puma.rb]
   ports:
     - "443:3000"
 worker:
   build: .
-  command: ["bin/bash", "bin/worker"]
+  command: ["/bin/bash", "bin/worker"]
