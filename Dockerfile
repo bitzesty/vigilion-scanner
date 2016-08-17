@@ -39,7 +39,8 @@ RUN apt-get -qq update && \
         unrar-free \
         libzip-dev \
         bzip2 \
-        libbz2-dev
+        libbz2-dev \
+        libncurses5-dev
 
 # config clamav user
 RUN useradd -ms /bin/bash clamav
