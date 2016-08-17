@@ -58,7 +58,7 @@ RUN cd /usr/src && \
 RUN ldconfig
 
 RUN echo 'gem: --no-rdoc --no-ri' >> ~/.gemrc
-RUN gem update --system && gem install bundler rake
+RUN gem update --system && gem install bundler
 
 EXPOSE 3000
 
