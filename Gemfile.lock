@@ -182,11 +182,11 @@ DEPENDENCIES
   rails (~> 5.0.0.1)
   rails-controller-testing
   rake
-  rspec-core
-  rspec-expectations
-  rspec-mocks
-  rspec-rails
-  rspec-support
+  rspec-core (~> 3.5.0)
+  rspec-expectations (~> 3.5.0)
+  rspec-mocks (~> 3.5.0)
+  rspec-rails (~> 3.5.0)
+  rspec-support (~> 3.5.0)
   sentry-raven
   sidekiq
   sidekiq-unique-jobs

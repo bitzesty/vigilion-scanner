@@ -14,7 +14,7 @@ gem 'sentry-raven'
 group :development, :test do
   gem 'byebug'
   %w[rails core expectations mocks support].each do |name|
-    gem "rspec-#{name}"
+    gem "rspec-#{name}", "~> 3.5.0"
   end
   gem 'factory_girl_rails'
   gem 'timecop'
