@@ -1,4 +1,4 @@
-class DashboardAuthorization < BaseAuthorization
+class Authorizations::DashboardAuthorization < Authorizations::BaseAuthorization
   def current_project
     @current_project ||= Project.find(params[:project_id])
   end
