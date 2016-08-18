@@ -1,4 +1,4 @@
-class ClientAuthorization < BaseAuthorization
+class Authorizations::ClientAuthorization < Authorizations::BaseAuthorization
   def current_project
     @current_project ||= Project.find_by_access_key_id(authorization_token)
   end

@@ -30,9 +30,9 @@ class ApplicationController < ActionController::API
 
   def authorization_policy
     @authorization_policy ||= if request.headers['Dashboard-Auth-Key']
-                                DashboardAuthorization.new(self)
+                                Authorizations::DashboardAuthorization.new(self)
                               else
-                                ClientAuthorization.new(self)
+                                Authorizations::ClientAuthorization.new(self)
                               end
   end
 end

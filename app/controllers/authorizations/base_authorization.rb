@@ -1,4 +1,4 @@
-class BaseAuthorization
+class Authorizations::BaseAuthorization
   def initialize(controller)
     @controller = controller
   end
