@@ -1,46 +1,51 @@
 FROM ubuntu:16.04
 
-# https://www.brightbox.com/docs/ruby/ubuntu/
-ENV RUBY_VERSION 2.3
-
-RUN apt-get update && \
-    apt-get -qqy install software-properties-common && \
-    apt-add-repository ppa:brightbox/ruby-ng
-
+# for building ruby
 RUN apt-get -qq update && \
-    apt-get -qqy install --no-install-recommends \
-        ca-certificates \
-        openssl \
-        libssl-dev \
-        g++ \
-        gcc \
-        libc6-dev \
-        make \
-        pkg-config \
-        llvm-3.6 \
-        llvm-3.6-dev \
-        llvm-3.6-tools \
-        clang \
-        libpcre3 \
-        libpcre3-dev \
-        patch \
-        ruby$RUBY_VERSION \
-        ruby$RUBY_VERSION-dev \
-        nodejs \
-        build-essential \
-        tzdata \
-        libxml2-dev \
-        libxslt-dev \
-        git \
-        postgresql-client \
-        libpq-dev \
-        libcurl3 \
-        curl \
-        unrar-free \
-        libzip-dev \
-        bzip2 \
-        libbz2-dev \
-        libncurses5-dev
+    apt-get -qqy install \
+            build-essential \
+            curl \
+            git \
+            zlib1g-dev \
+            libssl-dev \
+            libreadline-dev \
+            libyaml-dev \
+            libxml2-dev \
+            libcurl4-gnutls-dev \
+            libxslt-dev \
+    # for postgresql
+            libpq-dev \
+            postgresql-client \
+    # for clamAV
+            libncurses5-dev \
+            unrar-free \
+            libzip-dev \
+            bzip2 \
+            libbz2-dev && \
+    apt-get clean
+
+# Install rbenv and ruby-build
+RUN git clone https://github.com/sstephenson/rbenv.git /root/.rbenv && \
+    git clone https://github.com/sstephenson/ruby-build.git /root/.rbenv/plugins/ruby-build && \
+    /root/.rbenv/plugins/ruby-build/install.sh
+
+# compile rbenv
+RUN cd /root/.rbenv && src/configure && make -C src
+
+# rbenv path
+ENV PATH /root/.rbenv/bin:/root/.rbenv/shims:$PATH
+RUN echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh # or /etc/profile
+RUN echo 'eval "$(rbenv init -)"' >> .bashrc
+
+# nodoc
+RUN echo 'gem: --no-rdoc --no-ri' >> ~/.gemrc
+
+# install ruby
+RUN rbenv install 2.3.1 && \
+    rbenv global 2.3.1
+
+# install bundler
+RUN gem install bundler
 
 # config clamav user
 RUN useradd -ms /bin/bash clamav
@@ -57,16 +62,12 @@ RUN cd /usr/src && \
 # link shared libraries
 RUN ldconfig
 
-RUN echo 'gem: --no-rdoc --no-ri' >> ~/.gemrc
-RUN gem update --system && gem install bundler
-
 EXPOSE 3000
 
 WORKDIR /app
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 RUN bundle install --without development test --jobs 4 --system
-
 
 COPY . /app
 
