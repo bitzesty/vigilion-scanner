@@ -17,6 +17,8 @@ RUN apt-get -qq update && \
             libpq-dev \
             postgresql-client \
     # for clamAV
+            libpcre3 \
+            libpcre3-dev \
             libncurses5-dev \
             unrar-free \
             libzip-dev \
