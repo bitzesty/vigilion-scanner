@@ -37,14 +37,15 @@ RUN cd /root/.rbenv && src/configure && make -C src
 # rbenv path
 ENV PATH /root/.rbenv/bin:/root/.rbenv/shims:$PATH
 RUN echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh # or /etc/profile
-RUN echo 'eval "$(rbenv init -)"' >> .bashrc
+RUN echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 
 # nodoc
 RUN echo 'gem: --no-rdoc --no-ri' >> ~/.gemrc
 
 # install ruby
 RUN rbenv install 2.3.1 && \
-    rbenv global 2.3.1
+    rbenv global 2.3.1 && \
+    ruby -v
 
 # install bundler
 RUN gem install bundler
