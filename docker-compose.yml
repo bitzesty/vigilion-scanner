@@ -3,6 +3,9 @@ web:
   labels:
     - convox.port.443.protocol=https
     - convox.deployment.minimum=50
+    - convox.health.path=/healthcheck
+    - convox.health.port=3000
+    - convox.health.timeout=3
   command: [bundle, exec, puma, -C, config/puma.rb]
   ports:
     - "443:3000"
