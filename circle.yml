@@ -10,7 +10,7 @@ deployment:
     commands:
       - convox login console.convox.com
       - convox switch bitzesty/vigilion-eu
-      - convox deploy --app scanner-staging -f docker-compose.yml.staging:
+      - convox deploy --app scanner-staging:
           timeout: 1800
       - convox run web bundle exec rake db:migrate --app scanner-staging
   production:
