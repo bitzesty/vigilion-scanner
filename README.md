@@ -4,6 +4,14 @@ This app is the responsible for processing files and scanning them to see if the
 
 ## Local Convox
 
+    Need to be added to docker hub account, contact matt
+
+    then run
+
+    docker login
+
+    docker pull bitzesty/vigilion-scanner-baseimage
+
     convox start -f docker-compose.yml.local
 
 ## Deploying Convox
