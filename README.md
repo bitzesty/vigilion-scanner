@@ -4,21 +4,29 @@ This app is the responsible for processing files and scanning them to see if the
 
 ## Local Convox
 
+    Need to be added to docker hub account, contact matt
+
+    then run
+
+    docker login
+
+    docker pull bitzesty/vigilion-scanner-baseimage
+
     convox start -f docker-compose.yml.local
 
 ## Deploying Convox
 
     AUTO DEPLOYMENT is done via CircleCI, and a heroku daily scheduler.
 
-    convox switch bitzesty/vigilion
+    convox switch bitzesty/vigilion-eu
 
-    convox deploy --app vigilion-scanner-staging
+    convox deploy --app scanner-staging
 
-    convox run web bash --app vigilion-scanner-staging
-    convox run web rake db:migrate --app vigilion-scanner-staging
+    convox run web bash --app scanner-staging
+    convox run web rake db:migrate --app scanner-staging
     convox run web rake some:long_task --detach
 
-    convox deploy --app vigilion-scanner-production
+    convox deploy --app scanner-production
 
 
 Logging:
@@ -101,18 +109,11 @@ The id is obtained as a response from POST /scans
 
 ## Application setup
 
-#### STEP 1: Setup clamav antivirus on local
+### Install
 
-[Installing Clam AV](https://github.com/bitzesty/virus-scanner#installing-clam-av)
+Install docker and run `convox start -f docker-compose.yml.local`
 
-#### STEP 2: Set proper env vars to .env file in virus scanner repo
-
-```
-AVENGINE=clamdscan
-REDIS_URL=
-```
-
-#### STEP 3: Populate API account
+#### Populate API account
 
 Here is the rake script https://github.com/bitzesty/virus-scanner/blob/master/lib/tasks/account.rake
 
@@ -126,7 +127,7 @@ account.api_key
 
 * on Account creation api_key would be generated automatically.
 
-#### STEP 4: Setup env vars on Target Rails app side
+#### Setup env vars on Target Rails app side
 
 In .env you need to specify following env variables
 ```
@@ -135,7 +136,7 @@ VIRUS_SCANNER_API_URL=http://localhost:5000 # can be different on your side
 VIRUS_SCANNER_API_KEY=<API KEY>
 ```
 
-#### STEP 5: Run both apps
+#### Run both apps
 
 ```
 foreman start
@@ -147,30 +148,6 @@ NOTE: Make sure that in target rails app's Gemfile you have:
 ```
 gem "vs_rails", "~> 0.0.7"
 ```
-
-## Installing Clam AV
-
-    brew install clamav
-
-    modify /usr/local/etc/clamav/freshclam.conf.sample
-    save /usr/local/etc/clamav/freshclam.conf (comment out the example line)
-
-    modify /usr/local/etc/clamav/clamd.conf
-
-    freshclam
-
-    (OSX Run Clamd for faster scanning & MD5 caching)
-    /usr/local/Cellar/clamav/0.98.6/sbin/clamd
-
-## Redis
-
-  REDIS needs to be installed and running, can set REDIS_URL
-
-## Running
-
-    Load ENV variables see .env.example
-
-    foreman start
 
 ## Testing
 

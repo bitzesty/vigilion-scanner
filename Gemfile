@@ -1,8 +1,9 @@
 source 'https://rubygems.org'
 
-gem 'rails', github: 'rails/rails'
+gem 'rails', '~> 5.0.0.1'
+gem 'rake'
 gem 'pg'
-gem 'jbuilder', github: 'rails/jbuilder'
+gem 'jbuilder', '~> 2.6.0'
 gem 'sidekiq'
 gem 'sidekiq-unique-jobs'
 gem 'typhoeus'
@@ -13,7 +14,7 @@ gem 'sentry-raven'
 group :development, :test do
   gem 'byebug'
   %w[rails core expectations mocks support].each do |name|
-    gem "rspec-#{name}", github: "rspec/rspec-#{name}", branch: 'master'
+    gem "rspec-#{name}", "~> 3.5.0"
   end
   gem 'factory_girl_rails'
   gem 'timecop'
