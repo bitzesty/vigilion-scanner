@@ -15,7 +15,9 @@ RSpec.describe ScanWorker do
         scan = create(:scan, file: OpenStruct.new(read: "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"))
         puts scan.id
         ScanWorker.new.perform(scan.id)
-        expect(scan.reload).to be_infected
+        expect(scan.reload).to be_clamav_infected
+        expect(scan).to be_infected
+        expect(scan.result).to eq(scan.clamav_result)
       end
     end
 
@@ -24,7 +26,9 @@ RSpec.describe ScanWorker do
         scan = create(:scan, file: OpenStruct.new(read: "regular file"))
         puts scan.id
         ScanWorker.new.perform(scan.id)
-        expect(scan.reload).to be_clean
+        expect(scan.reload).to be_clamav_clean
+        expect(scan).to be_clean
+        expect(scan.result).to eq(scan.clamav_result)
       end
     end
   end
