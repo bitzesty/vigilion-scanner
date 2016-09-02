@@ -26,7 +26,13 @@ class Scan < ActiveRecord::Base
   end
 
   def file_path
-    File.join(File.expand_path("../../..", __FILE__), "tmp", id)
+    File.join(
+      File.expand_path("../../..", __FILE__), "tmp", id + file_extension.to_s
+    )
+  end
+
+  def file_extension
+    File.extname(url) if url.present?
   end
 
   def file_exists?
