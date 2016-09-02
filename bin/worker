@@ -1,7 +1,10 @@
 #!/bin/sh
 
-# Startup clamd in background
+# boot clamd in background
 nohup clamd &
+
+# boot avg in background
+nohup service avgd start &
 
 # run sidekiq
 exec bundle exec sidekiq -q default -c 2
