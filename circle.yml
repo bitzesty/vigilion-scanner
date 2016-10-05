@@ -1,6 +1,7 @@
 dependencies:
   pre:
-    - sudo apt-get install clamav clamav-daemon -y
+    - sudo apt-get update -qq
+    - sudo apt-get install clamav clamav-daemon -qqy
   post:
     - curl -Ls https://install.convox.com/linux.zip > convox.zip
     - sudo unzip convox.zip -d /usr/local/bin
