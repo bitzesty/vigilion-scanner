@@ -83,12 +83,13 @@ The id is obtained as a response from POST /scans
 ### Install
 
 Install docker and to be added to docker hub account (contact matt) and run:
+```
+docker login
 
-    docker login
+docker pull bitzesty/vigilion-scanner-baseimage # https://github.com/bitzesty/vigilion-scanner-baseimage/blob/master/Dockerfile
 
-    docker pull [bitzesty/vigilion-scanner-baseimage](https://github.com/bitzesty/vigilion-scanner-baseimage/blob/master/Dockerfile)
-
-    convox start -f docker-compose.yml.local
+convox start -f docker-compose.yml.local
+```
 
 #### Populate API account
 
