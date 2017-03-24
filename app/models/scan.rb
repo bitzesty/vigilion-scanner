@@ -12,6 +12,11 @@ class Scan < ActiveRecord::Base
   after_create :write_file
   before_destroy :delete_file
 
+  def url=(new_url)
+    unescaped_url = Addressable::URI.unescape(new_url)
+    write_attribute :url, unescaped_url
+  end
+
   def duration
     ended_at - started_at if ended_at
   end
