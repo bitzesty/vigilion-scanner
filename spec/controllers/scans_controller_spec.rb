@@ -126,6 +126,21 @@ RSpec.describe ScansController, type: :controller do
           post :create, params: { scan: valid_attributes }
           expect(response).to be_created
         end
+
+        it "accepts an encoded URI" do
+          attributes = attributes_for(:scan, url: "https%3A%2F%2Fs3.amazonaws.com%2Fvigilion-load-test%2Feicar.com")
+          post :create, params: { scan: attributes }
+          expect(
+            JSON.parse(response.body)["url"]
+          ).to eq(valid_attributes[:url])
+        end
+
+        it "accepts a non-encoded URI" do
+          post :create, params: { scan: valid_attributes }
+          expect(
+            JSON.parse(response.body)["url"]
+          ).to eq(valid_attributes[:url])
+        end
       end
 
       context "with a scan not allowed to the account" do

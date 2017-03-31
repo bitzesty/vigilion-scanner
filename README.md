@@ -87,7 +87,7 @@ Install docker and to be added to docker hub account (contact matt) and run:
 
     docker login
 
-Pull the Docker base image from docker hub if you like:
+Pull the Docker base image from docker hub (https://github.com/bitzesty/vigilion-scanner-baseimage/blob/master/Dockerfile):
 
     docker pull bitzesty/vigilion-scanner-baseimage
 
