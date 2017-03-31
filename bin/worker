@@ -4,4 +4,4 @@
 nohup clamd &
 
 # run sidekiq
-bundle exec sidekiq -q default -c 2
+exec bundle exec sidekiq -q default -c 2
