@@ -67,15 +67,16 @@ The id is obtained as a response from POST /scans
 
 ## HTTP Statuses
 
-|Code |	Title |	Description |
-|---------------------------|
-|200|	OK |	The request was successful. |
-|201|	Created |	The resource was successfully created. |
-|400|	Bad request |	Bad request |
-|422|	Validation error |	A validation error occurred. |
-|401|	Unauthorized |	Your API key is invalid. |
-|404|	Not found |	The resource does not exist. |
-|50X|	Internal Server Error |	An error occurred with our API. |
+
+|Code |	Title                 |	Description                            |
+| --- |:---------------------:| :--------------------------------------|
+|200  |	OK                    |	The request was successful.            |
+|201  |	Created               |	The resource was successfully created. |
+|400  |	Bad request           |	Bad request                            |
+|422  |	Validation error      |	A validation error occurred.           |
+|401  |	Unauthorized          |	Your API key is invalid.               |
+|404  |	Not found             |	The resource does not exist.           |
+|50X  |	Internal Server Error |	An error occurred with our API.        |
 
 
 ## Application setup
@@ -83,13 +84,16 @@ The id is obtained as a response from POST /scans
 ### Install
 
 Install docker and to be added to docker hub account (contact matt) and run:
-```
-docker login
 
-docker pull bitzesty/vigilion-scanner-baseimage # https://github.com/bitzesty/vigilion-scanner-baseimage/blob/master/Dockerfile
+    docker login
 
-convox start -f docker-compose.yml.local
-```
+Pull the Docker base image from docker hub (https://github.com/bitzesty/vigilion-scanner-baseimage/blob/master/Dockerfile):
+
+    docker pull bitzesty/vigilion-scanner-baseimage
+
+Build the image from the base image and the contents of this repository: 
+
+    convox start -f docker-compose.yml.local
 
 #### Populate API account
 
