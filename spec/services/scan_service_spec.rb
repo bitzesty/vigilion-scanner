@@ -54,6 +54,19 @@ RSpec.describe ScanService do
           scan_service.perform scan
         end
       end
+
+      context "when an exception occurs" do
+        before do
+          expect_any_instance_of(FileDownloader).to receive(:download).and_raise(RuntimeError)
+        end
+
+        it "does not call #delete_file and exceptions are raised" do
+          expect(scan).to_not receive(:delete_file)
+          expect {
+            scan_service.perform scan
+          }.to raise_exception(RuntimeError)
+        end
+      end
     end
 
     context "with non pending scan" do
