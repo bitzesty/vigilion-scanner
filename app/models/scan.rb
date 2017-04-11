@@ -15,6 +15,7 @@ class Scan < ActiveRecord::Base
   validates :url, presence: true, on: :create, unless: :file_to_write?
 
   after_create :write_file
+  after_create :analyse_account_for_quota_usage
   before_destroy :delete_file
 
   def url=(new_url)
@@ -103,5 +104,9 @@ class Scan < ActiveRecord::Base
 
   def write_file
     File.open(file_path, "wb") { |f| f.write(@file.read) } if file_to_write?
+  end
+
+  def analyse_account_for_quota_usage
+    AccountQuotaUsageAnalyserService.new(scan: self).perform!
   end
 end
