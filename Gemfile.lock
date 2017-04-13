@@ -43,6 +43,7 @@ GEM
     arel (7.1.1)
     builder (3.2.2)
     byebug (9.0.5)
+    chronic (0.10.2)
     concurrent-ruby (1.0.2)
     connection_pool (2.2.0)
     database_cleaner (1.5.3)
@@ -170,6 +171,8 @@ GEM
     websocket-driver (0.6.4)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
+    whenever (0.9.4)
+      chronic (>= 0.6.3)
 
 PLATFORMS
   ruby
@@ -197,6 +200,7 @@ DEPENDENCIES
   simplecov
   timecop
   typhoeus
+  whenever (~> 0.9)
 
 BUNDLED WITH
    1.12.5
