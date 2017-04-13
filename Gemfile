@@ -4,13 +4,14 @@ gem 'rails', '~> 5.0.0.1'
 gem 'rake'
 gem 'pg'
 gem 'jbuilder', '~> 2.6.0'
-gem 'sidekiq'
-gem 'sidekiq-unique-jobs'
 gem 'typhoeus'
 gem 'dotenv-rails'
 gem 'puma'
 gem 'sentry-raven'
 gem 'addressable', '~> 2.5'
+
+gem 'sidekiq', '~> 4.1'
+gem 'sidekiq-scheduler', '~> 2.0'
 
 group :development, :test do
   gem 'byebug'
