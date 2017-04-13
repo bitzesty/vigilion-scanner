@@ -1,9 +1,9 @@
 class AccountQuotaUsageMailer < ApplicationMailer
-  def alert_support(scan)
-    @project = scan.project
+  def alert_support(account)
+    @account = account
     mail(
       to: "support@vigilion.com",
-      subject: "High quota usage for #{@project.name}"
+      subject: "High quota usage for account #{@account.id}"
     )
   end
 end
