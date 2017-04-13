@@ -11,7 +11,7 @@ gem 'dotenv-rails'
 gem 'puma'
 gem 'sentry-raven'
 gem 'addressable', '~> 2.5'
-gem 'whenever', '~> 0.9', require: false
+gem 'sidekiq-scheduler'
 
 group :development, :test do
   gem 'byebug'
