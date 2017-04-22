@@ -91,7 +91,7 @@ Pull the Docker base image from docker hub (https://github.com/bitzesty/vigilion
 
     docker pull bitzesty/vigilion-scanner-baseimage
 
-Build the image from the base image and the contents of this repository: 
+Build the image from the base image and the contents of this repository:
 
     convox start -f docker-compose.yml.local
 
