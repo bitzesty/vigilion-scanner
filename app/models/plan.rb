@@ -1,4 +1,5 @@
 class Plan < ActiveRecord::Base
+  ENGINES = [:clamav, :eset, :avg]
   MEGA_BYTE = 1024 * 1024
 
   has_many :accounts
@@ -11,5 +12,9 @@ class Plan < ActiveRecord::Base
 
   def allow_file_size?(size_in_bytes)
     file_size_limit.nil? || file_size_limit * MEGA_BYTE >= size_in_bytes
+  end
+
+  def engines
+    ENGINES.select { |e| public_send(e) }
   end
 end

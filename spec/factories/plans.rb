@@ -4,6 +4,7 @@ FactoryGirl.define do
     cost 9.99
     file_size_limit 1
     scans_per_month 1
+    clamav true
 
     trait :no_scans_limit do
       scans_per_month nil

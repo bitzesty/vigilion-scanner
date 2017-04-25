@@ -1,37 +1,8 @@
-# Vigilion Scanner [![Circle CI](https://circleci.com/gh/bitzesty/vigilion-scanner.svg?style=svg&circle-token=fdeeca1d75da76a7ed912436b764c9f6497cf4fc)](https://circleci.com/gh/bitzesty/vigilion-scanner)
+# Vigilion Scanner API [![Circle CI](https://circleci.com/gh/bitzesty/vigilion-scanner.svg?style=svg&circle-token=fdeeca1d75da76a7ed912436b764c9f6497cf4fc)](https://circleci.com/gh/bitzesty/vigilion-scanner)
 
 This app is the responsible for processing files and scanning them to see if they are clean or if they contain viruses.
 
-## Local Convox
-
-    Need to be added to docker hub account, contact matt
-
-    then run
-
-    docker login
-
-    docker pull bitzesty/vigilion-scanner-baseimage
-
-    convox start -f docker-compose.yml.local
-
-## Deploying Convox
-
-    AUTO DEPLOYMENT is done via CircleCI, and a heroku daily scheduler.
-
-    convox switch bitzesty/vigilion-eu
-
-    convox deploy --app scanner-staging
-
-    convox run web bash --app scanner-staging
-    convox run web rake db:migrate --app scanner-staging
-    convox run web rake some:long_task --detach
-
-    convox deploy --app scanner-production
-
-
-Logging:
-
-Staging & Production logs are streamed to papertrail (credentials are in lastpass user`matt+prod@vigilion.com`)
+It also contains the models for company accounts and plans, and scanning API keys.
 
 ## Scanning Flow
 
@@ -96,22 +67,33 @@ The id is obtained as a response from POST /scans
 
 ## HTTP Statuses
 
-|Code |	Title |	Description |
-|---------------------------|
-|200|	OK |	The request was successful. |
-|201|	Created |	The resource was successfully created. |
-|400|	Bad request |	Bad request |
-|422|	Validation error |	A validation error occurred. |
-|401|	Unauthorized |	Your API key is invalid. |
-|404|	Not found |	The resource does not exist. |
-|50X|	Internal Server Error |	An error occurred with our API. |
+
+|Code |	Title                 |	Description                            |
+| --- |:---------------------:| :--------------------------------------|
+|200  |	OK                    |	The request was successful.            |
+|201  |	Created               |	The resource was successfully created. |
+|400  |	Bad request           |	Bad request                            |
+|422  |	Validation error      |	A validation error occurred.           |
+|401  |	Unauthorized          |	Your API key is invalid.               |
+|404  |	Not found             |	The resource does not exist.           |
+|50X  |	Internal Server Error |	An error occurred with our API.        |
 
 
 ## Application setup
 
 ### Install
 
-Install docker and run `convox start -f docker-compose.yml.local`
+Install docker and to be added to docker hub account (contact matt) and run:
+
+    docker login
+
+Pull the Docker base image from docker hub (https://github.com/bitzesty/vigilion-scanner-baseimage/blob/master/Dockerfile):
+
+    docker pull bitzesty/vigilion-scanner-baseimage
+
+Build the image from the base image and the contents of this repository:
+
+    convox start -f docker-compose.yml.local
 
 #### Populate API account
 
@@ -155,3 +137,22 @@ To run specs execute
 `bundle exec rspec`
 
 You can also test the API using postman
+
+## Deploying Convox
+
+    AUTO DEPLOYMENT is done via CircleCI, and a heroku daily scheduler.
+
+    convox switch bitzesty/vigilion-eu
+
+    convox deploy --app scanner-staging
+
+    convox run web bash --app scanner-staging
+    convox run web rake db:migrate --app scanner-staging
+    convox run web rake some:long_task --detach
+
+    convox deploy --app scanner-production
+
+
+## Logging
+
+Staging & Production logs are streamed to papertrail (credentials are in lastpass user`matt+prod@vigilion.com`)

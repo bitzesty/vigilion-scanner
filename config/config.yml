@@ -3,20 +3,36 @@ default: &default
 
 development:
   <<: *default
-  av_engine: "clamdscan"
   dashboard_api_key: "vigilion"
+  engines:
+    clamav: "clamdscan"
+    avg: "avgscan"
+    avg_opts: "-P -a -w -j"
+    eset: "esets_scan"
 
 test:
   <<: *default
-  av_engine: "clamdscan"
   dashboard_api_key: "vigilion"
+  engines:
+    clamav: "clamdscan"
+    avg: "avgscan"
+    avg_opts: "-P -a -w -j -i"
+    eset: "esets_scan"
 
 staging:
   <<: *default
-  av_engine: <%= ENV["AVENGINE"] %>
   dashboard_api_key:  <%= ENV["DASHBOARD_API_KEY"] %>
+  engines:
+    clamav: "clamdscan"
+    avg: "avgscan"
+    avg_opts: "-P -a -w -j"
+    eset: "esets_scan"
 
 production:
   <<: *default
-  av_engine: <%= ENV["AVENGINE"] %>
   dashboard_api_key:  <%= ENV["DASHBOARD_API_KEY"] %>
+  engines:
+    clamav: "clamdscan"
+    avg: "avgscan"
+    avg_opts: "-P -a -w -j"
+    eset: "esets_scan"
