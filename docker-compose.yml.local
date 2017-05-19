@@ -8,7 +8,7 @@ web:
     - "3000:3000"
 worker:
   build: .
-  command: ["bin/worker"]
+  command: ["/sbin/my_init"]
   links:
     - database
     - redis
