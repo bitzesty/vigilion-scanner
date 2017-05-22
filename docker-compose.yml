@@ -9,6 +9,3 @@ web:
   command: ["/sbin/my_init"]
   ports:
     - "443:3000"
-worker:
-  build: .
-  command: ["bin/worker"]
