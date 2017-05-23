@@ -1,6 +1,6 @@
 web:
   build: .
-  command: [bundle, exec, puma, -C, config/puma.rb]
+  command: ["/sbin/my_init"]
   links:
     - database
     - redis
