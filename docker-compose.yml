@@ -6,6 +6,6 @@ web:
     - convox.health.path=/healthcheck
     - convox.health.port=3000
     - convox.health.timeout=3
-  command: [bundle, exec, puma, -C, config/puma.rb]
+  command: ["/sbin/my_init"]
   ports:
     - "443:3000"
