@@ -1,4 +1,4 @@
-FROM bitzesty/vigilion-scanner-baseimage:release-2.0
+FROM bitzesty/vigilion-scanner-baseimage:release-2.1
 
 # so that we sync in dev
 COPY . /usr/src/app
