@@ -1,0 +1,8 @@
+#!/bin/bash
+# Forwards the sidekiq.log to the Docker logs.
+set -e
+if [[ -e /var/log/sidekiq.log ]]; then
+	exec tail -F /var/log/sidekiq.log
+else
+	exec sleep 10
+fi
