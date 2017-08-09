@@ -12,6 +12,7 @@ gem 'addressable', '~> 2.5'
 
 gem 'sidekiq', '~> 4.1'
 gem 'sidekiq-scheduler', '~> 2.0'
+gem 'lograge'
 
 group :development, :test do
   gem 'byebug'
