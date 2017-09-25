@@ -1,18 +1,19 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 5.0.0.1'
-gem 'rake'
-gem 'pg'
+gem 'rake', '~> 11.2'
+gem 'pg', '~> 0.18'
 gem 'jbuilder', '~> 2.6.0'
-gem 'typhoeus'
-gem 'dotenv-rails'
-gem 'puma'
-gem 'sentry-raven'
+gem 'typhoeus', '~> 1.1'
+gem 'dotenv-rails', '~> 2.1'
+gem 'puma', '~> 3.6'
+gem 'sentry-raven', '~> 1.2'
 gem 'addressable', '~> 2.5'
 
 gem 'sidekiq', '~> 4.1'
 gem 'sidekiq-scheduler', '~> 2.0'
-gem 'lograge'
+gem 'lograge', '~> 0.5'
+gem 'logstash-event', '~> 1.2'
 
 group :development, :test do
   gem 'byebug'
