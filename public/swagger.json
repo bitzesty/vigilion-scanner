@@ -1,0 +1,187 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Welcome to the Vigilion API! The API is organized around REST. All requests must be made over SSL to https://api.vigilion.com. All request and response bodies, including errors, are encoded in JSON.\n\nWe also have some specific language and framework open source code libraries to make integration easier. You can checkout our [detailed guides here](https://docs.vigilion.com/guides).",
+    "version": "1.0.0",
+    "title": "Vigilion API",
+    "termsOfService": "https://www.vigilion.com/terms",
+    "contact": { "email": "help@vigilion.com" }
+  },
+  "host": "api.vigilion.com",
+  "tags": [
+    {
+      "name": "scans",
+      "description": "Request virus/malware scanning of files and to check the scan status"
+    }
+  ],
+  "schemes": [ "https" ],
+  "paths": {
+    "/scans": {
+      "get": {
+        "tags": [ "scans" ],
+        "summary": "List scans",
+        "description": "Fetch scans information",
+        "operationId": "list_scans",
+        "consumes": [ "application/json" ],
+        "produces": [ "application/json" ],
+        "responses": {
+          "200": {
+            "description": "Scans list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Scan"
+              }
+            }
+          }
+        },
+        "security": [
+          { "api_key": [] }
+        ]
+      },
+      "post": {
+        "tags": [ "scans" ],
+        "summary": "Create scans",
+        "description": "Submit a file URL for scanning",
+        "operationId": "create_scan",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "name": "url",
+            "in": "formData",
+            "description": "URL of the file you want to scan",
+            "type": "string"
+          },
+          {
+            "name": "key",
+            "in": "formData",
+            "description": "Reference to the ID of the file in your application",
+            "type": "string"
+          },
+          {
+            "name": "force",
+            "in": "formData",
+            "description": "bypass cache and force the file to be scanned again",
+            "type": "boolean"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "Instead of passing a URL to the file, you can pass the file itself (has file size restrictions).",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Pending scan",
+            "schema": {
+              "$ref": "#/definitions/Scan"
+            }
+          }
+        },
+        "security": [
+          { "api_key": [] }
+        ]
+      }
+    },
+    "/scans/{id}": {
+      "get": {
+        "tags": [ "scans" ],
+        "summary": "Get scan",
+        "description": "fetch a specific scan information",
+        "operationId": "get_scan",
+        "consumes": [ "application/json" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of scan to fetch",
+            "required": true,
+            "type": "integer",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Specific scan",
+            "schema": {
+              "$ref": "#/definitions/Scan"
+            }
+          }
+        },
+        "security": [
+          { "api_key": [] }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "X-Api-Key",
+      "in": "header",
+      "description": "Authentication is done via the API access key which you can find in your project settings, each API request must have the corresponding header X-Api-Key\\n\\n\\nIf this header is not present or the API key is not valid then the response will be 401 UNAUTHORIZED."
+    }
+  },
+  "definitions": {
+    "Scan": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "04fe9a97-a579-43c5-bb1a-58ed29bf0a6a"
+        },
+        "url": {
+          "type": "string",
+          "example": "https://s3.amazonaws.com/vigilion-load-test/eicar.com"
+        },
+        "key": {
+          "type": "string",
+          "description": "The ID of the file in your application"
+        },
+        "status": {
+          "type": "string",
+          "example": "infected",
+          "default": "pending",
+          "enum": [
+            "pending",
+            "scanning",
+            "clean",
+            "infected",
+            "error"
+          ]
+        },
+        "result": {
+          "type": "string",
+          "description": "Additional details from the scanning result",
+          "example": "Eicar-Test-Signature FOUND"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "duration": {
+          "type": "number",
+          "format": "double",
+          "example": 0.065503
+        },
+        "response_time": {
+          "type": "number",
+          "format": "double",
+          "example": 0.078898
+        },
+        "file_size": {
+          "type": "integer",
+          "format": "int32",
+          "example": 42
+        }
+      }
+    }
+  }
+}
