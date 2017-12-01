@@ -139,7 +139,7 @@
         },
         "url": {
           "type": "string",
-          "example": "http://google.com"
+          "example": "https://s3.amazonaws.com/vigilion-load-test/eicar.com"
         },
         "key": {
           "type": "string",
