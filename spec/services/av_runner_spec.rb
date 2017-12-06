@@ -12,6 +12,10 @@ RSpec.describe AvRunner do
       expect(AvRunner::Clamav).to receive(:new).with(scan).and_return(clamav)
 
       described_class.new.perform(scan)
+
+      scan.reload
+      expect(scan.mime_type).to eq("text/plain")
+      expect(scan.mime_encoding).to eq("charset=us-ascii")
     end
   end
 end

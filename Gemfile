@@ -9,6 +9,7 @@ gem 'dotenv-rails', '~> 2.1'
 gem 'puma', '~> 3.6'
 gem 'sentry-raven', '~> 1.2'
 gem 'addressable', '~> 2.5'
+gem 'ruby-filemagic', '~> 0.7'
 
 gem 'sidekiq', '~> 4.1'
 gem 'sidekiq-scheduler', '~> 2.0'
