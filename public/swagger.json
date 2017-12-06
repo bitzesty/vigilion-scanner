@@ -180,6 +180,21 @@
           "type": "integer",
           "format": "int32",
           "example": 42
+        },
+        "engines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [ "clamav" ]
+        },
+        "mime_type": {
+          "type": "string",
+          "example": "text/plain"
+        },
+        "mime_encoding": {
+          "type": "string",
+          "example": "charset=us-ascii"
         }
       }
     }
