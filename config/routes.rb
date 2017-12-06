@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   get :healthcheck, to: 'healthcheck#perform'
   get :status, to: 'healthcheck#perform'
 
+  post 'keys/rotate', to: 'keys#rotate'
+
   # Redirect the root api request back to vigilion
   root to: redirect('https://www.vigilion.com/')
 end
