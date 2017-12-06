@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170413130427) do
+ActiveRecord::Schema.define(version: 20171206001747) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,8 @@ ActiveRecord::Schema.define(version: 20170413130427) do
     t.string   "clamav_result"
     t.string   "eset_result"
     t.string   "avg_result"
+    t.string   "mime_type"
+    t.string   "mime_encoding"
     t.index ["md5"], name: "index_scans_on_md5", using: :btree
     t.index ["project_id"], name: "index_scans_on_project_id", using: :btree
   end

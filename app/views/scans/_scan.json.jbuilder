@@ -8,4 +8,6 @@ json.extract! scan,
               :duration,
               :response_time,
               :file_size,
-              :engines
+              :engines,
+              :mime_type,
+              :mime_encoding
