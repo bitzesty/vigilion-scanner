@@ -11,7 +11,11 @@
   "tags": [
     {
       "name": "scans",
-      "description": "Request virus/malware scanning of files and to check the scan status"
+      "description": "Request virus/malware scanning of files and check the scan status"
+    },
+    {
+      "name": "keys",
+      "description": "Regenerate api keys"
     }
   ],
   "schemes": [ "https" ],
@@ -118,6 +122,30 @@
           { "api_key": [] }
         ]
       }
+    },
+    "/keys/rotate": {
+      "post": {
+        "tags": [ "keys" ],
+        "summary": "Rotate api keys",
+        "description": "Generate new api key & api secret key, expiring existing keys",
+        "operationId": "keys_rotate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [ "application/json" ],
+        "parameters": [ ],
+        "responses": {
+          "201": {
+            "description": "New api keys",
+            "schema": {
+              "$ref": "#/definitions/ProjectKeys"
+            }
+          }
+        },
+        "security": [
+          { "api_key": [] }
+        ]
+      }
     }
   },
   "securityDefinitions": {
@@ -129,6 +157,19 @@
     }
   },
   "definitions": {
+    "ProjectKeys": {
+      "type": "object",
+      "properties": {
+        "access_key_id": {
+          "type": "string",
+          "example": "VIGILgoKmWLtppitK4V5fthMHxohmitQ"
+        },
+        "secret_access_key": {
+          "type": "string",
+          "example": "LIONEHb4hwqYhyMs3AQDlcTIc3LYUbthlYNn99VqCogqYxQ4Oxyy"
+        }
+      }
+    },
     "Scan": {
       "type": "object",
       "properties": {
