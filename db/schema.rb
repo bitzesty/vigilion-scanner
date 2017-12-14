@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171206001747) do
+ActiveRecord::Schema.define(version: 20171214043037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,28 +51,29 @@ ActiveRecord::Schema.define(version: 20171206001747) do
   end
 
   create_table "scans", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid     "project_id",                    null: false
+    t.uuid     "project_id",                       null: false
     t.string   "url"
-    t.string   "key",                           null: false
-    t.boolean  "force",         default: false
-    t.integer  "status",        default: 0
+    t.string   "key",                              null: false
+    t.boolean  "force",            default: false
+    t.integer  "status",           default: 0
     t.string   "result"
     t.string   "md5"
     t.string   "sha1"
     t.string   "sha256"
     t.bigint   "file_size"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.datetime "started_at"
     t.datetime "ended_at"
-    t.integer  "clamav_status", default: 0
-    t.integer  "eset_status",   default: 0
-    t.integer  "avg_status",    default: 0
+    t.integer  "clamav_status",    default: 0
+    t.integer  "eset_status",      default: 0
+    t.integer  "avg_status",       default: 0
     t.string   "clamav_result"
     t.string   "eset_result"
     t.string   "avg_result"
     t.string   "mime_type"
     t.string   "mime_encoding"
+    t.text     "webhook_response"
     t.index ["md5"], name: "index_scans_on_md5", using: :btree
     t.index ["project_id"], name: "index_scans_on_project_id", using: :btree
   end
