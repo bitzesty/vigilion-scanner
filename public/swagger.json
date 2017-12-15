@@ -236,6 +236,9 @@
         "mime_encoding": {
           "type": "string",
           "example": "charset=us-ascii"
+        },
+        "webhook_response": {
+          "type": "string"
         }
       }
     }

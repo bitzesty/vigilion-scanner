@@ -10,4 +10,5 @@ json.extract! scan,
               :file_size,
               :engines,
               :mime_type,
-              :mime_encoding
+              :mime_encoding,
+              :webhook_response
