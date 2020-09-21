@@ -15,7 +15,7 @@ gem 'sidekiq', '~> 4.1'
 gem 'sidekiq-scheduler', '~> 2.0'
 gem 'lograge', '~> 0.5'
 gem 'logstash-event', '~> 1.2'
-gem 'rack-cors', '~> 1.0.2', require: 'rack/cors'
+gem 'rack-cors', '~> 1.0.5', require: 'rack/cors'
 
 group :development, :test do
   gem 'byebug'
