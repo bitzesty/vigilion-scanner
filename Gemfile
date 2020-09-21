@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 5.0.6'
-gem 'rake', '~> 11.2'
+gem 'rake', '~> 12.3'
 gem 'pg', '~> 0.18'
 gem 'jbuilder', '~> 2.6.0'
 gem 'typhoeus', '~> 1.1'
