@@ -95,7 +95,8 @@ GEM
     public_suffix (2.0.5)
     puma (3.12.6)
     rack (2.2.3)
-    rack-cors (1.0.2)
+    rack-cors (1.0.5)
+      rack (>= 1.6.0)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.0.6)
@@ -196,7 +197,7 @@ DEPENDENCIES
   logstash-event (~> 1.2)
   pg (~> 0.18)
   puma (~> 3.12)
-  rack-cors (~> 1.0.2)
+  rack-cors (~> 1.0.5)
   rails (~> 5.0.6)
   rails-controller-testing
   rake (~> 11.2)
