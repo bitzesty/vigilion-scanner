@@ -38,8 +38,8 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.5.0)
-      public_suffix (~> 2.0, >= 2.0.2)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     arel (7.1.4)
     builder (3.2.3)
     byebug (9.0.5)
@@ -92,7 +92,7 @@ GEM
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     pg (0.18.4)
-    public_suffix (2.0.5)
+    public_suffix (4.0.6)
     puma (4.3.8)
       nio4r (~> 2.0)
     rack (2.2.3)
@@ -188,7 +188,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  addressable (~> 2.5)
+  addressable (~> 2.8)
   byebug
   database_cleaner
   dotenv-rails (~> 2.1)
