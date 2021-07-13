@@ -8,7 +8,7 @@ gem 'typhoeus', '~> 1.1'
 gem 'dotenv-rails', '~> 2.1'
 gem 'puma', '~> 4.3'
 gem 'sentry-raven', '~> 1.2'
-gem 'addressable', '~> 2.5'
+gem 'addressable', '~> 2.8'
 gem 'ruby-filemagic', '~> 0.7'
 
 gem 'sidekiq', '~> 4.1'
