@@ -1,6 +1,8 @@
 version: "3.9"
 services:
   web:
+    environment:
+    - REDIS_URL=redis:6379
     build: .
     command: ["/sbin/my_init"]
     links:

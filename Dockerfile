@@ -80,21 +80,6 @@ ENV BUNDLER_VERSION 1.17.3
 
 RUN gem install bundler --version "$BUNDLER_VERSION"
 
-# install things globally, for great justice
-# and don't create ".bundle" in all our apps
-ENV GEM_HOME /usr/local/bundle
-ENV BUNDLE_PATH="$GEM_HOME" \
-	BUNDLE_BIN="$GEM_HOME/bin" \
-	BUNDLE_SILENCE_ROOT_WARNING=1 \
-	BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $BUNDLE_BIN:$PATH
-RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
-	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
-# finished building ruby
-
-# FROM RUBY ONBUILD
-RUN bundle config --global frozen 1
-
 # our required packages
 RUN apt-get -qq update
 RUN apt-get -qqy install \
@@ -119,7 +104,7 @@ WORKDIR /usr/src/app
 
 COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
-RUN bundle install --without development test --jobs 4 --retry 3
+RUN bundle install --jobs 4 --retry 3
 
 # END RUBY ONBUILD
 
@@ -127,12 +112,11 @@ RUN bundle install --without development test --jobs 4 --retry 3
 COPY config/freshclam.conf /usr/local/etc/freshclam.conf
 RUN chmod 0700 /usr/local/etc/freshclam.conf
 COPY config/clamd.conf /usr/local/etc/clamd.conf
+RUN chmod 0700 /usr/local/etc/clamd.conf
 RUN freshclam -v && freshclam --version > CLAM_VERSION
 # END CLAMAV
 
 # avg
-
-EXPOSE 3000
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -155,3 +139,5 @@ RUN chmod +x /etc/service/puma/run
 RUN mkdir /etc/service/puma-log-forwarder
 COPY docker/puma-log-forwarder /etc/service/puma-log-forwarder/run
 RUN chmod +x /etc/service/puma-log-forwarder/run
+
+EXPOSE 3000
