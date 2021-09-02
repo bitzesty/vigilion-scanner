@@ -117,19 +117,17 @@ RUN ldconfig
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-ONBUILD COPY Gemfile /usr/src/app/
-ONBUILD COPY Gemfile.lock /usr/src/app/
-ONBUILD RUN bundle install --without development test --jobs 4 --system
+COPY Gemfile /usr/src/app/
+COPY Gemfile.lock /usr/src/app/
+RUN bundle install --without development test --jobs 4 --retry 3
 
-ONBUILD COPY . /usr/src/app
 # END RUBY ONBUILD
 
 # ClamAV
-ONBUILD COPY config/freshclam.conf /usr/local/etc/freshclam.conf
-ONBUILD RUN chmod 0700 /usr/local/etc/freshclam.conf
-ONBUILD COPY config/clamd.conf /usr/local/etc/clamd.conf
-ONBUILD RUN freshclam -v
-ONBUILD RUN freshclam --version > CLAM_VERSION
+COPY config/freshclam.conf /usr/local/etc/freshclam.conf
+RUN chmod 0700 /usr/local/etc/freshclam.conf
+COPY config/clamd.conf /usr/local/etc/clamd.conf
+RUN freshclam -v && freshclam --version > CLAM_VERSION
 # END CLAMAV
 
 # avg
