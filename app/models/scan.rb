@@ -14,12 +14,13 @@ class Scan < ActiveRecord::Base
   validates :key, :project, presence: true
   validates :url, presence: true, on: :create, unless: :file_to_write?
 
+  before_create :set_url, unless: :do_not_unencode?
   after_create :write_file
   before_destroy :delete_file
 
-  def url=(new_url)
+  def set_url
     unescaped_url = Addressable::URI.unescape(new_url)
-    write_attribute :url, unescaped_url
+    self.url =  unescaped_url
   end
 
   def duration

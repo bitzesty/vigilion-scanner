@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171214043037) do
+ActiveRecord::Schema.define(version: 20210902141405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(version: 20171214043037) do
     t.string   "mime_type"
     t.string   "mime_encoding"
     t.text     "webhook_response"
+    t.boolean  "do_not_unencode",  default: false, null: false
     t.index ["md5"], name: "index_scans_on_md5", using: :btree
     t.index ["project_id"], name: "index_scans_on_project_id", using: :btree
   end

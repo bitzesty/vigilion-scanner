@@ -92,7 +92,7 @@ GEM
     nokogiri (1.11.5)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
-    pg (0.18.4)
+    pg (0.21.0)
     public_suffix (4.0.6)
     puma (4.3.8)
       nio4r (~> 2.0)
@@ -218,4 +218,4 @@ DEPENDENCIES
   typhoeus (~> 1.1)
 
 BUNDLED WITH
-   1.16.0
+   1.17.3

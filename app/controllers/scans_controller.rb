@@ -55,7 +55,7 @@ class ScansController < ApplicationController
     if params[:scan].present?
       params.require(:scan).permit(:url, :key, :file, :force)
     else
-      params.permit(:url, :key, :file, :force)
+      params.permit(:url, :key, :file, :force, :do_not_unencode)
     end
   end
 
