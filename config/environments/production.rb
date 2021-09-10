@@ -58,8 +58,8 @@ Rails.application.configure do
 
   config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
 
-  config.lograge.enabled = true
-  config.lograge.formatter = Lograge::Formatters::Logstash.new
+#  config.lograge.enabled = true
+#  config.lograge.formatter = Lograge::Formatters::Logstash.new
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
