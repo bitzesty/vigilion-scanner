@@ -140,17 +140,17 @@ You can also test the API using postman
 
 ## Deploying Convox
 
-    AUTO DEPLOYMENT is done via CircleCI, and a heroku daily scheduler.
-
     convox switch bitzesty/vigilion-eu
 
-    convox deploy --app scanner-staging
+    convox deploy --app api-scanner-staging-g2
 
-    convox run web bash --app scanner-staging
-    convox run web rake db:migrate --app scanner-staging
-    convox run web rake some:long_task --detach
+    convox run web bash --app api-scanner-staging-g2
+    convox run web rake db:migrate --app api-scanner-staging-g2
+    convox run web rake some:long_task --detach --app api-scanner-staging-g2
 
-    convox deploy --app scanner-production
+    Production
+
+    convox deploy --app api-scanner-production
 
 
 ## Logging
