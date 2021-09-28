@@ -1,4 +1,8 @@
-FROM phusion/baseimage:0.9.21
+FROM phusion/baseimage:master
+# Use baseimage-docker's init system.
+ENTRYPOINT ["/sbin/my_init", "--"]
+CMD ["/sbin/my_init"]
+
 
 # ruby runtime dependencies
 RUN apt-get -qq update && \
@@ -18,10 +22,10 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.3
-ENV RUBY_VERSION 2.3.4
-ENV RUBY_DOWNLOAD_SHA256 341cd9032e9fd17c452ed8562a8d43f7e45bfe05e411d0d7d627751dd82c578c
-ENV RUBYGEMS_VERSION 2.6.12
+ENV RUBY_MAJOR 2.5
+ENV RUBY_VERSION 2.5.8
+ENV RUBY_DOWNLOAD_SHA256 0391b2ffad3133e274469f9953ebfd0c9f7c186238968cbdeeb0651aa02a4d6d
+ENV RUBYGEMS_VERSION 2.7.6.2
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -69,68 +73,29 @@ RUN set -ex \
 	\
 	&& apt-get purge -y --auto-remove $buildDeps \
 	&& cd / \
-	&& rm -r /usr/src/ruby \
-	\
-	&& gem update --system "$RUBYGEMS_VERSION"
+	&& rm -r /usr/src/ruby
 
-ENV BUNDLER_VERSION 1.14.6
+RUN gem update --system "$RUBYGEMS_VERSION"
+
+ENV BUNDLER_VERSION 1.17.3
 
 RUN gem install bundler --version "$BUNDLER_VERSION"
 
-# install things globally, for great justice
-# and don't create ".bundle" in all our apps
-ENV GEM_HOME /usr/local/bundle
-ENV BUNDLE_PATH="$GEM_HOME" \
-	BUNDLE_BIN="$GEM_HOME/bin" \
-	BUNDLE_SILENCE_ROOT_WARNING=1 \
-	BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $BUNDLE_BIN:$PATH
-RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
-	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
-# finished building ruby
-
-# FROM RUBY ONBUILD
-RUN bundle config --global frozen 1
-
 # our required packages
-RUN apt-get -qq update && \
-		apt-get -qqy install \
+RUN apt-get -qq update
+RUN apt-get -qqy install \
     # for postgresql
             libpq-dev \
             postgresql-client \
     # for clamAV
-            libpcre3 \
-            libpcre3-dev \
-            libncurses5-dev \
-            unrar-free \
-            libzip-dev \
-            bzip2 \
-            libbz2-dev \
-            build-essential \
+            clamav \
+						clamav-daemon \
+            build-essential
     # for AVG
-            lib32ncurses5
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# config clamav user
-RUN useradd -ms /bin/bash clamav
-RUN mkdir /var/lib/clamav
-RUN chown clamav:clamav -R /var/lib/clamav
-
-# build clamav
-RUN cd /usr/src && \
-    curl -LO https://www.clamav.net/downloads/production/clamav-0.104.0.tar.gz && \
-    tar xzvf clamav-0.104.0.tar.gz && \
-    cd clamav-0.104.0 && \
-    ./configure --enable-bzip2 --enable-llvm -q && make CFLAGS="-Wall -g -O2 -Wno-unused-variable -Wno-unused-value" -s && make install -s
-
-# refresh virus definitions each 2 hours. ClamAV recommends not update in times multiple of 10
-RUN echo "15 */2 * * * root /usr/local/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
-RUN echo "30 */2 * * * root /usr/local/bin/freshclam --version > /usr/src/app/CLAM_VERSION\n" >> /etc/cron.d/freshclam-version-cron
-
-# install avg
-RUN curl -LO http://download.avgfree.com/filedir/inst/avg2013flx-r3118-a6926.i386.deb && \
-    dpkg -i avg2013flx-r3118-a6926.i386.deb
+# refresh virus definitions each 1 hour. ClamAV recommends not update in times multiple of 10
+RUN echo "15 * * * * root /usr/local/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
+RUN echo "30 * * * * root /usr/local/bin/freshclam --version > /usr/src/app/CLAM_VERSION\n" >> /etc/cron.d/freshclam-version-cron
 
 # link shared libraries
 RUN ldconfig
@@ -140,26 +105,20 @@ WORKDIR /usr/src/app
 
 COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
-RUN bundle install --without development test --jobs 4 --system
+RUN bundle install --jobs 4 --retry 3
 
-COPY . /usr/src/app
 # END RUBY ONBUILD
 
 # ClamAV
 COPY config/freshclam.conf /usr/local/etc/freshclam.conf
 RUN chmod 0700 /usr/local/etc/freshclam.conf
 COPY config/clamd.conf /usr/local/etc/clamd.conf
-RUN freshclam -v
-RUN freshclam --version > CLAM_VERSION
+RUN chmod 0700 /usr/local/etc/clamd.conf
+RUN freshclam -v && freshclam --version > CLAM_VERSION
 # END CLAMAV
 
-# avg
-RUN service avgd start && avgupdate
-RUN avgscan -v > AVG_VERSION
-
-EXPOSE 3000
-
 # Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # so that we sync in dev
 COPY . /usr/src/app
@@ -179,3 +138,5 @@ RUN chmod +x /etc/service/puma/run
 RUN mkdir /etc/service/puma-log-forwarder
 COPY docker/puma-log-forwarder /etc/service/puma-log-forwarder/run
 RUN chmod +x /etc/service/puma-log-forwarder/run
+
+EXPOSE 3000
