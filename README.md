@@ -143,9 +143,9 @@ You can also test the API using postman
     convox switch bitzesty/vigilion-uk
 
     convox deploy --app api-scanner-staging-g2
+    convox run web rake db:migrate --app api-scanner-staging-g2
 
     convox run web bash --app api-scanner-staging-g2
-    convox run web rake db:migrate --app api-scanner-staging-g2
     convox run web rake some:long_task --detach --app api-scanner-staging-g2
 
     Production

@@ -19,7 +19,7 @@ class Scan < ActiveRecord::Base
   before_destroy :delete_file
 
   def set_url
-    unescaped_url = Addressable::URI.unescape(new_url)
+    unescaped_url = Addressable::URI.unescape(url)
     self.url =  unescaped_url
   end
 
