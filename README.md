@@ -140,7 +140,7 @@ You can also test the API using postman
 
 ## Deploying Convox
 
-    convox switch bitzesty/vigilion-eu
+    convox switch bitzesty/vigilion-uk
 
     convox deploy --app api-scanner-staging-g2
 
