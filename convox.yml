@@ -19,3 +19,4 @@ services:
       - convox.health.path=/healthcheck
       - convox.health.port=3000
       - convox.health.timeout=3
+    domain: ${HOST}
