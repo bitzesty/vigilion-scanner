@@ -114,7 +114,7 @@ COPY config/freshclam.conf /usr/local/etc/freshclam.conf
 RUN chmod 0700 /usr/local/etc/freshclam.conf
 COPY config/clamd.conf /usr/local/etc/clamd.conf
 RUN chmod 0700 /usr/local/etc/clamd.conf
-RUN freshclam -v && freshclam --version > CLAM_VERSION
+RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
 # END CLAMAV
 
 # Clean up APT when done.
