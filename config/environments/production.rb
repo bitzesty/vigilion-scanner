@@ -47,7 +47,7 @@ Rails.application.configure do
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = :info
+  config.log_level = :debug
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
@@ -58,8 +58,8 @@ Rails.application.configure do
 
   config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
 
-  config.lograge.enabled = true
-  config.lograge.formatter = Lograge::Formatters::Logstash.new
+#  config.lograge.enabled = true
+#  config.lograge.formatter = Lograge::Formatters::Logstash.new
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store

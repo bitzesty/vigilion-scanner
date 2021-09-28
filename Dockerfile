@@ -3,6 +3,7 @@ FROM phusion/baseimage:master
 ENTRYPOINT ["/sbin/my_init", "--"]
 CMD ["/sbin/my_init"]
 
+
 # ruby runtime dependencies
 RUN apt-get -qq update && \
     apt-get -qqy install \
@@ -115,8 +116,6 @@ COPY config/clamd.conf /usr/local/etc/clamd.conf
 RUN chmod 0700 /usr/local/etc/clamd.conf
 RUN freshclam -v && freshclam --version > CLAM_VERSION
 # END CLAMAV
-
-# avg
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
