@@ -90,8 +90,23 @@ RUN apt-get -qqy install \
     # for clamAV
             clamav \
 						clamav-daemon \
+						clamav-freshclam \
             build-essential
     # for AVG
+
+# permission juggling
+RUN mkdir /var/run/clamav && \
+    chown clamav:clamav /var/run/clamav && \
+    chmod 750 /var/run/clamav
+
+RUN chown clamav:clamav /etc/clamav /etc/clamav/clamd.conf /etc/clamav/freshclam.conf
+
+# END RUBY ONBUILD
+RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
+# END CLAMAV
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # refresh virus definitions each 1 hour. ClamAV recommends not update in times multiple of 10
 RUN echo "15 * * * * root /usr/local/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
@@ -106,19 +121,6 @@ WORKDIR /usr/src/app
 COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
 RUN bundle install --jobs 4 --retry 3
-
-# END RUBY ONBUILD
-
-# ClamAV
-COPY config/freshclam.conf /usr/local/etc/freshclam.conf
-RUN chmod 0700 /usr/local/etc/freshclam.conf
-RUN touch /var/run/clamav/clamd.ctl
-RUN chown clamav:clamav /var/run/clamav/clamd.ctl
-RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
-# END CLAMAV
-
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # so that we sync in dev
 COPY . /usr/src/app
