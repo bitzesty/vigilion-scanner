@@ -150,7 +150,7 @@ You can also test the API using postman
 
     Production
 
-    convox deploy --app api-scanner-production
+    convox deploy --app api-scanner-production-g2
 
 
 ## Logging
