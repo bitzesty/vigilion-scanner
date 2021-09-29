@@ -81,6 +81,9 @@ ENV BUNDLER_VERSION 1.17.3
 
 RUN gem install bundler --version "$BUNDLER_VERSION"
 
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
 # our required packages
 RUN apt-get -qq update
 RUN apt-get -qqy install \
