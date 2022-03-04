@@ -1,20 +1,23 @@
-common: &common
+default: &default
   adapter: postgresql
   encoding: utf8
+  host: db
+  username: postgres
+  password: password
+  pool: 5
 
 development:
-  <<: *common
-  database: vigilion_scanner_development
-  url: <%= ENV['DATABASE_URL'] %>
+  <<: *default
+  database: vigilion_scanner_dev
 
 test:
-  <<: *common
+  <<: *default
   database: vigilion_scanner_test
 
 staging:
-  <<: *common
+  <<: *default
   url: <%= ENV['DATABASE_URL'] %>
 
 production:
-  <<: *common
+  <<: *default
   url: <%= ENV['DATABASE_URL'] %>
