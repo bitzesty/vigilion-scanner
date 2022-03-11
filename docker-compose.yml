@@ -12,6 +12,7 @@ services:
     image: "redis:alpine"
   db:
     image: postgres
+    command: postgres -c stats_temp_directory=/tmp
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
     environment:

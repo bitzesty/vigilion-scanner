@@ -104,25 +104,60 @@ RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-RUN apt-get -qq update
+RUN apt-get update
 RUN apt-get -qqy install \
     # for postgresql
             libpq-dev \
             postgresql-client \
-    # for clamAV
-            clamav \
-						clamav-daemon \
-						clamav-freshclam \
-            build-essential \
+    # # for clamAV
+    #         clamav \
+		# 				clamav-daemon \
+		# 				clamav-freshclam \
+    #         build-essential \
+    # for building clamav
+              build-essential \
+              cmake \
+              git \
+              check \
+              libcurl4-openssl-dev \
+              libssl-dev \
+              zlib1g-dev \
+              libbz2-dev \
+              libxml2-dev \
+              libpcre2-dev \
+              libjson-c-dev \
+              libncurses5-dev \
+              valgrind \
+              pkg-config \
+              libmilter-dev \
     # for ruby-filemagic
             libmagic-dev
 
-# permission juggling
-RUN mkdir /var/run/clamav && \
-    chown clamav:clamav /var/run/clamav && \
-    chmod 750 /var/run/clamav
+# # permission juggling
+# RUN mkdir /var/run/clamav && \
+#     chown clamav:clamav /var/run/clamav && \
+#     chmod 750 /var/run/clamav
 
-RUN chown clamav:clamav /etc/clamav /etc/clamav/clamd.conf /etc/clamav/freshclam.conf
+# RUN chown clamav:clamav /etc/clamav /etc/clamav/clamd.conf /etc/clamav/freshclam.conf
+
+# build clamav
+RUN set -eux; \
+    curl -L -o clamav.tar.gz https://www.clamav.net/downloads/production/clamav-0.104.2.tar.gz; \
+    tar xzf clamav.tar.gz; \
+    cd clamav-0.104.2; \
+    mkdir build && cd build; \
+    cmake .. \
+      -D CMAKE_INSTALL_PREFIX=/usr \
+      -D APP_CONFIG_DIRECTORY=/etc/clamav \
+      -D DATABASE_DIRECTORY=/var/lib/clamav \
+      # -D ENABLE_JSON_SHARED=OFF \
+      -D CMAKE_INSTALL_LIBDIR=/usr/lib \
+    ; \
+    cmake --build .; \
+    ctest; \
+    cmake --build . --target install; \
+    cd ../../ && rm -r clamav.tar.gz clamav-0.104.2;
+
 
 RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
 
@@ -130,8 +165,8 @@ RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
 # clamav done
 
 # refresh virus definitions each 1 hour. ClamAV recommends not update in times multiple of 10
-RUN echo "15 * * * * root /usr/local/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
-RUN echo "30 * * * * root /usr/local/bin/freshclam --version > /usr/src/app/CLAM_VERSION\n" >> /etc/cron.d/freshclam-version-cron
+RUN echo "15 * * * * root /usr/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
+RUN echo "30 * * * * root /usr/bin/freshclam --version > /usr/src/app/CLAM_VERSION\n" >> /etc/cron.d/freshclam-version-cron
 
 # link shared libraries
 RUN ldconfig

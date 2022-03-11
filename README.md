@@ -83,17 +83,13 @@ The id is obtained as a response from POST /scans
 
 ### Install
 
-Install docker and to be added to docker hub account (contact matt) and run:
+Install docker and run:
 
-    docker login
+    docker-compose up
 
-Pull the Docker base image from docker hub (https://github.com/bitzesty/vigilion-scanner-baseimage/blob/master/Dockerfile):
+This will build and start the containers. Now need to create the database:
 
-    docker pull bitzesty/vigilion-scanner-baseimage
-
-Build the image from the base image and the contents of this repository:
-
-    convox start -f docker-compose.yml.local
+    docker-compose run web rake db:create
 
 #### Populate API account
 
