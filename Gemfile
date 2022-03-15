@@ -11,7 +11,7 @@ gem 'sentry-raven', '~> 1.2'
 gem 'addressable', '~> 2.8'
 gem 'ruby-filemagic', '~> 0.7'
 
-gem 'sidekiq', '~> 4.1'
+gem 'sidekiq', '~> 6.4'
 gem 'sidekiq-scheduler', '~> 2.0'
 gem 'lograge', '~> 0.5'
 gem 'logstash-event', '~> 1.2'
