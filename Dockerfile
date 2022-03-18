@@ -158,6 +158,12 @@ RUN set -eux; \
     cmake --build . --target install; \
     cd ../../ && rm -r clamav.tar.gz clamav-0.104.2;
 
+COPY config/freshclam.conf /etc/clamav/freshclam.conf
+COPY config/clamd.conf /etc/clamav/clamd.conf
+
+RUN groupadd clamav
+RUN useradd -g clamav -s /bin/false -c "Clam Antivirus" clamav
+RUN mkdir -p /var/lib/clamav && chown -R clamav:clamav /var/lib/clamav
 
 RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
 
