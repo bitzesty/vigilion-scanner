@@ -1,9 +1,5 @@
 #!/bin/sh
 
-# boot clamd in background
-nohup freshclam -d &
-nohup clamd &
-
 # boot avg in background
 #nohup service avgd start &
 

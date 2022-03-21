@@ -91,19 +91,22 @@ This will build and start the containers. Now need to create the database:
 
     docker-compose run web rake db:create
 
-#### Populate API account
+Optionally seed database:
 
-Here is the rake script https://github.com/bitzesty/virus-scanner/blob/master/lib/tasks/account.rake
+    docker-compose run web rake db:seed
 
-Run:
-```
-account = Account.create!(name: 'test_api_account', callback_url: "http://localhost:3000/vs_rails/scans/callback")
+#### Setup accounts
 
-account.api_key
- => kdsjfsf728832....
-```
+List plans:
 
-* on Account creation api_key would be generated automatically.
+    docker-compose run web rake plans:list
+
+Create an account using `accounts:create` task. Arguments in required order: plan_id, project_name, callback_url
+Example:
+
+    docker-compose run web rake "accounts:create[1,demo,https://localhost/vigilion/callback]"
+
+* Rake task will output details of the account just created, including X-Api-Key required for API requests
 
 #### Setup env vars on Target Rails app side
 

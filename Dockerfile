@@ -3,9 +3,6 @@ FROM phusion/baseimage:focal-1.1.0
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-# ...put your own build instructions here...
-
-
 ##
 # based on Dockerfile for ruby:2.7.5
 
@@ -109,11 +106,6 @@ RUN apt-get -qqy install \
     # for postgresql
             libpq-dev \
             postgresql-client \
-    # # for clamAV
-    #         clamav \
-		# 				clamav-daemon \
-		# 				clamav-freshclam \
-    #         build-essential \
     # for building clamav
               build-essential \
               cmake \
@@ -133,13 +125,6 @@ RUN apt-get -qqy install \
     # for ruby-filemagic
             libmagic-dev
 
-# # permission juggling
-# RUN mkdir /var/run/clamav && \
-#     chown clamav:clamav /var/run/clamav && \
-#     chmod 750 /var/run/clamav
-
-# RUN chown clamav:clamav /etc/clamav /etc/clamav/clamd.conf /etc/clamav/freshclam.conf
-
 # build clamav
 RUN set -eux; \
     curl -L -o clamav.tar.gz https://www.clamav.net/downloads/production/clamav-0.104.2.tar.gz; \
@@ -150,6 +135,7 @@ RUN set -eux; \
       -D CMAKE_INSTALL_PREFIX=/usr \
       -D APP_CONFIG_DIRECTORY=/etc/clamav \
       -D DATABASE_DIRECTORY=/var/lib/clamav \
+      # need to upgrade json-c
       # -D ENABLE_JSON_SHARED=OFF \
       -D CMAKE_INSTALL_LIBDIR=/usr/lib \
     ; \
@@ -185,6 +171,14 @@ RUN bundle install --jobs 4 --retry 3
 RUN mkdir /etc/service/puma
 COPY docker/puma.sh /etc/service/puma/run
 RUN chmod +x /etc/service/puma/run
+
+RUN mkdir /etc/service/sidekiq
+COPY docker/sidekiq.sh /etc/service/sidekiq/run
+RUN chmod +x /etc/service/sidekiq/run
+
+RUN mkdir /etc/service/av-clamd
+COPY docker/av-clamd.sh /etc/service/av-clamd/run
+RUN chmod +x /etc/service/av-clamd/run
 
 ###
 # clear phusion/baseimage
