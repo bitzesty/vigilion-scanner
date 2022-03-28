@@ -1,7 +1,84 @@
-FROM phusion/baseimage:focal-1.1.0
+FROM phusion/baseimage:focal-1.1.0 AS clamav-builder
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
+
+##
+# start building clamav
+RUN apt-get -qq update; \
+    apt-get -qqy --no-install-recommends install \
+              build-essential \
+              cmake \
+              git \
+              check \
+              libcurl4-openssl-dev \
+              libssl-dev \
+              zlib1g-dev \
+              libbz2-dev \
+              libxml2-dev \
+              libpcre2-dev \
+              libjson-c-dev \
+              libncurses5-dev \
+              valgrind \
+              pkg-config \
+              libmilter-dev \
+    ;
+
+# build clamav
+RUN set -eux; \
+    curl -L -o clamav.tar.gz https://www.clamav.net/downloads/production/clamav-0.104.2.tar.gz; \
+    tar xzf clamav.tar.gz; \
+    cd clamav-0.104.2; \
+    mkdir build && cd build; \
+    cmake .. \
+      -D CMAKE_BUILD_TYPE="Release" \
+      -D CMAKE_INSTALL_PREFIX=/usr \
+      -D APP_CONFIG_DIRECTORY=/etc/clamav \
+      -D DATABASE_DIRECTORY=/var/lib/clamav \
+      # need to upgrade json-c
+      -D ENABLE_JSON_SHARED=ON \
+      -D CMAKE_INSTALL_LIBDIR=/usr/lib \
+      -D ENABLE_CLAMONACC=OFF \
+      -D ENABLE_EXAMPLES=OFF \
+      -D ENABLE_MAN_PAGES=OFF \
+      -D ENABLE_MILTER=ON \
+      -D ENABLE_STATIC_LIB=OFF \
+    ; \
+    # cmake --build .; \
+    # ctest; \
+    # cmake --build . --target install; \
+    make DESTDIR="/clamav" -j$(($(nproc) - 1)) install; \
+    cd ../../ && rm -r clamav.tar.gz clamav-0.104.2; \
+    rm -r "/clamav/usr/include" "/clamav/usr/lib/pkgconfig/" ; \
+    # rm -r "/usr/share/doc/ClamAV/" ;
+    rm -rf /clamav/usr/share/doc ;
+
+# RUN rm -rf "/clamav/usr/share/doc/"
+
+FROM phusion/baseimage:focal-1.1.0
+
+COPY --from=clamav-builder "/clamav" "/"
+
+COPY config/freshclam.conf /etc/clamav/freshclam.conf
+COPY config/clamd.conf /etc/clamav/clamd.conf
+
+RUN groupadd clamav
+RUN useradd -g clamav -s /bin/false -c "Clam Antivirus" clamav
+RUN mkdir -p /var/lib/clamav && chown -R clamav:clamav /var/lib/clamav
+
+###
+# done building ruby, now vigilion stuff
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
+
+###
+# clamav done
+
+# refresh virus definitions each 1 hour. ClamAV recommends not update in times multiple of 10
+RUN echo "15 * * * * root /usr/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
+RUN echo "30 * * * * root /usr/bin/freshclam --version > /usr/src/app/CLAM_VERSION\n" >> /etc/cron.d/freshclam-version-cron
 
 ##
 # based on Dockerfile for ruby:2.7.5
@@ -24,8 +101,8 @@ ENV RUBY_DOWNLOAD_SHA256 d216d95190eaacf3bf165303747b02ff13f10b6cfab67a9031b502a
 RUN set -eux; \
   \
   savedAptMark="$(apt-mark showmanual)"; \
-  apt-get update; \
-  apt-get install -y --no-install-recommends \
+  apt-get -qq update; \
+  apt-get install -qqy --no-install-recommends \
     bison \
     dpkg-dev \
     libgdbm-dev \
@@ -58,12 +135,13 @@ RUN set -eux; \
   autoconf; \
   gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
   ./configure \
+    --silent \
     --build="$gnuArch" \
     --disable-install-doc \
     --enable-shared \
   ; \
-  make -j "$(nproc)"; \
-  make install; \
+  make --quiet -j "$(nproc)"; \
+  make --quiet install; \
   \
   apt-mark auto '.*' > /dev/null; \
   apt-mark manual $savedAptMark > /dev/null; \
@@ -76,7 +154,7 @@ RUN set -eux; \
     | sort -u \
     | xargs -r apt-mark manual \
   ; \
-  apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+  apt-get purge -qqy --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
   \
   cd /; \
   rm -r /usr/src/ruby; \
@@ -96,69 +174,17 @@ ENV PATH $GEM_HOME/bin:$PATH
 # adjust permissions of a few directories for running "gem install" as an arbitrary user
 RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
 
-###
-# done building ruby, now vigilion stuff
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-
-RUN apt-get update
-RUN apt-get -qqy install \
+RUN apt-get -qq update; \
+    apt-get -qqy --no-install-recommends install \
     # for postgresql
             libpq-dev \
             postgresql-client \
-    # for building clamav
-              build-essential \
-              cmake \
-              git \
-              check \
-              libcurl4-openssl-dev \
-              libssl-dev \
-              zlib1g-dev \
-              libbz2-dev \
-              libxml2-dev \
-              libpcre2-dev \
-              libjson-c-dev \
-              libncurses5-dev \
-              valgrind \
-              pkg-config \
-              libmilter-dev \
     # for ruby-filemagic
-            libmagic-dev
-
-# build clamav
-RUN set -eux; \
-    curl -L -o clamav.tar.gz https://www.clamav.net/downloads/production/clamav-0.104.2.tar.gz; \
-    tar xzf clamav.tar.gz; \
-    cd clamav-0.104.2; \
-    mkdir build && cd build; \
-    cmake .. \
-      -D CMAKE_INSTALL_PREFIX=/usr \
-      -D APP_CONFIG_DIRECTORY=/etc/clamav \
-      -D DATABASE_DIRECTORY=/var/lib/clamav \
-      # need to upgrade json-c
-      # -D ENABLE_JSON_SHARED=OFF \
-      -D CMAKE_INSTALL_LIBDIR=/usr/lib \
-    ; \
-    cmake --build .; \
-    ctest; \
-    cmake --build . --target install; \
-    cd ../../ && rm -r clamav.tar.gz clamav-0.104.2;
-
-COPY config/freshclam.conf /etc/clamav/freshclam.conf
-COPY config/clamd.conf /etc/clamav/clamd.conf
-
-RUN groupadd clamav
-RUN useradd -g clamav -s /bin/false -c "Clam Antivirus" clamav
-RUN mkdir -p /var/lib/clamav && chown -R clamav:clamav /var/lib/clamav
-
-RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
-
-###
-# clamav done
-
-# refresh virus definitions each 1 hour. ClamAV recommends not update in times multiple of 10
-RUN echo "15 * * * * root /usr/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
-RUN echo "30 * * * * root /usr/bin/freshclam --version > /usr/src/app/CLAM_VERSION\n" >> /etc/cron.d/freshclam-version-cron
+            libmagic-dev \
+    # for bundling vigilion gems
+            make \
+            gcc \
+            libpcre2-dev
 
 # link shared libraries
 RUN ldconfig
@@ -167,6 +193,8 @@ COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
 RUN gem install bundler:1.17.3
 RUN bundle install --jobs 4 --retry 3
+
+COPY . /usr/src/app
 
 RUN mkdir /etc/service/puma
 COPY docker/puma.sh /etc/service/puma/run
