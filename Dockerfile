@@ -1,6 +1,5 @@
 FROM phusion/baseimage:focal-1.1.0 AS clamav-builder
 
-# build clamav
 RUN set -eux; \
     \
     savedAptMark="$(apt-mark showmanual)"; \
@@ -33,7 +32,7 @@ RUN set -eux; \
       -D CMAKE_INSTALL_PREFIX=/usr \
       -D APP_CONFIG_DIRECTORY=/etc/clamav \
       -D DATABASE_DIRECTORY=/var/lib/clamav \
-      # need to upgrade json-c
+      # update after upgrading json-c:
       -D ENABLE_JSON_SHARED=ON \
       -D CMAKE_INSTALL_LIBDIR=/usr/lib \
       -D ENABLE_CLAMONACC=OFF \
@@ -42,25 +41,18 @@ RUN set -eux; \
       -D ENABLE_MILTER=ON \
       -D ENABLE_STATIC_LIB=OFF \
     ; \
-    # cmake --build .; \
-    # ctest; \
-    # cmake --build . --target install; \
     make DESTDIR="/clamav" --quiet -j$(($(nproc) - 1)) install; \
     cd ../../ && rm -r clamav.tar.gz clamav-0.104.2; \
-    rm -r "/clamav/usr/include" "/clamav/usr/lib/pkgconfig/" ; \
-    # rm -r "/usr/share/doc/ClamAV/" ;
-    rm -rf /clamav/usr/share/doc ; \
-    \
+    rm -rf "/clamav/usr/include" \
+           "/clamav/usr/lib/pkgconfig/" \
+           "/clamav/usr/share/doc" ; \
     apt-mark auto '.*' > /dev/null; \
     apt-mark manual $savedAptMark > /dev/null; \
     apt-get purge -qqy --auto-remove -o APT::AutoRemove::RecommendsImportant=false;
 
-# RUN rm -rf "/clamav/usr/share/doc/"
-
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 FROM phusion/baseimage:focal-1.1.0 AS ruby-builder
-
 ##
 # based on Dockerfile for ruby:2.7.5
 
@@ -169,16 +161,12 @@ RUN groupadd clamav
 RUN useradd -g clamav -s /bin/false -c "Clam Antivirus" clamav
 RUN mkdir -p /var/lib/clamav && chown -R clamav:clamav /var/lib/clamav
 
-###
-# done building ruby, now vigilion stuff
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
 
-###
-# clamav done
-
+##
 # refresh virus definitions each 1 hour. ClamAV recommends not update in times multiple of 10
 RUN echo "15 * * * * root /usr/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
 RUN echo "30 * * * * root /usr/bin/freshclam --version > /usr/src/app/CLAM_VERSION\n" >> /etc/cron.d/freshclam-version-cron
@@ -189,17 +177,13 @@ RUN gem install bundler:1.17.3
 
 RUN set -eux; \
     \
-    # savedAptMark="$(apt-mark showmanual)"; \
     apt-get -qq update; \
-# RUN apt-get -qq update; \
     apt-get -qqy --no-install-recommends install \
     # for postgresql
             libpq-dev \
             postgresql-client \
     # for ruby-filemagic
             libmagic-dev \
-    # for healthcheck
-            # netcat \
     # for bundling vigilion gems
             make \
             gcc \
@@ -209,13 +193,11 @@ RUN set -eux; \
     \
     bundle install --jobs 4 --retry 3 ; \
     \
-    # apt-mark auto '.*' > /dev/null; \
     apt-mark auto make gcc gcc-9-base libpcre2-dev > /dev/null; \
-    # apt-mark manual $savedAptMark > /dev/null; \
     apt-get purge -qqy --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-    # apt -y autoremove;
-    # \ ;
-    # so that we
+    ##
+    # clean:
+    # we are doing the following so that we:
     # Removing gcc-9-base:amd64 (9.4.0-1ubuntu1~20.04.1)
     apt-get -qqy update; \
     apt-get -qqy autoremove; \
@@ -223,15 +205,7 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # link shared libraries
-# RUN ldconfig
-
-# so that we
-# Removing gcc-9-base:amd64 (9.4.0-1ubuntu1~20.04.1)
-# RUN apt-get -qqy update; \
-#     apt-get -qqy autoremove; \
-#     rm -rf /var/lib/apt/lists/*
-
-# RUN bundle install --jobs 4 --retry 3
+RUN ldconfig
 
 COPY . /usr/src/app
 
@@ -246,14 +220,6 @@ RUN chmod +x /etc/service/sidekiq/run
 RUN mkdir /etc/service/av-clamd
 COPY docker/av-clamd.sh /etc/service/av-clamd/run
 RUN chmod +x /etc/service/av-clamd/run
-
-###
-# clear phusion/baseimage
-# Clean up APT when done.
-# RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# copied from https://github.com/Neomediatech/clamav/blob/master/Dockerfile
-# HEALTHCHECK --interval=60s --timeout=3s --start-period=60s --retries=10 CMD echo PING | nc 127.0.0.1 3310 || exit 1
 
 CMD ["/sbin/my_init"]
 EXPOSE 3000
