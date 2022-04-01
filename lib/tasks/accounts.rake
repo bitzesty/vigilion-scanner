@@ -26,5 +26,6 @@ namespace :accounts do
     puts "Created account with plan: #{plan.name} - £#{plan.cost} - #{plan.scans_per_month} scans/mo"
     puts "Project: #{project.name}"
     puts "X-Api-Key: #{project.access_key_id}"
+    puts "Secret key: #{project.secret_access_key}"
   end
 end
