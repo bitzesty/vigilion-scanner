@@ -40,11 +40,13 @@ RSpec.describe Scan, type: :model do
 
       it "unescapes url" do
         url = "https://domain/file.txt?Signature=ZWY%3D%0A"
-        expect(Addressable::URI).to receive(:unescape).with(url).at_least(:once)
+        expect(Addressable::URI).to receive(
+          :unescape
+        ).with(url).at_least(:once).and_call_original
         scan = create(:scan, do_not_unencode: false, url: url)
         expect(
           scan.url
-        ).to eq(Addressable::URI.unescape(url))
+        ).to eq("https://domain/file.txt?Signature=ZWY=\n")
       end
     end
   end
