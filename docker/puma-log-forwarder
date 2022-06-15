@@ -1,8 +1,0 @@
-#!/bin/bash
-# Forwards the puma.log to the Docker logs.
-set -e
-if [[ -e /var/log/puma.log ]]; then
-	exec tail -F /var/log/puma.log
-else
-	exec sleep 10
-fi
