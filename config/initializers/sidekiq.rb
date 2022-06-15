@@ -1,4 +1,4 @@
-url = ENV['REDIS_URL'].present? ? ENV['REDIS_URL'] : "redis://:#{ENV['REDIS_ENV_REDIS_PASSWORD']}@#{ENV['REDIS_PORT_6379_TCP_ADDR']}:#{ENV['REDIS_PORT_6379_TCP_PORT']}/0"
+url = ENV['REDIS_URL'].present? ? ENV['REDIS_URL'] : "redis://redis/0"
 
 Sidekiq.configure_server do |config|
   Rails.logger = Sidekiq::Logging.logger

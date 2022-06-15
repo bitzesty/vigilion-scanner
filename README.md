@@ -83,31 +83,30 @@ The id is obtained as a response from POST /scans
 
 ### Install
 
-Install docker and to be added to docker hub account (contact matt) and run:
+Install docker and run:
 
-    docker login
+    docker-compose up
 
-Pull the Docker base image from docker hub (https://github.com/bitzesty/vigilion-scanner-baseimage/blob/master/Dockerfile):
+This will build and start the containers. Now need to create the database:
 
-    docker pull bitzesty/vigilion-scanner-baseimage
+    docker-compose run web rake db:create
 
-Build the image from the base image and the contents of this repository:
+Optionally seed database:
 
-    convox start -f docker-compose.yml.local
+    docker-compose run web rake db:seed
 
-#### Populate API account
+#### Setup accounts
 
-Here is the rake script https://github.com/bitzesty/virus-scanner/blob/master/lib/tasks/account.rake
+List plans:
 
-Run:
-```
-account = Account.create!(name: 'test_api_account', callback_url: "http://localhost:3000/vs_rails/scans/callback")
+    docker-compose run web rake plans:list
 
-account.api_key
- => kdsjfsf728832....
-```
+Create an account using `accounts:create` task. Arguments in required order: plan_id, project_name, callback_url
+Example:
 
-* on Account creation api_key would be generated automatically.
+    docker-compose run web rake "accounts:create[1,demo,https://localhost/vigilion/callback]"
+
+* Rake task will output details of the account just created, including X-Api-Key required for API requests
 
 #### Setup env vars on Target Rails app side
 

@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.0.7.2'
+gem 'rails', '~> 5.2', '>= 5.2.6.2'
 gem 'rake', '~> 12.3'
 gem 'pg', '~> 0.21.0'
 gem 'jbuilder', '~> 2.6.0'
@@ -10,6 +10,7 @@ gem 'puma', '~> 4.3'
 gem 'sentry-raven', '~> 1.2'
 gem 'addressable', '~> 2.8'
 gem 'ruby-filemagic', '~> 0.7'
+gem 'thwait', '~> 0.2.0'
 
 gem 'sidekiq', '~> 4.1'
 gem 'sidekiq-scheduler', '~> 2.0'

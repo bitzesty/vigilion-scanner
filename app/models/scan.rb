@@ -38,7 +38,7 @@ class Scan < ActiveRecord::Base
   end
 
   def file_extension
-    File.extname(url) if url.present?
+    File.extname(URI.parse(url).path) if url.present?
   end
 
   def file_exists?

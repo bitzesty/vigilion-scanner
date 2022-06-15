@@ -29,6 +29,26 @@ RSpec.describe Scan, type: :model do
       expect(build(:scan, url: "http://domain/file.zip")).to be_valid
       expect(build(:scan, url: "https://domain/file.zip")).to be_valid
     end
+
+    context "do_not_unencode?" do
+      it "does not unescape url" do
+        expect(Addressable::URI).to_not receive(:unescape)
+        url = "https://domain/file.txt?Signature=ZWY%3D%0A"
+        scan = create(:scan, do_not_unencode: true, url: url)
+        expect(scan.url).to eq(url)
+      end
+
+      it "unescapes url" do
+        url = "https://domain/file.txt?Signature=ZWY%3D%0A"
+        expect(Addressable::URI).to receive(
+          :unescape
+        ).with(url).at_least(:once).and_call_original
+        scan = create(:scan, do_not_unencode: false, url: url)
+        expect(
+          scan.url
+        ).to eq("https://domain/file.txt?Signature=ZWY=\n")
+      end
+    end
   end
 
   it "must have key" do
@@ -57,6 +77,20 @@ RSpec.describe Scan, type: :model do
     it "must contain id" do
       scan = create(:scan)
       expect(scan.file_path).to match /#{scan.id}/
+    end
+
+    context "do_not_unencode?" do
+      it "unescaping url" do
+        url = "https://domain/file.txt?Signature=ZWY%3D%0A"
+        scan = create(:scan, do_not_unencode: false, url: url)
+        expect(scan.file_path).to end_with(".txt")
+      end
+
+      it "skipping unescaping url" do
+        url = "https://domain/file.txt?Signature=ZWY%3D%0A"
+        scan = create(:scan, do_not_unencode: true, url: url)
+        expect(scan.file_path).to end_with(".txt")
+      end
     end
   end
 
