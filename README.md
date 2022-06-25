@@ -81,6 +81,10 @@ The id is obtained as a response from POST /scans
 
 ## Application setup
 
+### Hardware requirements
+
+API server should have at least 4GB of RAM memory and 2GB for storage
+
 ### Install
 
 Install docker and run:
@@ -115,19 +119,6 @@ In .env you need to specify following env variables
 DISABLE_VIRUS_SCANNER=false # it true by default on localhost
 VIRUS_SCANNER_API_URL=http://localhost:5000 # can be different on your side
 VIRUS_SCANNER_API_KEY=<API KEY>
-```
-
-#### Run both apps
-
-```
-foreman start
-```
-
-Target app in this example on 3000 port and virus scanner app on 5000
-
-NOTE: Make sure that in target rails app's Gemfile you have:
-```
-gem "vs_rails", "~> 0.0.7"
 ```
 
 ## Testing
