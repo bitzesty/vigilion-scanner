@@ -14,7 +14,7 @@ class Scan < ActiveRecord::Base
   validates :key, :project, presence: true
   validates :url, presence: true, on: :create, unless: :file_to_write?
 
-  before_create :set_url, unless: :do_not_unencode?
+  before_validation :set_url, unless: :do_not_unencode?
   after_create :write_file
   before_destroy :delete_file
 
