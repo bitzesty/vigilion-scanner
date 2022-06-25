@@ -13,7 +13,7 @@ RSpec.describe ScanWorker do
     context "scan eicar file" do
       it "set scan as infected" do
         scan = create(:scan, file: OpenStruct.new(read: "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"))
-        puts scan.id
+        expect_any_instance_of(ClientNotifier).to receive(:notify)
         ScanWorker.new.perform(scan.id)
         expect(scan.reload).to be_clamav_infected
         expect(scan).to be_infected
@@ -24,7 +24,7 @@ RSpec.describe ScanWorker do
     context "scan regular file" do
       it "set scan as clean" do
         scan = create(:scan, file: OpenStruct.new(read: "regular file"))
-        puts scan.id
+        expect_any_instance_of(ClientNotifier).to receive(:notify)
         ScanWorker.new.perform(scan.id)
         expect(scan.reload).to be_clamav_clean
         expect(scan).to be_clean

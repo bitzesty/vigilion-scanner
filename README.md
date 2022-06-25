@@ -124,6 +124,11 @@ VIRUS_SCANNER_API_KEY=<API KEY>
 ## Testing
 
 To run specs execute
-`bundle exec rspec`
+
+    docker-compose run web bash
+
+and within container:
+
+    bundle exec rspec
 
 You can also test the API using postman

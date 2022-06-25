@@ -191,6 +191,7 @@ RSpec.describe ScansController, type: :controller do
 
         context "with a file size limit of 1MB" do
           before do
+            expect_any_instance_of(ClientNotifier).to receive(:notify)
             current_project.account.plan.update(file_size_limit: 1)
           end
 
@@ -205,6 +206,7 @@ RSpec.describe ScansController, type: :controller do
         render_views
 
         it "includes id and status" do
+          expect_any_instance_of(ClientNotifier).to receive(:notify)
           post :create, params: { scan: valid_attributes }
           json = JSON.parse(response.body)
           expect(json["id"]).to eq Scan.last.id
@@ -213,6 +215,7 @@ RSpec.describe ScansController, type: :controller do
         end
 
         it "includes list of AV engines" do
+          expect_any_instance_of(ClientNotifier).to receive(:notify)
           post :create, params: { scan: valid_attributes }
           json = JSON.parse(response.body)
           expect(json["engines"]).to include("clamav")
