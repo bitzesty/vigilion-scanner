@@ -23,7 +23,7 @@ namespace :accounts do
     plan = Plan.find(args[:plan_id])
     account = Account.create!(plan_id: plan.id)
     project = account.projects.create!(name: args[:name], callback_url: args[:callback_url])
-    puts "Created account with plan: #{plan.name} - £#{plan.cost} - #{plan.scans_per_month} scans/mo"
+    puts "Created account with plan: #{plan.name} - #{plan.scans_per_month} scans/mo"
     puts "Project: #{project.name}"
     puts "X-Api-Key: #{project.access_key_id}"
     puts "Secret key: #{project.secret_access_key}"
