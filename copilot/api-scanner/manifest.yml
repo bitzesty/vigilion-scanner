@@ -14,11 +14,7 @@ http:
   # You can specify a custom health check path. The default is "/".
   healthcheck: 
     path: '/healthcheck'
-    success_codes: '200,301'
-
-network:
-  vpc:
-    placement: private    
+    success_codes: '200,301'  
 
 # Configuration for your containers and service.
 image:
