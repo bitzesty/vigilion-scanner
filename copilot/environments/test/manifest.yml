@@ -2,8 +2,4 @@ name: test
 type: Environment
 
 observability:
-    container_insights: false
-    
-network:
-  vpc:
-    placement: public    
+  container_insights: false

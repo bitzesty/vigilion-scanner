@@ -9,7 +9,3 @@ type: Environment
 # Configure observability for your environment resources.
 observability:
   container_insights: false
-
-network:
-  vpc:
-    placement: private
