@@ -3,4 +3,3 @@ type: Environment
 
 observability:
   container_insights: false
-    
