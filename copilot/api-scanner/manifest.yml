@@ -15,7 +15,6 @@ http:
   healthcheck:
     path: '/healthcheck'
     success_codes: '200,301'
-  alias: ["staging.api.vigilion.com", "api.vigilion.com"]
 
 # Configuration for your containers and service.
 image:
