@@ -9,3 +9,6 @@ type: Environment
 # Configure observability for your environment resources.
 observability:
   container_insights: false
+
+http:
+  alias: ["api.vigilion.com"]
