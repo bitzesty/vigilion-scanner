@@ -10,5 +10,12 @@ type: Environment
 observability:
   container_insights: false
 
+count: 2
+
 http:
   alias: ["api.vigilion.com"]
+  path: '/'
+    # You can specify a custom health check path. The default is "/".
+  healthcheck:
+    path: '/healthcheck'
+    success_codes: '200,301'
