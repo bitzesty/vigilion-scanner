@@ -6,7 +6,16 @@
 name: api-scanner
 type: Load Balanced Web Service
 
-# http defined in envrioments
+# Distribute traffic to your service.
+http:
+  # Requests to this path will be forwarded to your service.
+  # To match all requests you can use the "/" path.
+  path: '/'
+  # You can specify a custom health check path. The default is "/".
+  healthcheck:
+    path: '/healthcheck'
+    success_codes: '200,301'
+  alias: ["staging.api.vigilion.com", "api.vigilion.com"]
 
 # Configuration for your containers and service.
 image:
@@ -32,11 +41,13 @@ network:
 #  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
 
 # You can override any of the values defined above by environment.
-#environments:
-#  test:
-#    count: 2               # Number of tasks to run for the "test" environment.
-#    deployment:            # The deployment strategy for the "test" environment.
-#       rolling: 'recreate' # Stops existing tasks before new ones are started for faster deployments.
+environments:
+  production:
+    count: 2
+  test:
+    count: 1               # Number of tasks to run for the "test" environment.
+    deployment:            # The deployment strategy for the "test" environment.
+        rolling: 'recreate' # Stops existing tasks before new ones are started for faster deployments.
 
 secrets:
   AVENGINE: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/avengine
