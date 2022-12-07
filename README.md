@@ -30,17 +30,6 @@ file until the async process analyzes it.
 
 ## API methods
 
-### `GET    /scans/stats`
-Returns an agregation of all the scans performed.
-It could be filtered by status.
-Example:
-```
-GET /scans/stats?status=infected
-```
-
-### `GET    /scans`
-List all the scans performed.
-
 ### `POST   /scans`
 Creates a new scan request and queues it.
 Params:
@@ -51,6 +40,17 @@ The scanner wont do anything with it but it requires to be there.
 
 Or alternatively:
 * `scan[file]`: Instead of sending a URL it sends the actual file.
+
+### `GET    /scans/stats`
+Returns an agregation of all the scans performed.
+It could be filtered by status.
+Example:
+```
+GET /scans/stats?status=infected
+```
+
+### `GET    /scans`
+List all the scans performed.
 
 ### `GET    /scans/:id`
 Gets information about an specific scan request.
