@@ -1,4 +1,4 @@
-# Vigilion Scanner API
+# Vigilion Malware Scanner API
 
 This app is the responsible for processing files and scanning them to see if they are clean or if they contain viruses.
 
@@ -32,19 +32,21 @@ file until the async process analyzes it.
 
 ### `POST   /scans`
 Creates a new scan request and queues it.
-Params:
+
+Accepted Paramseters:
 * `scan[key]`: This is a key to map your model to ours.
 The scanner wont do anything with it but it requires to be there. Typically this is the ID of your model in your database.
 
+If scanning a URL of a file:
 * `scan[url]`: URL to download the actual file
 * `scan[do_not_unencode]`: If using GCP to store files you can request that the URL is not unencoded (values true/false, defaults to false).
 
-Or alternatively:
-* `scan[file]`: Instead of sending a URL it sends the actual file.
+Or alternatively, an actual file:
+* `scan[file]`: The file.
 
 ### `GET    /scans/:id`
 Gets information about an specific scan request.
-The id is obtained as a response from POST /scans
+The id is obtained as a response from `POST /scans`
 
 ### `GET    /scans`
 List all the scans performed.
@@ -52,18 +54,21 @@ List all the scans performed.
 ### `GET    /scans/stats`
 Returns an agregation of all the scans performed.
 It could be filtered by status.
+
 Example:
+
 ```
 GET /scans/stats?status=infected
 ```
 
 ## Scan statuses
-
-* pending: The file is queued for scanning.
-* scanning: The scan is being scanned.
-* clean: The scan succeeded and the file is clean.
-* infected: The scan succeeded and the file was infected.
-* error: Unable to scan the file.
+| Status | Description|
+| ------ |:---------------------:|
+| pending| The file is queued for scanning.|
+| scanning| The scan is being scanned.|
+| clean| The scan succeeded and the file is clean.|
+| infected| The scan succeeded and the file was infected.|
+| error| Unable to scan the file.|
 
 ## HTTP Statuses
 
