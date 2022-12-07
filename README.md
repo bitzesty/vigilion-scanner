@@ -2,7 +2,7 @@
 
 This app is the responsible for processing files and scanning them to see if they are clean or if they contain viruses.
 
-It also contains the models for company accounts and plans, and scanning API keys.
+It also contains the models for company accounts and plans, and scanning API keys, however now this is open source, you can create a plan with no limit and assign that to each accounts API key.
 
 ## Scanning Flow
 
@@ -85,7 +85,7 @@ The id is obtained as a response from POST /scans
 
 API server should have at least 4GB of RAM memory and 2GB for storage
 
-### Install
+### Local Install
 
 Install docker and run:
 
@@ -131,4 +131,38 @@ and within container:
 
     bundle exec rspec
 
-You can also test the API using postman
+You can also test the API using postman.
+
+# API clients
+We have some API clients for the some languages:
+* [Ruby](https://github.com/vigilion/vigilion-ruby)
+* [Rails](https://github.com/vigilion/vigilion-rails)
+
+
+# Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Add test coverage for the feature, We use rspec for this purpose
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create new Pull Request
+
+# License
+
+Vigilion scanner is Copyright © 2021 Bit Zesty. It is free
+software, and may be redistributed under the terms specified in the
+[LICENSE] file.
+
+[LICENSE]: https://github.com/bitzesty/vigilion-scanner/blob/main/LICENSE
+
+
+# About Bit Zesty
+
+![Bit Zesty](https://bitzesty.com/wp-content/uploads/2017/01/logo_dark.png)
+
+Vigilion malware scanner is maintained by Bit Zesty Limited.
+The names and logos for Bit Zesty are trademarks of Bit Zesty Limited.
+
+See [our other projects](https://bitzesty.com/client-stories/) or
+[hire us](https://bitzesty.com/contact/) to design, develop, and support your product or service.
