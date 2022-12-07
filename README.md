@@ -1,8 +1,12 @@
 # Vigilion Malware Scanner API
 
-This app is the responsible for processing files and scanning them to see if they are clean or if they contain viruses.
+Vigilion is an easy to integrate cloud scanning API service for systems that have user file-upload functionality. Our real time anti-malware security solution stops viruses from reaching your users, helping you meet security requirements of IT Health Checks (ITHC) for your cloud services.
 
 It also contains the models for company accounts and plans, and scanning API keys, however now this is open source, you can create a plan with no limit and assign that to each accounts API key.
+
+The ClamAV detection engine is the default engine - it has heuristics, support for numerous archivers (Zip, Rar, OLE, etc), unpacking support (UPX, PeTite, NSPack, etc), and several different content inspection engines.
+
+Virus definition database updated hourly.
 
 ## Scanning Flow
 
@@ -15,7 +19,7 @@ URL to download the file.
 3) Vigilion Scanner check the **client app** credentials and if
 everything is ok, it schedules the scan using **Sidekiq**.
 
-4) An async process downloads the file and performs the scan.
+4) An async process downloads the file and performs the scan, then deletes the file.
 
 5) Once the file was scanned, **Virus Scanner** sends a
 callback request to the **client app**
