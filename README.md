@@ -1,4 +1,4 @@
-# Vigilion Malware Scanner API
+# Vigilion Antivirus & Malware Scanner API
 
 Vigilion is an easy to integrate cloud scanning API service for systems that have user file-upload functionality. Our real time anti-malware security solution stops viruses from reaching your users, helping you meet security requirements of IT Health Checks (ITHC) for your cloud services.
 
