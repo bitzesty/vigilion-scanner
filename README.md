@@ -41,6 +41,13 @@ The scanner wont do anything with it but it requires to be there.
 Or alternatively:
 * `scan[file]`: Instead of sending a URL it sends the actual file.
 
+### `GET    /scans/:id`
+Gets information about an specific scan request.
+The id is obtained as a response from POST /scans
+
+### `GET    /scans`
+List all the scans performed.
+
 ### `GET    /scans/stats`
 Returns an agregation of all the scans performed.
 It could be filtered by status.
@@ -48,14 +55,6 @@ Example:
 ```
 GET /scans/stats?status=infected
 ```
-
-### `GET    /scans`
-List all the scans performed.
-
-### `GET    /scans/:id`
-Gets information about an specific scan request.
-The id is obtained as a response from POST /scans
-
 
 ## Scan statuses
 
