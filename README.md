@@ -34,9 +34,10 @@ file until the async process analyzes it.
 Creates a new scan request and queues it.
 Params:
 * `scan[key]`: This is a key to map your model to ours.
-The scanner wont do anything with it but it requires to be there.
+The scanner wont do anything with it but it requires to be there. Typically this is the ID of your model in your database.
 
 * `scan[url]`: URL to download the actual file
+* `scan[do_not_unencode]`: If using GCP to store files you can request that the URL is not unencoded (values true/false, defaults to false).
 
 Or alternatively:
 * `scan[file]`: Instead of sending a URL it sends the actual file.
