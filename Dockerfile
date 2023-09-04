@@ -52,7 +52,7 @@ RUN set -eux; \
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-FROM phusion/baseimage:focal-1.1.0 AS ruby-builder
+FROM phusion/baseimage:focal-1.2.0 AS ruby-builder
 ##
 # based on Dockerfile for ruby:2.7.7
 
@@ -149,7 +149,7 @@ RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-FROM phusion/baseimage:focal-1.1.0
+FROM phusion/baseimage:focal-1.2.0
 
 COPY --from=ruby-builder "/usr" "/usr"
 COPY --from=clamav-builder "/clamav" "/"
@@ -173,7 +173,7 @@ RUN echo "30 * * * * root /usr/bin/freshclam --version > /usr/src/app/CLAM_VERSI
 
 COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
-RUN gem install bundler:1.17.3
+RUN gem install bundler:2.1.4
 
 RUN set -eux; \
     \
