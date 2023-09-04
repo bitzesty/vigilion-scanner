@@ -171,7 +171,7 @@ GEM
       rspec-mocks (~> 3.5.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    ruby-filemagic (0.7.2)
+    ruby-filemagic (0.7.3)
     rufus-scheduler (3.8.0)
       fugit (~> 1.1, >= 1.1.6)
     sentry-raven (1.2.3)
