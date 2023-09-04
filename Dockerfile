@@ -23,9 +23,9 @@ RUN set -eux; \
               ; \
     rm -rf /var/lib/apt/lists/*; \
     \
-    curl -L -o clamav.tar.gz https://www.clamav.net/downloads/production/clamav-0.104.2.tar.gz; \
+    curl -L -o clamav.tar.gz https://www.clamav.net/downloads/production/clamav-1.2.0.tar.gz; \
     tar xzf clamav.tar.gz; \
-    cd clamav-0.104.2; \
+    cd clamav-1.2.0; \
     mkdir build && cd build; \
     cmake .. \
       -D CMAKE_BUILD_TYPE="Release" \
@@ -42,7 +42,7 @@ RUN set -eux; \
       -D ENABLE_STATIC_LIB=OFF \
     ; \
     make DESTDIR="/clamav" --quiet -j$(($(nproc) - 1)) install; \
-    cd ../../ && rm -r clamav.tar.gz clamav-0.104.2; \
+    cd ../../ && rm -r clamav.tar.gz clamav-1.2.0; \
     rm -rf "/clamav/usr/include" \
            "/clamav/usr/lib/pkgconfig/" \
            "/clamav/usr/share/doc" ; \
