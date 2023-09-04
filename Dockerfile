@@ -1,4 +1,4 @@
-FROM phusion/baseimage:focal-1.1.0 AS clamav-builder
+FROM phusion/baseimage:focal-1.2.0 AS clamav-builder
 
 RUN set -eux; \
     \
