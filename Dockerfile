@@ -20,19 +20,28 @@ RUN set -eux; \
               valgrind \
               pkg-config \
               libmilter-dev \
+              gcc \
+              make \
+              python3 \
+              python3-pip \
+              python3-pytest \
+              curl \
               ; \
     rm -rf /var/lib/apt/lists/*; \
     \
-    curl -L -o clamav.tar.gz https://www.clamav.net/downloads/production/clamav-1.2.0.tar.gz; \
+    # Install Rust and Cargo
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; \
+    . $HOME/.cargo/env; \
+    \
+    curl -L -o clamav.tar.gz https://www.clamav.net/downloads/production/clamav-1.3.1.tar.gz; \
     tar xzf clamav.tar.gz; \
-    cd clamav-1.2.0; \
+    cd clamav-1.3.1; \
     mkdir build && cd build; \
     cmake .. \
       -D CMAKE_BUILD_TYPE="Release" \
       -D CMAKE_INSTALL_PREFIX=/usr \
       -D APP_CONFIG_DIRECTORY=/etc/clamav \
       -D DATABASE_DIRECTORY=/var/lib/clamav \
-      # update after upgrading json-c:
       -D ENABLE_JSON_SHARED=ON \
       -D CMAKE_INSTALL_LIBDIR=/usr/lib \
       -D ENABLE_CLAMONACC=OFF \
@@ -42,7 +51,7 @@ RUN set -eux; \
       -D ENABLE_STATIC_LIB=OFF \
     ; \
     make DESTDIR="/clamav" --quiet -j$(($(nproc) - 1)) install; \
-    cd ../../ && rm -r clamav.tar.gz clamav-1.2.0; \
+    cd ../../ && rm -r clamav.tar.gz clamav-1.3.1; \
     rm -rf "/clamav/usr/include" \
            "/clamav/usr/lib/pkgconfig/" \
            "/clamav/usr/share/doc" ; \
@@ -65,9 +74,9 @@ RUN set -eux; \
     } >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 2.7
-ENV RUBY_VERSION 2.7.7
-ENV RUBY_DOWNLOAD_SHA256 b38dff2e1f8ce6e5b7d433f8758752987a6b2adfd9bc7571dbc42ea5d04e3e4c
+ENV RUBY_MAJOR 3.0
+ENV RUBY_VERSION 3.0.7
+ENV RUBY_DOWNLOAD_SHA256 1748338373c4fad80129921080d904aca326e41bd9589b498aa5ee09fd575bab
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -168,12 +177,14 @@ RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
 
 ##
 # refresh virus definitions each 1 hour. ClamAV recommends not update in times multiple of 10
-RUN echo "15 * * * * root /usr/bin/freshclam --quiet >/dev/null 2>&1 \n" >> /etc/cron.d/freshclam-cron
-RUN echo "30 * * * * root /usr/bin/freshclam --version > /usr/src/app/CLAM_VERSION\n" >> /etc/cron.d/freshclam-version-cron
+RUN echo "15 * * * * root /usr/bin/freshclam --quiet >/dev/null 2>&1" > /etc/cron.d/freshclam-cron && \
+    echo "30 * * * * root /usr/bin/freshclam --version > /usr/src/app/CLAM_VERSION" >> /etc/cron.d/freshclam-version-cron && \
+    chmod 644 /etc/cron.d/freshclam-cron && \
+    service cron restart
 
 COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
-RUN gem install bundler:2.1.4
+RUN gem install bundler:2.2.33
 
 RUN set -eux; \
     \

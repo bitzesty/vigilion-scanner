@@ -1,5 +1,6 @@
-:schedule:
-  accounts_quota_usage_analyser:
-    cron: '0 10 * * * *'
-    class: AccountsQuotaUsageAnalyserWorker
-    description: 'analyse and alert accounts with high quota usage'
+:scheduler:
+  :schedule:
+    accounts_quota_usage_analyser:
+      cron: '0 10 * * * *'
+      class: AccountsQuotaUsageAnalyserWorker
+      description: 'analyse and alert accounts with high quota usage'
