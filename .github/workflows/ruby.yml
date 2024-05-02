@@ -2,9 +2,9 @@ name: Ruby on Rails CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -26,34 +26,40 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.0.7' # Adjust the Ruby version to match your project's version
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0.7' # Adjust the Ruby version to match your project's version
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libpq-dev clamav clamav-daemon
-        gem install bundler
-        bundle install --jobs 4 --retry 3
+      - name: Install ClamAV
+        run: >
+          sudo apt-get install -y clamav clamav-daemon 
+          && sudo mkdir /var/run/clamav
+          && sudo chown clamav:clamav /var/run/clamav
 
-    - name: Start ClamAV daemon
-      run: |
-        sudo systemctl start clamav-daemon
+      - name: Refresh ClamAV
+        run: sudo systemctl stop clamav-freshclam.service && sudo freshclam
 
-    - name: Setup Database
-      env:
-        RAILS_ENV: test
-        DATABASE_URL: postgres://postgres:password@localhost:5432/vigilion_scanner_test
-      run: |
-        bin/rails db:create
-        bin/rails db:schema:load
+      - name: ClamAV Status
+        run: sudo systemctl restart clamav-daemon && sleep 30 && sudo systemctl status clamav-daemon
 
-    - name: Run tests
-      env:
-        RAILS_ENV: test
-        DATABASE_URL: postgres://postgres:password@localhost:5432/vigilion_scanner_test
-      run: bundle exec rspec
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+
+      - name: Setup Database
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:password@localhost:5432/vigilion_scanner_test
+        run: |
+          bin/rails db:create
+          bin/rails db:schema:load
+
+      - name: Run tests
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:password@localhost:5432/vigilion_scanner_test
+        run: bundle exec rspec

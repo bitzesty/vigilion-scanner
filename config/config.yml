@@ -6,6 +6,7 @@ development:
   dashboard_api_key: "vigilion"
   engines:
     clamav: "clamdscan"
+    clamav_opts: "--stream --stdout"
     avg: "avgscan"
     avg_opts: "-P -a -w -j"
     eset: "esets_scan"
@@ -15,6 +16,7 @@ test:
   dashboard_api_key: "vigilion"
   engines:
     clamav: "clamdscan"
+    clamav_opts: "--stream --stdout"
     avg: "avgscan"
     avg_opts: "-P -a -w -j -i"
     eset: "esets_scan"
