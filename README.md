@@ -90,6 +90,12 @@ GET /scans/stats?status=infected
 
 ## Application setup
 
+### Requirements
+
+* Ruby 3.0.7
+* Postgres
+* Redis
+
 ### Hardware requirements
 
 API server should have at least 4GB of RAM memory and 2GB for storage

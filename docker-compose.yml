@@ -12,9 +12,10 @@ services:
   redis:
     image: "redis:alpine"
   db:
-    image: postgres
-    command: postgres -c stats_temp_directory=/tmp
+    image: postgres:latest  # Ensure you are using an appropriate version
+    command: ["postgres", "-c", "hba_file=/var/lib/postgresql/data/pg_hba.conf"]
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
+      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
     environment:
       POSTGRES_PASSWORD: password
