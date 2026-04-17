@@ -1,1 +1,8 @@
 .env
+.git
+.github
+CLAM_VERSION
+coverage
+log
+spec
+tmp

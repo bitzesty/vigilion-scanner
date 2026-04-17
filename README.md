@@ -92,7 +92,7 @@ GET /scans/stats?status=infected
 
 ### Requirements
 
-* Ruby 3.0.7
+* Ruby 3.3.9
 * Postgres
 * Redis
 
