@@ -166,15 +166,19 @@ COPY --from=clamav-builder "/clamav" "/"
 
 COPY config/freshclam.conf /etc/clamav/freshclam.conf
 COPY config/clamd.conf /etc/clamav/clamd.conf
+RUN chmod 644 /etc/clamav/clamd.conf /etc/clamav/freshclam.conf
 
 RUN groupadd --system app && \
     useradd --system --create-home --gid app --home-dir /home/app --shell /bin/sh app && \
-    mkdir -p /var/lib/clamav /usr/src/app /usr/src/app/tmp/pids && \
+    mkdir -p /var/lib/clamav /usr/src/app /usr/src/app/tmp/pids \
+      /etc/service/clamd /etc/service/freshclam /etc/service/puma /etc/service/sidekiq && \
     chown -R app:app /var/lib/clamav /usr/src/app /usr/local/bundle
 
 WORKDIR /usr/src/app
 
-RUN freshclam --user=app -v && freshclam --version > /usr/src/app/CLAM_VERSION
+RUN freshclam --user=app -v && \
+    freshclam --version > /usr/src/app/CLAM_VERSION && \
+    chown app:app /usr/src/app/CLAM_VERSION
 
 COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
@@ -214,10 +218,15 @@ RUN set -eux; \
 RUN ldconfig
 
 COPY --chown=app:app . /usr/src/app
-COPY --chown=app:app docker/start.sh /usr/local/bin/start-vigilion
-RUN chmod +x /usr/local/bin/start-vigilion
+COPY docker/av-clamd.sh /etc/service/clamd/run
+COPY docker/freshclam.sh /etc/service/freshclam/run
+COPY docker/puma.sh /etc/service/puma/run
+COPY docker/sidekiq.sh /etc/service/sidekiq/run
+RUN chmod +x \
+    /etc/service/clamd/run \
+    /etc/service/freshclam/run \
+    /etc/service/puma/run \
+    /etc/service/sidekiq/run
 
-USER app
-
-CMD ["/usr/local/bin/start-vigilion"]
+CMD ["/sbin/my_init"]
 EXPOSE 3000

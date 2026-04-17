@@ -1,3 +1,4 @@
 #!/bin/sh
+set -eu
 
-clamd -F -c /etc/clamav/clamd.conf -l /var/log/clamd.log
+exec /sbin/setuser app clamd -F -c /etc/clamav/clamd.conf
