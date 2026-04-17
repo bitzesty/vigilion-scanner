@@ -95,6 +95,7 @@ GET /scans/stats?status=infected
 * Ruby 3.3.9
 * Postgres
 * Redis
+* Docker / Docker Compose for the containerised setup
 
 ### Hardware requirements
 
@@ -102,11 +103,24 @@ API server should have at least 4GB of RAM memory and 2GB for storage
 
 ### Local Install
 
-Install docker and run:
+Install Docker and start the application stack:
 
     docker-compose up
 
-This will build and start the containers. Now need to create the database:
+This builds the application image and starts:
+
+* the Rails app on port `3000`
+* Postgres 16
+* Redis
+
+Inside the `web` container, the image uses `phusion/baseimage` with `/sbin/my_init` as PID 1. `my_init` supervises the long-running in-container services with runit:
+
+* Puma
+* Sidekiq
+* `clamd`
+* `freshclam`
+
+Create the database:
 
     docker-compose run web rake db:create
 
@@ -138,13 +152,17 @@ VIRUS_SCANNER_API_KEY=<API KEY>
 
 ## Testing
 
-To run specs execute
+To run the test suite in Docker:
 
     docker-compose run web bash
 
 and within container:
 
     bundle exec rspec
+
+To run the suite locally instead of in Docker, make sure Postgres is available and set `DATABASE_URL`, for example:
+
+    DATABASE_URL=postgresql://$USER@localhost:5432/vigilion_scanner_test bundle exec rspec
 
 You can also test the API using postman.
 
