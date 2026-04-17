@@ -161,42 +161,46 @@ RSpec.describe Scan, type: :model do
 
   describe "#start!" do
     it "sets started_at and status" do
-      Timecop.freeze Time.now
-      scan = build(:scan, started_at: nil, status: :pending)
-      scan.start!
-      expect(scan).to be_scanning
-      expect(scan.started_at).to eq Time.now
+      Timecop.freeze(Time.current) do
+        scan = build(:scan, started_at: nil, status: :pending)
+        scan.start!
+
+        expect(scan).to be_scanning
+        expect(scan.started_at).to be_within(1e-6).of(Time.current)
+      end
     end
   end
 
   describe "#complete!" do
     it "sets started_at and status" do
-      Timecop.freeze Time.now
-      scan = build(:scan, ended_at: nil, status: :pending)
-      scan.complete!(:clean, "good")
+      Timecop.freeze(Time.current) do
+        scan = build(:scan, ended_at: nil, status: :pending)
+        scan.complete!(:clean, "good")
 
-      expect(scan).to be_clean
-      expect(scan.result).to eq "good"
-      expect(scan.ended_at).to eq Time.now
+        expect(scan).to be_clean
+        expect(scan.result).to eq "good"
+        expect(scan.ended_at).to be_within(1e-6).of(Time.current)
+      end
     end
   end
 
   describe "#av_checked!" do
     it "sets av status and main status to success" do
-      Timecop.freeze Time.now
-      scan = build(:scan, ended_at: nil, status: :pending)
-      scan.av_checked!(
-        clamav: {
-          status: :clean,
-          message: "good"
-        }
-      )
+      Timecop.freeze(Time.current) do
+        scan = build(:scan, ended_at: nil, status: :pending)
+        scan.av_checked!(
+          clamav: {
+            status: :clean,
+            message: "good"
+          }
+        )
 
-      expect(scan).to be_clean
-      expect(scan.result).to eq "good"
-      expect(scan).to be_clamav_clean
-      expect(scan.clamav_result).to eq "good"
-      expect(scan.ended_at).to eq Time.now
+        expect(scan).to be_clean
+        expect(scan.result).to eq "good"
+        expect(scan).to be_clamav_clean
+        expect(scan.clamav_result).to eq "good"
+        expect(scan.ended_at).to be_within(1e-6).of(Time.current)
+      end
     end
 
     it "sets av status and main status to failure" do
