@@ -22,7 +22,9 @@ RSpec.describe AccountQuotaUsageAnalyserService do
       end
 
       it "one alert is triggered for support" do
-        described_class.new(account: account).perform!
+        Sidekiq::Testing.inline! do
+          described_class.new(account: account).perform!
+        end
         email = ActionMailer::Base.deliveries.last
         expect(ActionMailer::Base.deliveries.count).to eq(1)
         expect(email.to).to eq(%w(support@vigilion.com))
@@ -38,7 +40,9 @@ RSpec.describe AccountQuotaUsageAnalyserService do
       end
 
       it "we alert the client **as well**" do
-        described_class.new(account: account).perform!
+        Sidekiq::Testing.inline! do
+          described_class.new(account: account).perform!
+        end
         email = ActionMailer::Base.deliveries.last
         expect(ActionMailer::Base.deliveries.count).to eq(2)
         expect(email.to).to eq([account.alert_email])

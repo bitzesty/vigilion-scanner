@@ -4,7 +4,16 @@ RSpec.describe AbsoluteUrlValidator do
   subject(:validator){ AbsoluteUrlValidator.new(attributes: :url) }
 
   describe "#validate_each" do
-    let(:record){ OpenStruct.new(errors: { url: []}) }
+    let(:record_class) do
+      Class.new do
+        include ActiveModel::Model
+        attr_accessor :url
+
+        validates :url, absolute_url: true
+      end
+    end
+
+    let(:record) { record_class.new }
 
     it "allows http" do
       validator.validate_each(record, :url, "http://www.google.com")

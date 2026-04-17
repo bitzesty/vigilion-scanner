@@ -2,10 +2,10 @@ class Scan < ActiveRecord::Base
   AV_STATUSES = %w(pending scanning clean infected error password_protected)
   attr_accessor :file
 
-  enum status: AV_STATUSES
-  enum clamav_status: AV_STATUSES, _prefix: :clamav
-  enum avg_status: AV_STATUSES, _prefix: :avg
-  enum eset_status: AV_STATUSES, _prefix: :eset
+  enum :status, AV_STATUSES
+  enum :clamav_status, AV_STATUSES, prefix: :clamav
+  enum :avg_status, AV_STATUSES, prefix: :avg
+  enum :eset_status, AV_STATUSES, prefix: :eset
 
   belongs_to :project
   has_one :account, through: :project
