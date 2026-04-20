@@ -1,2 +1,7 @@
 #!/bin/sh
-cd /usr/src/app && exec bundle exec puma -C /usr/src/app/config/puma.rb >>/var/log/puma.log 2>&1
+set -eu
+
+cd /usr/src/app
+mkdir -p tmp/pids
+
+exec /sbin/setuser app bundle exec puma -C /usr/src/app/config/puma.rb

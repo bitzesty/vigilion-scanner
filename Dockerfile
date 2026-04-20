@@ -73,10 +73,10 @@ RUN set -eux; \
       echo 'update: --no-document'; \
     } >> /usr/local/etc/gemrc
 
-ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.0
-ENV RUBY_VERSION 3.0.7
-ENV RUBY_DOWNLOAD_SHA256 1748338373c4fad80129921080d904aca326e41bd9589b498aa5ee09fd575bab
+ENV LANG=C.UTF-8
+ENV RUBY_MAJOR=3.3
+ENV RUBY_VERSION=3.3.9
+ENV RUBY_DOWNLOAD_SHA256=2b24a2180a2f7f63c099851a1d01e6928cf56d515d136a91bd2075423a7a76bb
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -88,6 +88,7 @@ RUN set -eux; \
     bison \
     dpkg-dev \
     libgdbm-dev \
+    libyaml-dev \
     ruby \
     autoconf \
     gcc \
@@ -149,10 +150,10 @@ RUN set -eux; \
   bundle --version
 
 # don't create ".bundle" in all our apps
-ENV GEM_HOME /usr/local/bundle
+ENV GEM_HOME=/usr/local/bundle
 ENV BUNDLE_SILENCE_ROOT_WARNING=1 \
     BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $GEM_HOME/bin:$PATH
+ENV PATH=$GEM_HOME/bin:$PATH
 # adjust permissions of a few directories for running "gem install" as an arbitrary user
 RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
 
@@ -165,26 +166,23 @@ COPY --from=clamav-builder "/clamav" "/"
 
 COPY config/freshclam.conf /etc/clamav/freshclam.conf
 COPY config/clamd.conf /etc/clamav/clamd.conf
+RUN chmod 644 /etc/clamav/clamd.conf /etc/clamav/freshclam.conf
 
-RUN groupadd clamav
-RUN useradd -g clamav -s /bin/false -c "Clam Antivirus" clamav
-RUN mkdir -p /var/lib/clamav && chown -R clamav:clamav /var/lib/clamav
+RUN groupadd --system app && \
+    useradd --system --create-home --gid app --home-dir /home/app --shell /bin/sh app && \
+    mkdir -p /var/lib/clamav /usr/src/app /usr/src/app/tmp/pids \
+      /etc/service/clamd /etc/service/freshclam /etc/service/puma /etc/service/sidekiq && \
+    chown -R app:app /var/lib/clamav /usr/src/app /usr/local/bundle
 
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-RUN freshclam -v && freshclam --version > /usr/src/app/CLAM_VERSION
-
-##
-# refresh virus definitions each 1 hour. ClamAV recommends not update in times multiple of 10
-RUN echo "15 * * * * root /usr/bin/freshclam --quiet >/dev/null 2>&1" > /etc/cron.d/freshclam-cron && \
-    echo "30 * * * * root /usr/bin/freshclam --version > /usr/src/app/CLAM_VERSION" >> /etc/cron.d/freshclam-version-cron && \
-    chmod 644 /etc/cron.d/freshclam-cron && \
-    service cron restart
+RUN freshclam --user=app -v && \
+    freshclam --version > /usr/src/app/CLAM_VERSION && \
+    chown app:app /usr/src/app/CLAM_VERSION
 
 COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
-RUN gem install bundler:2.2.33
+RUN gem install bundler:4.0.10
 
 RUN set -eux; \
     \
@@ -198,13 +196,14 @@ RUN set -eux; \
     # for bundling vigilion gems
             make \
             gcc \
+            libyaml-dev \
             libpcre2-dev \
             ; \
     rm -rf /var/lib/apt/lists/*; \
     \
     bundle install --jobs 4 --retry 3 ; \
     \
-    apt-mark auto make gcc gcc-9-base libpcre2-dev > /dev/null; \
+    apt-mark auto make gcc gcc-9-base libpcre2-dev libyaml-dev > /dev/null; \
     apt-get purge -qqy --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     ##
     # clean:
@@ -218,19 +217,16 @@ RUN set -eux; \
 # link shared libraries
 RUN ldconfig
 
-COPY . /usr/src/app
-
-RUN mkdir /etc/service/puma
+COPY --chown=app:app . /usr/src/app
+COPY docker/av-clamd.sh /etc/service/clamd/run
+COPY docker/freshclam.sh /etc/service/freshclam/run
 COPY docker/puma.sh /etc/service/puma/run
-RUN chmod +x /etc/service/puma/run
-
-RUN mkdir /etc/service/sidekiq
 COPY docker/sidekiq.sh /etc/service/sidekiq/run
-RUN chmod +x /etc/service/sidekiq/run
-
-RUN mkdir /etc/service/av-clamd
-COPY docker/av-clamd.sh /etc/service/av-clamd/run
-RUN chmod +x /etc/service/av-clamd/run
+RUN chmod +x \
+    /etc/service/clamd/run \
+    /etc/service/freshclam/run \
+    /etc/service/puma/run \
+    /etc/service/sidekiq/run
 
 CMD ["/sbin/my_init"]
 EXPOSE 3000

@@ -1,17 +1,17 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :plan do
-    name "MyString"
-    cost 9.99
-    file_size_limit 1
-    scans_per_month 1
-    clamav true
+    name { "MyString" }
+    cost { 9.99 }
+    file_size_limit { 1 }
+    scans_per_month { 1 }
+    clamav { true }
 
     trait :no_scans_limit do
-      scans_per_month nil
+      scans_per_month { nil }
     end
 
     trait :no_size_limit do
-      file_size_limit nil
+      file_size_limit { nil }
     end
   end
 end

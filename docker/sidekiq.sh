@@ -1,3 +1,6 @@
 #!/bin/sh
+set -eu
 
-cd /usr/src/app && exec bundle exec sidekiq -q default -c 2 >>/var/log/sidekiq.log 2>&1
+cd /usr/src/app
+
+exec /sbin/setuser app bundle exec sidekiq -q default -c 2

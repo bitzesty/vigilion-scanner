@@ -1,7 +1,7 @@
 class HealthcheckController < ActionController::Base
   def perform
     file = "#{Rails.root}/CLAM_VERSION"
-    updated_at = if File.exists?(file)
+    updated_at = if File.exist?(file)
       `cat #{file}`.chomp
     else
       "unknown"

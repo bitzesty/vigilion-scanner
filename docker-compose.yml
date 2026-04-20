@@ -12,7 +12,7 @@ services:
   redis:
     image: "redis:alpine"
   db:
-    image: postgres:latest  # Ensure you are using an appropriate version
+    image: postgres:16
     command: ["postgres", "-c", "hba_file=/var/lib/postgresql/data/pg_hba.conf"]
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
