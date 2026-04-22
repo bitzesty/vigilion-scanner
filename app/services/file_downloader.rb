@@ -11,6 +11,9 @@ class FileDownloader
 private
 
   def download_file(scan)
+    if scan.file_path.include?("..") || scan.file_path.include?("/") || scan.file_path.include?("\\")
+      raise "Invalid path: path traversal detected in #{scan.file_path}"
+    end
     downloaded_file = File.open scan.file_path, "wb"
     request = Typhoeus::Request.new(scan.url, accept_encoding: "gzip", ssl_verifypeer: false, ssl_verifyhost: 0, followlocation: true)
     request.on_headers do |response|
