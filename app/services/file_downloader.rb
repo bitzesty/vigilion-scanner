@@ -11,10 +11,7 @@ class FileDownloader
 private
 
   def download_file(scan)
-    if scan.file_path.include?("..") || scan.file_path.include?("/") || scan.file_path.include?("\\")
-      raise "Invalid path: path traversal detected in #{scan.file_path}"
-    end
-    downloaded_file = File.open scan.file_path, "wb"
+    downloaded_file = File.open validated_file_path(scan), "wb"
     request = Typhoeus::Request.new(scan.url, accept_encoding: "gzip", ssl_verifypeer: false, ssl_verifyhost: 0, followlocation: true)
     request.on_headers do |response|
       validate_status response
@@ -28,6 +25,17 @@ private
     end
     request.run
     true
+  end
+
+  def validated_file_path(scan)
+    tmp_path = Rails.root.join("tmp").to_s
+    file_path = File.expand_path(scan.file_path)
+
+    unless file_path.start_with?("#{tmp_path}/")
+      raise DownloadError.new "Invalid path"
+    end
+
+    file_path
   end
 
   def validate_status(response)
