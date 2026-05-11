@@ -97,6 +97,20 @@ RSpec.describe FileDownloader do
           expect(file_content(scan)).to eq url_content
         end
       end
+
+      context "with a file path outside tmp" do
+        before do
+          allow(scan).to receive(:file_path).and_return(Rails.root.join("tmp", "..", "invalid.txt").to_s)
+        end
+
+        it "sets scan status to error" do
+          expect(downloader.download(scan)).to be false
+
+          scan.reload
+          expect(scan).to be_error
+          expect(scan.result).to eq("Cannot download file. Invalid path")
+        end
+      end
     end
 
     def mock_download_request(status = 200, content_length = 1000)
