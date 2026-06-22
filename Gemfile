@@ -13,7 +13,7 @@ gem 'fugit', '>= 1.11.1'
 gem 'net-imap', '~> 0.4.20'
 gem 'nokogiri', '>= 1.18.7'
 gem 'rack', '~> 2.2.23'
-gem 'ruby-filemagic', '~> 0.7'
+gem 'marcel', '~> 1.1'
 gem 'thor', '>= 1.3.2'
 gem 'thwait', '~> 0.2.0'
 

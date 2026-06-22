@@ -1,5 +1,7 @@
 require "open3"
-require "filemagic"
+require "marcel"
+require "pathname"
+require "English"
 
 class AvRunner
   def perform(scan)
@@ -33,7 +35,32 @@ class AvRunner
   end
 
   def get_mimetype_and_encoding(filepath)
-    result = FileMagic.open(:mime) { |fm| fm.file(filepath) }
-    result.split(";").map(&:squish)
+    filepath = validated_mimetype_path(filepath)
+
+    # Keep libmagic-style charset output when available; Marcel only returns a content type.
+    result = mimetype_from_file_command(filepath)
+    return result.split(";").map(&:squish) if result.present?
+
+    [
+      Marcel::MimeType.for(Pathname.new(filepath), name: File.basename(filepath)),
+      nil
+    ]
+  end
+
+  def mimetype_from_file_command(filepath)
+    stdout = IO.popen(["file", "--brief", "--mime", filepath], &:read)
+    return nil unless $CHILD_STATUS.success?
+
+    stdout.strip
+  rescue Errno::ENOENT
+    nil
+  end
+
+  def validated_mimetype_path(filepath)
+    mimetype_path = File.expand_path(filepath)
+    tmp_path = File.expand_path("tmp", Rails.root)
+    return mimetype_path if mimetype_path.start_with?("#{tmp_path}#{File::SEPARATOR}")
+
+    raise ArgumentError, "Invalid path"
   end
 end
