@@ -191,8 +191,9 @@ RUN set -eux; \
     # for postgresql
             libpq-dev \
             postgresql-client \
-    # for ruby-filemagic
-            libmagic-dev \
+    # for libmagic-backed MIME detection
+            file \
+            libmagic1 \
     # for bundling vigilion gems
             make \
             gcc \
