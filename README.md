@@ -92,7 +92,7 @@ GET /scans/stats?status=infected
 
 ### Requirements
 
-* Ruby 3.3.9
+* Ruby 3.3.12
 * Postgres
 * Redis
 * Docker / Docker Compose for the containerised setup
